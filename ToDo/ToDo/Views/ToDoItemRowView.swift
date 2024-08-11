@@ -1,0 +1,57 @@
+//
+//  ToDoItemRowView.swift
+//  ToDo
+//
+//  Created by LQ on 2024/8/10.
+//
+
+import SwiftUI
+
+struct ToDoItemRowView: View {
+    
+    @EnvironmentObject var modelData: ModelData
+    @State var item: EventItem
+    
+    var showImportance: Bool = true
+    var showTag: Bool = true
+    var showDeadline: Bool = false
+    
+    var tag: ItemTag? {
+        modelData.tagList.first { $0.id == item.tag }
+    }
+    
+    var body: some View {
+        HStack {
+            Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+            Text(item.title)
+            
+            if let tag, showTag {
+                tagView(title: tag.title, color: tag.titleColor)
+            }
+            
+            if showImportance {
+                tagView(title: item.importance.description, color: item.importance.titleColor)
+            }
+            
+            if let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
+                Spacer()
+                let days = planTime.daysBetweenDates(date: .now)
+                if planTime > .now {
+                    Text("截止\(days)天").foregroundStyle(.red)
+                } else {
+                    Text("过期\(days)天").foregroundStyle(.red)
+                }
+            }
+            
+        }
+    }
+    
+    func tagView(title: String, color: Color) -> some View {
+        Text(title)
+            .foregroundColor(.white)
+            .font(.system(size: 8))
+            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .background(color)
+            .clipShape(Capsule())
+    }
+}

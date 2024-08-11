@@ -1,0 +1,97 @@
+//
+//  CacheManager.swift
+//  JustDo
+//
+//  Created by LQ on 2024/5/2.
+//
+
+import Foundation
+
+struct CacheManager {
+    
+    enum CacheDataType {
+        case tag
+        case reward
+        case event
+        case wish
+        
+        var cacheKey: String {
+            switch self {
+            case .tag:
+                return "com.cache.taglist"
+            case .reward:
+                return "com.cache.reward"
+            case .event:
+                return "com.cache.event"
+            case .wish:
+                return "com.cache.wish"
+            }
+        }
+        
+        var decodeType: Decodable.Type {
+            switch self {
+            case .tag:
+                return ItemTag.self
+            case .reward:
+                return RewardModel.self
+            case .event:
+                return EventModel.self
+            case .wish:
+                return WishModel.self
+            }
+        }
+    }
+    
+    func asyncLoadCache<T: BaseModel>(type: CacheDataType, completion: @escaping ([T]) -> ()) {
+        DispatchQueue.global().async {
+            let items: [T] = loadCache(type: type)
+            DispatchQueue.main.async {
+                completion(items)
+            }
+        }
+    }
+    
+    func loadCache<T: BaseModel>(type: CacheDataType) -> [T] {
+        guard let jsonStrArray = UserDefaults.standard.array(forKey: type.cacheKey) as? [String], jsonStrArray.count > 0 else {
+            return []
+        }
+        var data = [T]()
+        jsonStrArray.forEach { jsonString in
+            if let jsonData = jsonString.data(using: .utf8)  {
+                do {
+                    if let item = try JSONDecoder().decode(type.decodeType, from: jsonData) as? T {
+                        data.append(item)
+                    }
+                } catch {
+                    print("json to model error: \(error)")
+                }
+            }
+            
+        }
+        print("load cache items: \(data.count)")
+        return data
+    }
+    
+    func storeCache<T: Encodable>(type: CacheDataType, items: [T]) {
+        var jsonStringArray = [String]()
+        items.forEach { item in
+            if let jsonData = try? JSONEncoder().encode(item), let jsonString = String(data: jsonData, encoding: .utf8) {
+                jsonStringArray.append(jsonString)
+            }
+        }
+        print("store cache items: \(items.count)")
+        UserDefaults.standard.setValue(jsonStringArray, forKey: type.cacheKey)
+    }
+    
+    func asyncStoreCache<T: Encodable>(type: CacheDataType, items: [T], completion: (() -> ())? = nil) {
+        DispatchQueue.global().async {
+            self.storeCache(type: type, items: items)
+            if let completion = completion {
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }
+        }
+    }
+    
+}
