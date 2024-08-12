@@ -24,6 +24,7 @@ struct TodoItemListView: View {
     @State var scrolledID: Date?
     
     @EnvironmentObject var modelData: ModelData
+    @ObservedObject var timerModel: TimerModel
     
     let recentThreshold: Int = 7
     var recentItems: [EventItem] {
@@ -167,10 +168,30 @@ struct TodoItemListView: View {
     func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, isVertical: Bool = false) -> some View {
         ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, isVerticalLayout: isVertical).environmentObject(modelData)
         .contextMenu {
+            
             Button {
                 checkItem(item)
             } label: {
                 Text((item.isFinish ? "unFinish" : "finish")).foregroundStyle(.blue)
+            }
+            
+            if item.isPlay {
+                Button {
+                    timerModel.stopTimer()
+                    handleStopEvent(item: item)
+                } label: {
+                    Text("stop").foregroundStyle(.red)
+                }
+            } else {
+                Button {
+                    if timerModel.startTimer(item: item) {
+                        item.isPlay = true
+                        item.playTime = .now
+                        modelData.updateItem(item)
+                    }
+                } label: {
+                    Text("start").foregroundStyle(.green)
+                }
             }
             
             Button {
@@ -180,6 +201,19 @@ struct TodoItemListView: View {
                 Text("delete").foregroundStyle(.red)
             }
         }
+    }
+    
+    func handleStopEvent(item: EventItem) {
+        guard let playTime = item.playTime else {
+            return
+        }
+        let interval = Int(Date.now.timeIntervalSince1970 - playTime.timeIntervalSince1970)
+        if let timingItem = timerModel.timingItem, timingItem.id == item.id, interval > 60 {
+            let dateInterval = LQDateInterval(start: playTime, end: .now)
+            item.intervals.append(dateInterval)
+        }
+        item.isPlay = false
+        modelData.updateItem(item)
     }
     
     func checkItem(_ item: EventItem) {

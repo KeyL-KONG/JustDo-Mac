@@ -10,6 +10,7 @@ import SwiftUI
 struct ToDoItemRowView: View {
     
     @EnvironmentObject var modelData: ModelData
+    //@ObservedObject var timerModel: TimerModel
     @State var item: EventItem
     
     var showImportance: Bool = true
@@ -72,6 +73,16 @@ struct ToDoItemRowView: View {
                     } else {
                         Text("过期\(days)天").foregroundStyle(.red)
                     }
+                }
+                
+                if item.isPlay {
+//                    if let timingItem = timerModel.timingItem,  timerModel.isTiming, timerModel.timeSeconds > 0 {
+//                        Spacer()
+//                        Text(timerModel.timeSeconds.timeStr).foregroundStyle(.blue)
+//                    } else {
+//                        Spacer()
+//                        Text("进行中").foregroundStyle(.blue)
+//                    }
                 }
                 
             }

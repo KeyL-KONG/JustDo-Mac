@@ -13,7 +13,11 @@ extension Int {
         let sec = (self % 3600) % 60
         let min = (self % 3600) / 60
         let hour = self / 3600
-        return String(format: "%02d:%02d:%02d", hour, min, sec)
+        if hour > 0 {
+            return String(format: "%02d:%02d:%02d", hour, min, sec)
+        } else {
+            return String(format: "%02d:%02d", min, sec)
+        }
     }
     
     var simpleTimeStr: String {

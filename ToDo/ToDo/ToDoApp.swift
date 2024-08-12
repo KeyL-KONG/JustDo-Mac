@@ -16,17 +16,54 @@ struct ToDoApp: App {
     #endif
 
     let modelData = ModelData()
+    @StateObject var timerModel = TimerModel()
     
     var body: some Scene {
+        
         WindowGroup {
-            ToDoListView()
+            ToDoListView(timerModel: timerModel)
                 .environmentObject(modelData)
                 .onAppear {
                     print("main view appear")
                     modelData.loadFromServer()
                 }
         }
+        
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "无任务") \(timerModel.timeSeconds > 0 ? (timerModel.timingItem?.title ?? "") : "")") {
+            Button("pause") {
+                if timerModel.isTiming {
+                    timerModel.pauseTimer()
+                }
+            }
+            
+            Button("stop") {
+                self.handleStopEvent()
+                timerModel.stopTimer()
+            }
+            
+            Button("restart") {
+                if timerModel.isTiming {
+                    return
+                }
+                timerModel.restartTimer()
+            }
+        }
     }
+    
+    func handleStopEvent() {
+        guard let item = timerModel.timingItem, let playTime = item.playTime else {
+            return
+        }
+        let interval = Int(Date.now.timeIntervalSince1970 - playTime.timeIntervalSince1970)
+        if interval < 60 {
+            return
+        }
+        let dateInterval = LQDateInterval(start: playTime, end: .now)
+        item.intervals.append(dateInterval)
+        item.isPlay = false
+        modelData.updateItem(item)
+    }
+    
 }
 
 #if os(macOS)

@@ -11,6 +11,7 @@ import LeanCloud
 struct ToDoListView: View {
     
     @EnvironmentObject var modelData: ModelData
+    @ObservedObject var timerModel: TimerModel
     @State private var selection: ToDoSection = .today
     @State private var selectItem: EventItem? = nil
     @State private var selectItemID: String = ""
@@ -91,7 +92,7 @@ struct ToDoListView: View {
         } content: {
             TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                 selectItemID = item.id
-            }).environmentObject(modelData)
+            }, timerModel: timerModel).environmentObject(modelData)
                 .id(UUID().uuidString)
                 .onChange(of: selectItemID) { oldValue, newValue in
                     if let item = itemList.first(where: { $0.id == newValue

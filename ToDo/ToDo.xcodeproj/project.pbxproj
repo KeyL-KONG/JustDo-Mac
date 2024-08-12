@@ -36,6 +36,7 @@
 		09F80C1C2C66FF8D00650366 /* ToDoItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80C1B2C66FF8D00650366 /* ToDoItemRowView.swift */; };
 		09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80C1D2C670BB300650366 /* ToDoEditView.swift */; };
 		09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80C1F2C670FAD00650366 /* DateIntervalView.swift */; };
+		09FB5D572C69A33B00C079ED /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FB5D562C69A33B00C079ED /* TimerModel.swift */; };
 		09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FDBE4D2C6870A500AC8F38 /* TodoItemListView+Week.swift */; };
 		5D46435523368AEAFF9A3BF0 /* Pods_ToDo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,7 @@
 		09F80C1B2C66FF8D00650366 /* ToDoItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemRowView.swift; sourceTree = "<group>"; };
 		09F80C1D2C670BB300650366 /* ToDoEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoEditView.swift; sourceTree = "<group>"; };
 		09F80C1F2C670FAD00650366 /* DateIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateIntervalView.swift; sourceTree = "<group>"; };
+		09FB5D562C69A33B00C079ED /* TimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerModel.swift; sourceTree = "<group>"; };
 		09FDBE4D2C6870A500AC8F38 /* TodoItemListView+Week.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Week.swift"; sourceTree = "<group>"; };
 		27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3B5A7BD036DC5D0B04CA9A2 /* Pods-ToDo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo.release.xcconfig"; path = "Target Support Files/Pods-ToDo/Pods-ToDo.release.xcconfig"; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		09F80BD92C66540F00650366 /* ToDo */ = {
 			isa = PBXGroup;
 			children = (
+				09FB5D552C69A33000C079ED /* Timer */,
 				09F80C142C66F62700650366 /* Views */,
 				09F80C092C665A5B00650366 /* Utils */,
 				09F80BEE2C665A3F00650366 /* Server */,
@@ -200,6 +203,14 @@
 				09FDBE4D2C6870A500AC8F38 /* TodoItemListView+Week.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		09FB5D552C69A33000C079ED /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				09FB5D562C69A33B00C079ED /* TimerModel.swift */,
+			);
+			path = Timer;
 			sourceTree = "<group>";
 		};
 		4D9CF80E2E2CB51836DD750D /* Frameworks */ = {
@@ -359,6 +370,7 @@
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,
 				09F80C1A2C66F88C00650366 /* TodoItemListView.swift in Sources */,
+				09FB5D572C69A33B00C079ED /* TimerModel.swift in Sources */,
 				09F80C082C665A3F00650366 /* GoalModel.swift in Sources */,
 				09F80C002C665A3F00650366 /* CloudManager.swift in Sources */,
 			);
