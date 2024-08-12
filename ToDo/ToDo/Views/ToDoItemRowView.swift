@@ -76,6 +76,8 @@ struct ToDoItemRowView: View {
                 }
                 
                 if item.isPlay {
+                    Spacer()
+                    Text("进行中").foregroundStyle(.blue)
 //                    if let timingItem = timerModel.timingItem,  timerModel.isTiming, timerModel.timeSeconds > 0 {
 //                        Spacer()
 //                        Text(timerModel.timeSeconds.timeStr).foregroundStyle(.blue)

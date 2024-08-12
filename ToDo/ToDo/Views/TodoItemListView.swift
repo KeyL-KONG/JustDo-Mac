@@ -169,19 +169,28 @@ struct TodoItemListView: View {
         ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, isVerticalLayout: isVertical).environmentObject(modelData)
         .contextMenu {
             
-            Button {
-                checkItem(item)
-            } label: {
-                Text((item.isFinish ? "unFinish" : "finish")).foregroundStyle(.blue)
-            }
-            
             if item.isPlay {
+                if timerModel.isTiming {
+                    Button {
+                        timerModel.pauseTimer()
+                    } label: {
+                        Text("pause").foregroundStyle(.red)
+                    }
+                } else {
+                    Button {
+                        timerModel.restartTimer()
+                    } label: {
+                        Text("restart").foregroundStyle(.blue)
+                    }
+                }
+                
                 Button {
                     timerModel.stopTimer()
                     handleStopEvent(item: item)
                 } label: {
                     Text("stop").foregroundStyle(.red)
                 }
+                
             } else {
                 Button {
                     if timerModel.startTimer(item: item) {
@@ -192,6 +201,12 @@ struct TodoItemListView: View {
                 } label: {
                     Text("start").foregroundStyle(.green)
                 }
+            }
+            
+            Button {
+                checkItem(item)
+            } label: {
+                Text((item.isFinish ? "unFinish" : "finish")).foregroundStyle(.blue)
             }
             
             Button {
