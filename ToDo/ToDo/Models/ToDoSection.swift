@@ -9,6 +9,7 @@ import Foundation
 
 enum ToDoSection: Identifiable, CaseIterable, Hashable {
     case today
+    case week
     case unplan
     case recent
     case all
@@ -18,6 +19,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "today"
+        case .week:
+            return "week"
         case .unplan:
             return "unplan"
         case .recent:
@@ -33,6 +36,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "today"
+        case .week:
+            return "week"
         case .unplan:
             return "unplan"
         case .recent:
@@ -48,6 +53,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "checklist.unchecked"
+        case .week:
+            return "calendar"
         case .unplan:
             return "star"
         case .recent:
@@ -60,7 +67,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     }
     
     static var allCases: [ToDoSection] {
-        return [.today, .recent, .unplan, .all]
+        return [.today, .week, .recent, .unplan, .all]
     }
     
 }

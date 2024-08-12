@@ -28,6 +28,14 @@ extension Date {
         format("yyyy-MM-dd HH:mm")
     }
     
+    var simpleDayAndWeekStr: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M.d EEE"
+        let chineseLocale = Locale(identifier: "zh_CN")
+        dateFormatter.locale = chineseLocale
+        return dateFormatter.string(from: self)
+    }
+    
     func format(_ format: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format
@@ -146,6 +154,24 @@ extension Date {
                 week.append(.init(date: weekDay))
             }
         }
+        return week
+    }
+    
+    func fetchWeekDates(_ date: Date = .init()) -> [Date] {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2
+        let startOfDate = calendar.startOfDay(for: date)
+        var week: [Date] = []
+        let weekForDate = calendar.dateInterval(of: .weekOfMonth, for: startOfDate)
+        guard let startOfWeek = weekForDate?.start else {
+            return []
+        }
+        (0..<7).forEach { index in
+            if let weekDay = calendar.date(byAdding: .day, value: index, to: startOfWeek) {
+                week.append(weekDay)
+            }
+        }
+        print("week days: \(week)")
         return week
     }
     

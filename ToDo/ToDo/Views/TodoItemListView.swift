@@ -21,6 +21,8 @@ struct TodoItemListView: View {
     @State private var showDeleteAlert: Bool = false
     private static var deleteItem: EventItem? = nil
     
+    @State var scrolledID: Date?
+    
     @EnvironmentObject var modelData: ModelData
     
     let recentThreshold: Int = 7
@@ -107,7 +109,10 @@ struct TodoItemListView: View {
                         }
                     }
                 }
-            } else {
+            } else if selection == .week {
+                weekView()
+            }
+            else {
                 List(itemList, id: \.self.id, selection: $selectItemID) { item in
                     if selection == .recent {
                         itemRowView(item: item, showDeadline: true)
@@ -146,6 +151,9 @@ struct TodoItemListView: View {
         .onAppear {
             if selection == .today {
                 print("today items: \(items.count)")
+            } else if selection == .week, let currentDate = weekDates.first(where: { $0.isToday }) {
+                print("scroll date: \(currentDate)")
+                scrolledID = currentDate
             }
         }
     }
@@ -156,8 +164,8 @@ struct TodoItemListView: View {
         }
     }
     
-    func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true) -> some View {
-        ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline).environmentObject(modelData)
+    func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, isVertical: Bool = false) -> some View {
+        ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, isVerticalLayout: isVertical).environmentObject(modelData)
         .contextMenu {
             Button {
                 checkItem(item)
@@ -186,7 +194,9 @@ struct TodoItemListView: View {
     func addNewItem() {
         let item = EventItem()
         item.title = "新建任务"
-        item.planTime = .now
+        if selection == .today {
+            item.planTime = .now
+        }
         modelData.updateItem(item) {
             self.addItemEvent(item)
         }

@@ -40,6 +40,13 @@ struct ToDoListView: View {
                 }
                 return planTime.isInToday
             }
+        case .week:
+            itemList = itemList.filter({ event in
+                guard let planTime = event.planTime else {
+                    return false
+                }
+                return planTime.isInThisWeek
+            })
         case .unplan:
             break
         case .recent:
