@@ -186,6 +186,7 @@ struct ToDoEditView: View {
             }.foregroundColor(.blue)
         })
         .onAppear {
+            print("edit view appear")
             if let selectedItem = selectItem {
                 titleText = selectedItem.title
                 mark = selectedItem.mark

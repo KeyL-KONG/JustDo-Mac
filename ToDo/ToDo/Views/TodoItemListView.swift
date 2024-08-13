@@ -152,6 +152,7 @@ struct TodoItemListView: View {
             }), secondaryButton: .cancel(Text("取消")))
         }
         .onAppear {
+            print("todo itemlist appear")
             if selection == .today {
                 print("today items: \(items.count)")
             } else if selection == .week, let currentDate = weekDates.first(where: { $0.isToday }) {
@@ -170,39 +171,49 @@ struct TodoItemListView: View {
     func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, isVertical: Bool = false) -> some View {
         ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, isVerticalLayout: isVertical).environmentObject(modelData)
         .contextMenu {
-            
-            if item.isPlay {
-                if timerModel.isTiming {
-                    Button {
-                        timerModel.pauseTimer()
-                    } label: {
-                        Text("pause").foregroundStyle(.red)
+            if item.actionType == .task {
+                if item.isPlay {
+                    if timerModel.isTiming {
+                        Button {
+                            timerModel.pauseTimer()
+                        } label: {
+                            Text("pause").foregroundStyle(.red)
+                        }
+                    } else {
+                        Button {
+                            timerModel.restartTimer()
+                        } label: {
+                            Text("restart").foregroundStyle(.blue)
+                        }
                     }
+                    
+                    Button {
+                        timerModel.stopTimer()
+                        handleStopEvent(item: item)
+                    } label: {
+                        Text("stop").foregroundStyle(.red)
+                    }
+                    
                 } else {
                     Button {
-                        timerModel.restartTimer()
+                        if timerModel.startTimer(item: item) {
+                            item.isPlay = true
+                            item.playTime = .now
+                            modelData.updateItem(item)
+                        }
                     } label: {
-                        Text("restart").foregroundStyle(.blue)
+                        Text("start").foregroundStyle(.green)
                     }
                 }
-                
+            }
+            
+            if selection == .project {
                 Button {
-                    timerModel.stopTimer()
-                    handleStopEvent(item: item)
+                    addProjectSubItem(root: item)
                 } label: {
-                    Text("stop").foregroundStyle(.red)
+                    Text("新建子任务").foregroundStyle(.cyan)
                 }
-                
-            } else {
-                Button {
-                    if timerModel.startTimer(item: item) {
-                        item.isPlay = true
-                        item.playTime = .now
-                        modelData.updateItem(item)
-                    }
-                } label: {
-                    Text("start").foregroundStyle(.green)
-                }
+
             }
             
             Button {
@@ -247,6 +258,9 @@ struct TodoItemListView: View {
         item.title = "新建任务"
         if selection == .today {
             item.planTime = .now
+        } else if selection == .project {
+            item.actionType = .project
+            item.title = "新建项目"
         }
         modelData.updateItem(item) {
             self.addItemEvent(item)

@@ -95,9 +95,9 @@ struct ToDoListView: View {
             TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                 selectItemID = item.id
             }, timerModel: timerModel).environmentObject(modelData)
-                .id(UUID().uuidString)
+                //.id(UUID().uuidString)
                 .onChange(of: selectItemID) { oldValue, newValue in
-                    if let item = itemList.first(where: { $0.id == newValue
+                    if let item = modelData.itemList.first(where: { $0.id == newValue
                     }) {
                         self.selectItem = item
                         print("select item: \(item.title)")
