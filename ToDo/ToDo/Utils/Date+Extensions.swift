@@ -20,12 +20,22 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
+    var monthAbbreviation: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM" // "MMM" 格式会返回月份的缩写，如 "Jan", "Feb" 等
+        return dateFormatter.string(from: self)
+    }
+    
     var simpleWeek: String {
         return startOfWeek.format("MM-dd") + "~" + endOfWeek.format("MM-dd")
     }
     
     var simpleDateStr: String {
         format("yyyy-MM-dd HH:mm")
+    }
+    
+    var simpleMonthAndDay: String {
+        format("MM-dd")
     }
     
     var simpleDayAndWeekStr: String {
@@ -119,17 +129,25 @@ extension Date {
     }
     
     var startOfWeek: Date {
-        var gregorian = Calendar(identifier: .gregorian)
-        gregorian.firstWeekday = 2
-        guard let sunday = gregorian.date(from: gregorian.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else { return self }
-        return gregorian.date(byAdding: .day, value: 1, to: sunday) ?? self
+//        var gregorian = Calendar(identifier: .gregorian)
+//        gregorian.firstWeekday = 2
+//        guard let sunday = gregorian.date(from: gregorian.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else { return self }
+//        return gregorian.date(byAdding: .day, value: 1, to: sunday) ?? self
+        
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2
+        let startOfDate = calendar.startOfDay(for: self)
+        let weekForDate = calendar.dateInterval(of: .weekOfMonth, for: startOfDate)
+        return weekForDate?.start ?? self
     }
     
     var endOfWeek: Date {
-        var gregorian = Calendar(identifier: .gregorian)
-        gregorian.firstWeekday = 2
-        guard let sunday = gregorian.date(from: gregorian.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else { return self }
-        return gregorian.date(byAdding: .day, value: 7, to: sunday) ?? self
+//        var gregorian = Calendar(identifier: .gregorian)
+//        gregorian.firstWeekday = 2
+//        guard let sunday = gregorian.date(from: gregorian.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else { return self }
+//        return gregorian.date(byAdding: .day, value: 7, to: sunday) ?? self
+        let calendar = Calendar.current
+        return calendar.date(byAdding: .day, value: 6, to: startOfWeek)!
     }
     
     var isSameHour: Bool {
@@ -157,10 +175,10 @@ extension Date {
         return week
     }
     
-    func fetchWeekDates(_ date: Date = .init()) -> [Date] {
+    func fetchWeekDates() -> [Date] {
         var calendar = Calendar.current
         calendar.firstWeekday = 2
-        let startOfDate = calendar.startOfDay(for: date)
+        let startOfDate = calendar.startOfDay(for: self)
         var week: [Date] = []
         let weekForDate = calendar.dateInterval(of: .weekOfMonth, for: startOfDate)
         guard let startOfWeek = weekForDate?.start else {

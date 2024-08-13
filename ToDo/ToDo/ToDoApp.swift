@@ -33,6 +33,7 @@ struct ToDoApp: App {
             Button("pause") {
                 if timerModel.isTiming {
                     timerModel.pauseTimer()
+                    handlePauseEvent()
                 }
             }
             
@@ -46,8 +47,30 @@ struct ToDoApp: App {
                     return
                 }
                 timerModel.restartTimer()
+                handleRestartEvent()
             }
         }
+    }
+    
+    func handleRestartEvent() {
+        guard let item = timerModel.timingItem else {
+             return
+        }
+        item.playTime = .now
+        modelData.updateItem(item)
+    }
+    
+    func handlePauseEvent() {
+        guard let item = timerModel.timingItem, let playTime = item.playTime else {
+             return
+        }
+        let interval = Int(Date.now.timeIntervalSince1970 - playTime.timeIntervalSince1970)
+        if interval < 60 {
+            return
+        }
+        let dateInterval = LQDateInterval(start: playTime, end: .now)
+        item.intervals.append(dateInterval)
+        modelData.updateItem(item)
     }
     
     func handleStopEvent() {

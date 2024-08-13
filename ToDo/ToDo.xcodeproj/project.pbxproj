@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -43,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Month.swift"; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				09F80C1F2C670FAD00650366 /* DateIntervalView.swift */,
 				09FDBE4D2C6870A500AC8F38 /* TodoItemListView+Week.swift */,
 				09FF8CD62C6A4B7800A74F55 /* TodoItemListView+Project.swift */,
+				097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -347,6 +350,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */,
 				09F80C012C665A3F00650366 /* WishModel.swift in Sources */,
 				09F80BFE2C665A3F00650366 /* UserManager.swift in Sources */,
 				09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */,

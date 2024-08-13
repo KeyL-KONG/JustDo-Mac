@@ -21,7 +21,7 @@ extension TodoItemListView {
     
     var projectItems: [TodoProjectDetailItem] {
         var detailItems = [TodoProjectDetailItem]()
-        let projectList = modelData.itemList.filter { $0.actionType == .project }
+        let projectList = itemList.filter { $0.actionType == .project }
         projectList.forEach { project in
             let eventItems = modelData.itemList.filter { $0.projectId.count > 0 && $0.projectId == project.id  && $0.fatherId.isEmpty }.compactMap { event in
                 

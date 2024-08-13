@@ -9,7 +9,7 @@ import Foundation
 
 enum ToDoSection: Identifiable, CaseIterable, Hashable {
     case today
-    case week
+    case calendar
     case project
     case unplan
     case recent
@@ -20,8 +20,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "today"
-        case .week:
-            return "week"
+        case .calendar:
+            return "calendar"
         case .project:
             return "project"
         case .unplan:
@@ -41,8 +41,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "today"
         case .project:
             return "project"
-        case .week:
-            return "week"
+        case .calendar:
+            return "calendar"
         case .unplan:
             return "unplan"
         case .recent:
@@ -58,7 +58,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "checklist.unchecked"
-        case .week:
+        case .calendar:
             return "calendar"
         case .project:
             return "paperplane.circle.fill"
@@ -74,9 +74,25 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     }
     
     static var allCases: [ToDoSection] {
-        return [.today, .week, .project, .recent, .unplan, .all]
+        return [.today, .calendar, .project, .recent, .unplan, .all]
     }
     
+}
+
+enum CalendarMode {
+    case week
+    case month
+    
+    var title: String {
+        switch self {
+        case .week:
+            return "周视图"
+        case .month:
+            return "月视图"
+        }
+    }
+    
+    static var allCases: [CalendarMode] = [.week, .month]
 }
 
 enum TodoMode {

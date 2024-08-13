@@ -16,10 +16,14 @@ struct TodoItemListView: View {
     @Binding var selectionMode: TodoMode
     var addItemEvent: (EventItem) -> ()
     
+    @State var calendarMode: CalendarMode = .month
+    
     @State private var inspectIsShown: Bool = false
     //@Binding var selectItem: EventItem?
     @State private var showDeleteAlert: Bool = false
     private static var deleteItem: EventItem? = nil
+    
+    @State var currentDate: Date = .now
     
     @State var scrolledID: Date?
     
@@ -110,8 +114,13 @@ struct TodoItemListView: View {
                         }
                     }
                 }
-            } else if selection == .week {
-                weekView()
+            } else if selection == .calendar {
+                if calendarMode == .week {
+                    weekView()
+                } else {
+                    monthView()
+                }
+                
             } else if selection == .project {
                 projectView()
             }
@@ -127,6 +136,33 @@ struct TodoItemListView: View {
             }
         }
         .toolbar {
+            
+            if selection == .calendar {
+                Button {
+                    currentDate = calendarMode == .week ?  currentDate.previousWeekDate : currentDate.previousMonth
+                } label: {
+                    Label("left", systemImage: "arrowshape.left.fill")
+                }
+                
+                if calendarMode == .week {
+                    Text("\(weekDateStr)")
+                } else {
+                    Text(currentDate.monthAbbreviation)
+                }
+                
+                Button {
+                    currentDate = calendarMode == .week ? currentDate.nextWeekDate : currentDate.nextMonth
+                } label: {
+                    Label("rigth", systemImage: "arrowshape.right.fill")
+                }
+                
+                Picker("视图切换", selection: $calendarMode) {
+                    ForEach(CalendarMode.allCases, id: \.self) { mode in
+                        Text(mode.title)
+                    }
+                }
+
+            }
             
             Picker("模式切换", selection: $selectionMode) {
                 ForEach(TodoMode.allCases, id: \.self) { mode in
@@ -155,7 +191,7 @@ struct TodoItemListView: View {
             print("todo itemlist appear")
             if selection == .today {
                 print("today items: \(items.count)")
-            } else if selection == .week, let currentDate = weekDates.first(where: { $0.isToday }) {
+            } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")
                 scrolledID = currentDate
             }
@@ -176,12 +212,14 @@ struct TodoItemListView: View {
                     if timerModel.isTiming {
                         Button {
                             timerModel.pauseTimer()
+                            handlePauseEvent(item: item)
                         } label: {
                             Text("pause").foregroundStyle(.red)
                         }
                     } else {
                         Button {
                             timerModel.restartTimer()
+                            handleRestartEvent(item: item)
                         } label: {
                             Text("restart").foregroundStyle(.blue)
                         }
@@ -229,6 +267,24 @@ struct TodoItemListView: View {
                 Text("delete").foregroundStyle(.red)
             }
         }
+    }
+    
+    func handleRestartEvent(item: EventItem) {
+        item.playTime = .now
+        modelData.updateItem(item)
+    }
+    
+    func handlePauseEvent(item: EventItem) {
+        guard let playTime = item.playTime else {
+             return
+        }
+        let interval = Int(Date.now.timeIntervalSince1970 - playTime.timeIntervalSince1970)
+        if interval < 60 {
+            return
+        }
+        let dateInterval = LQDateInterval(start: playTime, end: .now)
+        item.intervals.append(dateInterval)
+        modelData.updateItem(item)
     }
     
     func handleStopEvent(item: EventItem) {
