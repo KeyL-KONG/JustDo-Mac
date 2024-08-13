@@ -39,15 +39,17 @@ struct ToDoListView: View {
                 guard let planTime = event.planTime else {
                     return false
                 }
-                return planTime.isInToday
+                return planTime.isInToday && event.actionType == .task
             }
         case .week:
             itemList = itemList.filter({ event in
                 guard let planTime = event.planTime else {
                     return false
                 }
-                return planTime.isInThisWeek
+                return planTime.isInThisWeek && event.actionType == .task
             })
+        case .project:
+            itemList = itemList.filter({ $0.actionType == .project })
         case .unplan:
             break
         case .recent:
@@ -55,13 +57,13 @@ struct ToDoListView: View {
                 guard event.planTime != nil else {
                     return false
                 }
-                return true
+                return event.actionType == .task
             })
         case .all:
             break
         case .list(let itemTag):
             itemList = itemList.filter { event in
-                itemTag.id == event.tag
+                itemTag.id == event.tag && event.actionType == .task
             }
         }
         return itemList.sorted { first, second in

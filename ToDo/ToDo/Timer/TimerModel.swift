@@ -45,6 +45,7 @@ class TimerModel: ObservableObject {
         timer = nil
         timeSeconds = 0
         isTiming = false
+        timingItem = nil
     }
     
     private func start() {

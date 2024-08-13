@@ -15,6 +15,9 @@ struct ToDoEditView: View {
     var updateEvent: (() -> ())
     
     @State var titleText: String = ""
+    @State var actionType: EventActionType = .task
+    @State var actionList: [EventActionType] = [.task, .project]
+    
     @State var selectedTag: String = ""
     
     @State var importantTag: ImportanceTag = .mid
@@ -29,11 +32,26 @@ struct ToDoEditView: View {
         return ["无"] + modelData.rewardList.filter { $0.tag == tagId }.compactMap { $0.title }
     }
     
+    @State var selectProject: String = ""
+    var projectListTitle: [String] {
+        let tagId = modelData.tagList.filter{ $0.title == selectedTag }.first?.id ?? ""
+        return ["无"] + modelData.itemList.filter { $0.tag == tagId && $0.actionType == .project}.compactMap { $0.title }
+    }
+    
+    @State var selectFather: String = "无"
+    var fatherListTitle: [String] {
+        guard selectProject.count > 1, let selectItem = self.selectItem, let projectItem = modelData.itemList.first(where: { $0.title == selectProject && $0.actionType == .project }) else { return [] }
+        return ["无"] + modelData.itemList.filter { $0.projectId == projectItem.id && $0.id != selectItem.id }.compactMap { $0.title }
+    }
+    
     @State var isFinish: Bool = false
     @State var planTime = Date.now
     
     @State var mark: String = ""
     @State public var setPlanTime: Bool = false
+    
+    @State var setFinishTime: Bool = false
+    @State var finishTime: Date = .now
     
     @State var intervals: [LQDateInterval] = []
     
@@ -43,10 +61,32 @@ struct ToDoEditView: View {
                 Section {
                     TextField("任务标题", text: $titleText)
                     
+                    Picker("选择类型", selection: $actionType) {
+                        ForEach(actionList, id: \.self) { type in
+                            Text(type.title).tag(type)
+                        }
+                    }
+                    
                     Picker("选择标签", selection: $selectedTag) {
                         ForEach(modelData.tagList.map({$0.title}), id: \.self) { title in
                             if let tag = modelData.tagList.first(where: { $0.title == title}) {
                                 Text(tag.title).tag(tag)
+                            }
+                        }
+                    }
+                    
+                    if projectListTitle.count > 1 {
+                        Picker("选择项目", selection: $selectProject) {
+                            ForEach(projectListTitle, id: \.self) { projectTitle in
+                                Text(projectTitle).tag(projectTitle)
+                            }
+                        }
+                    }
+                    
+                    if fatherListTitle.count > 1 {
+                        Picker("选择父任务", selection: $selectFather) {
+                            ForEach(fatherListTitle, id: \.self) { fatherTitle in
+                                Text(fatherTitle).tag(fatherTitle)
                             }
                         }
                     }
@@ -76,15 +116,29 @@ struct ToDoEditView: View {
                 }
                 
                 Section(header: Text("设置时间"), content: {
-                    
-                    DatePicker(selection: $planTime, displayedComponents: .date) {
-                        Text("Date")
+                    HStack {
+                        Toggle(isOn: $setPlanTime) {
+                            Text("")
+                        }.labelsHidden()
+                        
+                        DatePicker(selection: $planTime, displayedComponents: .date) {
+                            Text("\(actionType == .task ? "设置为计划时间" : "设置为开始时间")")
+                        }
                     }
                     
-                    Toggle(isOn: $setPlanTime) {
-                        Text("设置为计划时间")
+                    if actionType == .project {
+                        HStack {
+                            Toggle(isOn: $setFinishTime) {
+                                Text("")
+                            }.labelsHidden()
+                            
+                            DatePicker(selection: $finishTime, displayedComponents: .date) {
+                                Text("设置为完成时间")
+                            }
+                        }
+
                     }
-    
+                    
                 })
                 
                 Section(header: Text("备注")) {
@@ -144,10 +198,18 @@ struct ToDoEditView: View {
                     self.planTime = planTime
                     setPlanTime = true
                 }
+                if let finishTime = selectedItem.finishTime {
+                    self.finishTime = finishTime
+                    setFinishTime = true
+                }
                 isFinish = selectedItem.isFinish
                 selectReward = modelData.rewardList.filter({ $0.id == selectedItem.rewardId }).first?.title ?? "无"
+                selectProject = modelData.itemList.filter { $0.id == selectedItem.projectId}.first?.title ?? "无"
+                selectFather = modelData.itemList.filter { $0.id == selectedItem.fatherId}.first?.title ?? "无"
+                actionType = selectedItem.actionType
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
+                actionType = EventActionType.task
             }
         }
     }
@@ -160,17 +222,33 @@ struct ToDoEditView: View {
         let rewardItem = modelData.rewardList.filter { $0.title == selectReward }.first
         let tag = modelData.tagList.filter({ $0.title == selectedTag}).first?.id ?? ""
         
+        if let projectItem = modelData.itemList.filter({ $0.title == selectProject}).first {
+            selectedItem.projectId = projectItem.id
+            projectItem.childrenIds.append(selectedItem.id)
+            modelData.updateItem(projectItem)
+        }
+        
+        if let fatherItem = modelData.itemList.filter({ $0.title == selectFather }).first {
+            selectedItem.fatherId = fatherItem.id
+            fatherItem.childrenIds.append(selectedItem.id)
+            modelData.updateItem(fatherItem)
+        }
+        
         selectedItem.title = titleText
         selectedItem.tag = tag
         selectedItem.mark = mark
         if setPlanTime {
             selectedItem.planTime = planTime
         }
+        if setFinishTime {
+            selectedItem.finishTime = finishTime
+        }
         selectedItem.importance = importantTag
         selectedItem.intervals = intervals
         selectedItem.eventType = eventType
         selectedItem.isFinish = isFinish
         selectedItem.rewardId = rewardItem?.id ?? ""
+        selectedItem.actionType = actionType
         modelData.updateItem(selectedItem)
         updateEvent()
     }

@@ -112,6 +112,8 @@ struct TodoItemListView: View {
                 }
             } else if selection == .week {
                 weekView()
+            } else if selection == .project {
+                projectView()
             }
             else {
                 List(itemList, id: \.self.id, selection: $selectItemID) { item in

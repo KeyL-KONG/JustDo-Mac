@@ -27,6 +27,20 @@ extension LQDateInterval {
     }
 }
 
+enum EventActionType: String {
+    case task
+    case project
+    
+    var title: String {
+        switch self {
+        case .task:
+            return "任务"
+        case .project:
+            return "项目"
+        }
+    }
+}
+
 class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     
     var generateId: String = UUID().uuidString
@@ -47,6 +61,11 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var rewardCount: Int = 0
     var fixedReward: Bool = false
     var rewardId: String = ""
+    
+    var actionType: EventActionType = .task
+    var projectId: String = ""
+    var fatherId: String = ""
+    var childrenIds: [String] = []
     
     // 废弃字段
     var finishState: FinishState = .normal
@@ -91,6 +110,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.rewardCount = try container.decode(Int.self, forKey: .rewardCount)
         self.fixedReward = try container.decode(Bool.self, forKey: .fixedReward)
         self.rewardId = try container.decode(String.self, forKey: .rewardId)
+        self.actionType = EventActionType(rawValue: try container.decode(String.self, forKey: .actionType)) ?? .task
+        self.fatherId = try container.decode(String.self, forKey: .fatherId)
+        self.childrenIds = try container.decode([String].self, forKey: .childrenIds)
+        self.projectId = try container.decode(String.self, forKey: .projectId)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -121,6 +144,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let playTime {
             try container.encode(playTime, forKey: .playTime)
         }
+        try container.encode(actionType.rawValue, forKey: .actionType)
+        try container.encode(fatherId, forKey: .fatherId)
+        try container.encode(childrenIds, forKey: .childrenIds)
+        try container.encode(projectId, forKey: .projectId)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -199,6 +226,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
         self.rewardCount = cloudObj.get(EventModelKeys.rewardCount.rawValue)?.intValue ?? 0
         self.rewardId = cloudObj.get(EventModelKeys.rewardId.rawValue)?.stringValue ?? ""
+        self.actionType = EventActionType(rawValue: cloudObj.get(EventModelKeys.actionType.rawValue)?.stringValue ?? "") ?? .task
+        self.fatherId = cloudObj.get(EventModelKeys.fatherId.rawValue)?.stringValue ?? ""
+        self.childrenIds = cloudObj.get(EventModelKeys.childrenIds.rawValue)?.arrayValue as? [String] ?? []
+        self.projectId = cloudObj.get(EventModelKeys.projectId.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -238,6 +269,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
         try cloudObj.set(EventModelKeys.rewardCount.rawValue, value: rewardCount.lcNumber)
         try cloudObj.set(EventModelKeys.rewardId.rawValue, value: rewardId.lcString)
+        try cloudObj.set(EventModelKeys.actionType.rawValue, value: actionType.rawValue.lcString)
+        try cloudObj.set(EventModelKeys.fatherId.rawValue, value: fatherId.stringValue)
+        try cloudObj.set(EventModelKeys.childrenIds.rawValue, value: childrenIds.lcArray)
+        try cloudObj.set(EventModelKeys.projectId.rawValue, value: projectId.lcString)
     }
     
 }
@@ -278,6 +313,10 @@ extension EventModel {
         case playTime
         case rewardCount
         case rewardId
+        case actionType
+        case fatherId
+        case childrenIds
+        case projectId
     }
     
 }
