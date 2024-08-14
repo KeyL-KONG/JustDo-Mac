@@ -16,14 +16,19 @@ struct TodoItemListView: View {
     @Binding var selectionMode: TodoMode
     var addItemEvent: (EventItem) -> ()
     
-    @State var calendarMode: CalendarMode = .month
+    @State var calendarMode: CalendarMode = .week
     
     @State private var inspectIsShown: Bool = false
     //@Binding var selectItem: EventItem?
     @State private var showDeleteAlert: Bool = false
     private static var deleteItem: EventItem? = nil
+    @State var toggleToRefresh: Bool = false
     
-    @State var currentDate: Date = .now
+    @State var currentDate: Date = .now {
+        didSet {
+            toggleToRefresh.toggle()
+        }
+    }
     
     @State var scrolledID: Date?
     

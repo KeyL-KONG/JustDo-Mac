@@ -112,7 +112,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.rewardId = try container.decode(String.self, forKey: .rewardId)
         self.actionType = EventActionType(rawValue: try container.decode(String.self, forKey: .actionType)) ?? .task
         self.fatherId = try container.decode(String.self, forKey: .fatherId)
-        self.childrenIds = try container.decode([String].self, forKey: .childrenIds)
+        self.childrenIds = try container.decode([String].self, forKey: .childrenIds).uniqueArray
         self.projectId = try container.decode(String.self, forKey: .projectId)
     }
     
@@ -146,7 +146,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
         try container.encode(actionType.rawValue, forKey: .actionType)
         try container.encode(fatherId, forKey: .fatherId)
-        try container.encode(childrenIds, forKey: .childrenIds)
+        try container.encode(childrenIds.uniqueArray, forKey: .childrenIds)
         try container.encode(projectId, forKey: .projectId)
     }
     
@@ -228,7 +228,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.rewardId = cloudObj.get(EventModelKeys.rewardId.rawValue)?.stringValue ?? ""
         self.actionType = EventActionType(rawValue: cloudObj.get(EventModelKeys.actionType.rawValue)?.stringValue ?? "") ?? .task
         self.fatherId = cloudObj.get(EventModelKeys.fatherId.rawValue)?.stringValue ?? ""
-        self.childrenIds = cloudObj.get(EventModelKeys.childrenIds.rawValue)?.arrayValue as? [String] ?? []
+        self.childrenIds = (cloudObj.get(EventModelKeys.childrenIds.rawValue)?.arrayValue as? [String] ?? []).uniqueArray
         self.projectId = cloudObj.get(EventModelKeys.projectId.rawValue)?.stringValue ?? ""
     }
     
@@ -271,7 +271,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.rewardId.rawValue, value: rewardId.lcString)
         try cloudObj.set(EventModelKeys.actionType.rawValue, value: actionType.rawValue.lcString)
         try cloudObj.set(EventModelKeys.fatherId.rawValue, value: fatherId.stringValue)
-        try cloudObj.set(EventModelKeys.childrenIds.rawValue, value: childrenIds.lcArray)
+        try cloudObj.set(EventModelKeys.childrenIds.rawValue, value: childrenIds.uniqueArray.lcArray)
         try cloudObj.set(EventModelKeys.projectId.rawValue, value: projectId.lcString)
     }
     
@@ -317,6 +317,24 @@ extension EventModel {
         case fatherId
         case childrenIds
         case projectId
+    }
+    
+}
+
+extension EventModel {
+    
+    func itemTotalTime(with items: [EventItem]) -> Int {
+        var totalTime = intervals.compactMap { $0.interval }.reduce(0, +)
+        childrenIds.forEach { itemId in
+            if let item = items.first(where: { $0.id == itemId }) {
+                if actionType == .project {
+                    totalTime += item.intervals.compactMap { $0.interval }.reduce(0, +)
+                } else {
+                    totalTime += item.itemTotalTime(with: items)
+                }
+            }
+        }
+        return totalTime
     }
     
 }

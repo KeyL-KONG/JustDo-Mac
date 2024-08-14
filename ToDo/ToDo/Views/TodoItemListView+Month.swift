@@ -10,8 +10,10 @@ import SwiftUI
 extension TodoItemListView {
     
     func monthView() -> some View {
-        
         ScrollView {
+            if toggleToRefresh {
+                Text("")
+            }
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                 ForEach(0..<6) { row in
                     GridRow {
@@ -66,6 +68,7 @@ extension TodoItemListView {
                     }
                 }
             }
+            .frame(minWidth: 800)
             .padding()
         }
     }
@@ -87,7 +90,7 @@ extension TodoItemListView {
     }
     
     func monthItemView(item: EventItem) -> some View {
-        itemRowView(item: item, showImportance: false, showTag: false,  showDeadline: false, isVertical: true)
+        itemRowView(item: item, showImportance: false, showTag: true,  showDeadline: false, isVertical: true)
     }
     
 }

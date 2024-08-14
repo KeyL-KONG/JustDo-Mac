@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */; };
+		097A04102C6C588300521483 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040F2C6C588300521483 /* Array+Extensions.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Month.swift"; sourceTree = "<group>"; };
+		097A040F2C6C588300521483 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				09F80C0B2C665A5B00650366 /* View+Extensions.swift */,
 				09F80C0C2C665A5B00650366 /* Color+Extensions.swift */,
 				09F80C0D2C665A5B00650366 /* Date+Extensions.swift */,
+				097A040F2C6C588300521483 /* Array+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 				09F80C052C665A3F00650366 /* BaseModel.swift in Sources */,
 				09F80BFD2C665A3F00650366 /* DataManager.swift in Sources */,
 				09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */,
+				097A04102C6C588300521483 /* Array+Extensions.swift in Sources */,
 				09F80C162C66F63200650366 /* SidebarView.swift in Sources */,
 				09F80BED2C665A3100650366 /* ModelData.swift in Sources */,
 				09F80C072C665A3F00650366 /* CloudProtocol.swift in Sources */,

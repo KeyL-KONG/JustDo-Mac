@@ -22,6 +22,10 @@ struct ToDoItemRowView: View {
         modelData.tagList.first { $0.id == item.tag }
     }
     
+    var totalTime: Int {
+        return item.itemTotalTime(with: modelData.itemList)
+    }
+    
     var body: some View {
         if isVerticalLayout {
             VStack {
@@ -49,6 +53,11 @@ struct ToDoItemRowView: View {
                             Text("过期\(days)天").foregroundStyle(.red)
                         }
                     }
+                    
+                    if totalTime > 0 {
+                        Text(totalTime.simpleTimeStr).foregroundStyle(Color.init(hex: "b3b6b7")).font(.system(size: 10))
+                    }
+                    
                     Spacer()
                 }.padding(.leading, 30)
             }
@@ -78,13 +87,9 @@ struct ToDoItemRowView: View {
                 if item.isPlay {
                     Spacer()
                     Text("进行中").foregroundStyle(.blue)
-//                    if let timingItem = timerModel.timingItem,  timerModel.isTiming, timerModel.timeSeconds > 0 {
-//                        Spacer()
-//                        Text(timerModel.timeSeconds.timeStr).foregroundStyle(.blue)
-//                    } else {
-//                        Spacer()
-//                        Text("进行中").foregroundStyle(.blue)
-//                    }
+                } else if totalTime > 0 {
+                    Spacer()
+                    Text(totalTime.simpleTimeStr).foregroundStyle(Color.init(hex: "b3b6b7"))
                 }
                 
             }

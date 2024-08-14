@@ -225,7 +225,9 @@ struct ToDoEditView: View {
         
         if let projectItem = modelData.itemList.filter({ $0.title == selectProject}).first {
             selectedItem.projectId = projectItem.id
-            projectItem.childrenIds.append(selectedItem.id)
+            if !projectItem.childrenIds.contains(selectedItem.id) {
+                projectItem.childrenIds.append(selectedItem.id)
+            }
             modelData.updateItem(projectItem)
         }
         

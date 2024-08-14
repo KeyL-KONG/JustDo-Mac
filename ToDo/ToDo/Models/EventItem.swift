@@ -378,9 +378,8 @@ extension Date {
     var isInThePast:   Bool { self < Date() }
     
     var firstDayOfMonth: Date {
-        let currentDate = Date()
         let calendar = Calendar.current
-        let firstDayComponents = calendar.dateComponents([.year, .month], from: currentDate)
+        let firstDayComponents = calendar.dateComponents([.year, .month], from: self)
         return calendar.date(from: firstDayComponents) ?? self
     }
 
