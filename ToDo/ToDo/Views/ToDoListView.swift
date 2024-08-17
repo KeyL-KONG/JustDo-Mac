@@ -17,9 +17,18 @@ struct ToDoListView: View {
     @State private var selectItemID: String = ""
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
+    @State var searchText: String = ""
     
     var itemList: [EventItem] {
+        return items(with: selection)
+    }
+    
+    func items(with section: ToDoSection) -> [EventItem] {
         var itemList: [EventItem] = []
+        
+        if searchText.count > 0 {
+            itemList = itemList.filter { $0.title.contains(searchText)}
+        }
         
         switch selectionMode {
         case .synthesis:
@@ -33,7 +42,7 @@ struct ToDoListView: View {
             })
         }
         
-        switch selection {
+        switch section {
         case .today:
             itemList = itemList.filter { event in
                 guard let planTime = event.planTime else {
@@ -79,9 +88,10 @@ struct ToDoListView: View {
         }
     }
     
+    
     var body: some View {
         NavigationSplitView {
-            SidebarView(selection: $selection).environmentObject(modelData)
+            SidebarView(selection: $selection, todayItems: items(with: .today)).environmentObject(modelData)
                 .onChange(of: selection) { oldValue, newValue in
                     if let selectItemID = itemList.first?.id, oldValue != newValue {
                         self.selectItemID = selectItemID
@@ -100,6 +110,7 @@ struct ToDoListView: View {
                         print("select item: \(item.title)")
                     }
                 }
+                .searchable(text: $searchText)
         } detail: {
             ToDoEditView(selectItem: selectItem, updateEvent: {
                 toggleRefresh.toggle()

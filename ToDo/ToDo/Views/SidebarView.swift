@@ -16,12 +16,20 @@ struct SidebarView: View {
     }
     
     @Binding var selection: ToDoSection
+    var todayItems: [EventItem]
     
     var body: some View {
         List(selection: $selection) {
             Section("Tasks") {
-                ForEach(ToDoSection.allCases) { section in
-                    Label(section.displayName, systemImage: section.iconName).tag(section)
+                ForEach(ToDoSection.allCases, id: \.self) { section in
+                    if section == .today {
+                        let taskCount = todayItems.count
+                        let finishCount = todayItems.filter { $0.isFinish }.count
+                        let displayName = section.displayName + " (\(finishCount)/\(taskCount))"
+                        Label(displayName, systemImage: section.iconName).tag(section)
+                    } else {
+                        Label(section.displayName, systemImage: section.iconName).tag(section)
+                    }
                 }
             }
             
