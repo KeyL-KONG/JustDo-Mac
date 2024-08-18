@@ -18,6 +18,8 @@ struct ToDoApp: App {
     let modelData = ModelData()
     @StateObject var timerModel = TimerModel()
     
+    @State var title: String = "无事项"
+    
     var body: some Scene {
         
         WindowGroup {
@@ -29,7 +31,7 @@ struct ToDoApp: App {
                 }
         }
         
-        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "无任务") \(timerModel.timeSeconds > 0 ? (timerModel.timingItem?.title ?? "") : "")") {
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
             Button("pause") {
                 if timerModel.isTiming {
                     timerModel.pauseTimer()
@@ -49,6 +51,15 @@ struct ToDoApp: App {
                 timerModel.restartTimer()
                 handleRestartEvent()
             }
+            
+            // TODO: 如何实时更新内容
+//            Button(title) {
+//                
+//            }.disabled(true)
+            
+        }
+        .onChange(of: timerModel.title) { oldValue, newValue in
+            self.title =  timerModel.title.isEmpty ? "无事项" : "<\(timerModel.title)> 进行中"
         }
     }
     

@@ -10,6 +10,7 @@ import SwiftUI
 class TimerModel: ObservableObject {
     
     @Published var timeSeconds: Int = 0
+    @Published var title: String = ""
     
     var timer: Timer?
     
@@ -27,6 +28,7 @@ class TimerModel: ObservableObject {
         }
         timingItem = item
         timeSeconds = 0
+        title = item.title
         start()
         return true
     }
@@ -46,6 +48,7 @@ class TimerModel: ObservableObject {
         timeSeconds = 0
         isTiming = false
         timingItem = nil
+        title = ""
     }
     
     private func start() {
