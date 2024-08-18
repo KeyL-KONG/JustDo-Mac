@@ -111,10 +111,14 @@ extension TodoItemListView {
                             guard let planTime = event.planTime else { return false }
                             return planTime.isInSameDay(as: date)
                         }
-                        let bgColor = dayItems.isEmpty ? Color.clear : Color.init(hex: "e9f7ef")
                         VStack(alignment: .leading) {
                             let unfinishItems = dayItems.filter { !$0.isFinish }
                             let finishItems = dayItems.filter { $0.isFinish }
+                            
+                            let rewardItems = modelData.rewardList.filter { reward in
+                                return reward.intervals.contains { $0.end.isInSameDay(as: date)
+                                }
+                            }
                             
                             if unfinishItems.count > 0 {
                                 VStack {
@@ -129,7 +133,7 @@ extension TodoItemListView {
                                 .background(Color.init(hex: "fdebd0"))
                                 .cornerRadius(10)
                                 
-                                if finishItems.isEmpty {
+                                if finishItems.isEmpty && rewardItems.isEmpty {
                                     Spacer()
                                 }
                             }
@@ -144,12 +148,32 @@ extension TodoItemListView {
                                     ForEach(finishItems, id: \.self) { item in
                                         weekItemView(item: item, selectColor: Color.init(hex: "a9dfbf"))
                                     }
-                                    Spacer()
+                                    
+                                    if rewardItems.isEmpty {
+                                        Spacer()
+                                    }
                                 }
                                 .padding(.top, (unfinishItems.isEmpty ? 0 : 10))
                                 .background(Color.init(hex: "d4efdf"))
                                 .cornerRadius(10)
                                 
+                            }
+                            
+                            
+                            if rewardItems.count > 0 {
+                                VStack {
+                                    HStack {
+                                        Text("积分事项").bold()
+                                        Spacer()
+                                    }.padding(.horizontal, 5).padding(.top, 5)
+                                    ForEach(rewardItems, id: \.self) { item in
+                                        weekItemView(item: item, date: date, selectColor: .clear)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.top, 10)
+                                .background(Color.init(hex: "d4e6f1"))
+                                .cornerRadius(10)
                             }
                         }
                         
@@ -161,9 +185,9 @@ extension TodoItemListView {
         }
     }
     
-    func weekItemView(item: EventItem, selectColor: Color) -> some View {
+    func weekItemView(item: any BasicTaskProtocol, date: Date = .now, selectColor: Color) -> some View {
         let itemColor = selectItemID == item.id ? selectColor : .clear
-        return itemRowView(item: item, showTag: true, showDeadline: false, showMark: true, isVertical: true)
+        return itemRowView(item: item, date: date, showTag: true, showDeadline: false, showMark: true, isVertical: true)
             .contentShape(Rectangle())
             .cornerRadius(5)
             .background(itemColor)

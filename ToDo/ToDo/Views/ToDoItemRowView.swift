@@ -11,8 +11,9 @@ struct ToDoItemRowView: View {
     
     @EnvironmentObject var modelData: ModelData
     //@ObservedObject var timerModel: TimerModel
-    @State var item: EventItem
+    @State var item: any BasicTaskProtocol
     
+    var date: Date = .now
     var showImportance: Bool = true
     var showTag: Bool = true
     var showDeadline: Bool = false
@@ -24,20 +25,33 @@ struct ToDoItemRowView: View {
     }
     
     var totalTime: Int {
-        return item.itemTotalTime(with: modelData.itemList)
+        if let item = self.item as? EventItem {
+            return item.itemTotalTime(with: modelData.itemList)
+        } else if let reward = self.item as? RewardModel {
+            return reward.totalTime(with: .day, intervals: reward.intervals, selectDate: date)
+        } else {
+            return 0
+        }
     }
     
     var body: some View {
         if isVerticalLayout {
             VStack {
-                HStack {
-                    Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
-                    Text(item.title).font(.system(size: 12))
-                    Spacer()
+                if item.type == .task {
+                    HStack {
+                        Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                        Text(item.title).font(.system(size: 12))
+                        Spacer()
+                    }
+                } else {
+                    HStack {
+                        Text(item.title).font(.system(size: 12))
+                        Spacer()
+                    }
                 }
                 
                 HStack {
-                    if showImportance {
+                    if let item = self.item as? EventItem, showImportance {
                         tagView(title: item.importance.simpleDescription, color: item.importance.titleColor)
                     }
                     
@@ -45,7 +59,7 @@ struct ToDoItemRowView: View {
                         tagView(title: tag.title, color: tag.titleColor)
                     }
                     
-                    if let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
+                    if let item = self.item as? EventItem, let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
                         Spacer()
                         let days = planTime.daysBetweenDates(date: .now)
                         if planTime > .now {
@@ -60,7 +74,7 @@ struct ToDoItemRowView: View {
                     }
                     
                     Spacer()
-                }.padding(.leading, 30)
+                }.padding(.leading, (item.type == .task ? 30 : 0))
                 
                 if showMark, item.mark.count > 0 {
                     HStack {
@@ -77,11 +91,11 @@ struct ToDoItemRowView: View {
                     tagView(title: tag.title, color: tag.titleColor)
                 }
                 
-                if showImportance {
+                if let item = self.item as? EventItem, showImportance {
                     tagView(title: item.importance.description, color: item.importance.titleColor)
                 }
                 
-                if let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
+                if let item = self.item as? EventItem, let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
                     Spacer()
                     let days = planTime.daysBetweenDates(date: .now)
                     if planTime > .now {
@@ -91,7 +105,7 @@ struct ToDoItemRowView: View {
                     }
                 }
                 
-                if item.isPlay {
+                if let item = self.item as? EventItem, item.isPlay {
                     Spacer()
                     Text("进行中").foregroundStyle(.blue)
                 } else if totalTime > 0 {

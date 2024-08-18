@@ -211,67 +211,69 @@ struct TodoItemListView: View {
         }
     }
     
-    func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false) -> some View {
-        ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical).environmentObject(modelData)
+    func itemRowView(item: any BasicTaskProtocol, date: Date = .now, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false) -> some View {
+        ToDoItemRowView(item: item, date: date, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical).environmentObject(modelData)
         .contextMenu {
-            if item.actionType == .task {
-                if item.isPlay {
-                    if timerModel.isTiming {
-                        Button {
-                            timerModel.pauseTimer()
-                            handlePauseEvent(item: item)
-                        } label: {
-                            Text("pause").foregroundStyle(.red)
+            if let item = item as? EventItem {
+                if item.actionType == .task {
+                    if item.isPlay {
+                        if timerModel.isTiming {
+                            Button {
+                                timerModel.pauseTimer()
+                                handlePauseEvent(item: item)
+                            } label: {
+                                Text("pause").foregroundStyle(.red)
+                            }
+                        } else {
+                            Button {
+                                timerModel.restartTimer()
+                                handleRestartEvent(item: item)
+                            } label: {
+                                Text("restart").foregroundStyle(.blue)
+                            }
                         }
+                        
+                        Button {
+                            timerModel.stopTimer()
+                            handleStopEvent(item: item)
+                        } label: {
+                            Text("stop").foregroundStyle(.red)
+                        }
+                        
                     } else {
                         Button {
-                            timerModel.restartTimer()
-                            handleRestartEvent(item: item)
+                            if timerModel.startTimer(item: item) {
+                                item.isPlay = true
+                                item.playTime = .now
+                                modelData.updateItem(item)
+                            }
                         } label: {
-                            Text("restart").foregroundStyle(.blue)
+                            Text("start").foregroundStyle(.green)
                         }
                     }
-                    
-                    Button {
-                        timerModel.stopTimer()
-                        handleStopEvent(item: item)
-                    } label: {
-                        Text("stop").foregroundStyle(.red)
-                    }
-                    
-                } else {
-                    Button {
-                        if timerModel.startTimer(item: item) {
-                            item.isPlay = true
-                            item.playTime = .now
-                            modelData.updateItem(item)
-                        }
-                    } label: {
-                        Text("start").foregroundStyle(.green)
-                    }
                 }
-            }
-            
-            if selection == .project {
-                Button {
-                    addProjectSubItem(root: item)
-                } label: {
-                    Text("新建子任务").foregroundStyle(.cyan)
-                }
+                
+                if selection == .project {
+                    Button {
+                        addProjectSubItem(root: item)
+                    } label: {
+                        Text("新建子任务").foregroundStyle(.cyan)
+                    }
 
-            }
-            
-            Button {
-                checkItem(item)
-            } label: {
-                Text((item.isFinish ? "unFinish" : "finish")).foregroundStyle(.blue)
-            }
-            
-            Button {
-                Self.deleteItem = item
-                showDeleteAlert.toggle()
-            } label: {
-                Text("delete").foregroundStyle(.red)
+                }
+                
+                Button {
+                    checkItem(item)
+                } label: {
+                    Text((item.isFinish ? "unFinish" : "finish")).foregroundStyle(.blue)
+                }
+                
+                Button {
+                    Self.deleteItem = item
+                    showDeleteAlert.toggle()
+                } label: {
+                    Text("delete").foregroundStyle(.red)
+                }
             }
         }
     }
