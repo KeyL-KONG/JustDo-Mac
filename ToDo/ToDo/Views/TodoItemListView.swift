@@ -209,8 +209,8 @@ struct TodoItemListView: View {
         }
     }
     
-    func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, isVertical: Bool = false) -> some View {
-        ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, isVerticalLayout: isVertical).environmentObject(modelData)
+    func itemRowView(item: EventItem, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false) -> some View {
+        ToDoItemRowView(item: item, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical).environmentObject(modelData)
         .contextMenu {
             if item.actionType == .task {
                 if item.isPlay {

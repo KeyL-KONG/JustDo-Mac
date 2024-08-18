@@ -16,6 +16,7 @@ struct ToDoItemRowView: View {
     var showImportance: Bool = true
     var showTag: Bool = true
     var showDeadline: Bool = false
+    var showMark: Bool = false
     var isVerticalLayout: Bool = false
     
     var tag: ItemTag? {
@@ -60,6 +61,12 @@ struct ToDoItemRowView: View {
                     
                     Spacer()
                 }.padding(.leading, 30)
+                
+                if showMark, item.mark.count > 0 {
+                    HStack {
+                        Text(item.mark).font(.system(size: 10)).foregroundColor(Color.init(hex: "95a5a6"))
+                    }.padding(.leading, 30)
+                }
             }
         } else {
             HStack {

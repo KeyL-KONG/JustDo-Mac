@@ -46,7 +46,7 @@ extension TodoItemListView {
                                 if unfinishItemList.count > 0 {
                                     Section(header:Text("待办事项")) {
                                         ForEach(unfinishItemList) { item in
-                                            itemRowView(item: item, showDeadline: false, isVertical: true)
+                                            itemRowView(item: item, showDeadline: false, showMark: true, isVertical: true)
                                         }
                                     }
                                 }
@@ -58,7 +58,7 @@ extension TodoItemListView {
                                 if finishItemList.count > 0 {
                                     Section(header:Text("已完成")) {
                                         ForEach(finishItemList) { item in
-                                            itemRowView(item: item, showDeadline: false, isVertical: true)
+                                            itemRowView(item: item, showDeadline: false, showMark: true, isVertical: true)
                                         }
                                     }
                                 }
