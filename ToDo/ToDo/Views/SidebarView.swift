@@ -23,8 +23,14 @@ struct SidebarView: View {
             Section("Tasks") {
                 ForEach(ToDoSection.allCases, id: \.self) { section in
                     if section == .today {
-                        let taskCount = todayItems.count
-                        let finishCount = todayItems.filter { $0.isFinish }.count
+                        var items = todayItems.filter { event in
+                            guard let planTime = event.planTime else {
+                                return false
+                            }
+                            return planTime.isToday
+                        }
+                        let taskCount = items.count
+                        let finishCount = items.filter { $0.isFinish }.count
                         let displayName = section.displayName + " (\(finishCount)/\(taskCount))"
                         Label(displayName, systemImage: section.iconName).tag(section)
                     } else {

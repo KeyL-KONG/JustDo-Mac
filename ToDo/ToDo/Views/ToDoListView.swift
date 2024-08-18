@@ -48,7 +48,7 @@ struct ToDoListView: View {
                 guard let planTime = event.planTime else {
                     return false
                 }
-                return planTime.isInToday && event.actionType == .task
+                return event.actionType == .task
             }
         case .calendar:
             itemList = itemList.filter({ event in

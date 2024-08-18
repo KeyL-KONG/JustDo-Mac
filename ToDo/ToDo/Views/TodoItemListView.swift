@@ -128,6 +128,8 @@ struct TodoItemListView: View {
                 
             } else if selection == .project {
                 projectView()
+            } else if selection == .today {
+                todayView()
             }
             else {
                 List(itemList, id: \.self.id, selection: $selectItemID) { item in

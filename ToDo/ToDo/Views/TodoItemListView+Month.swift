@@ -68,7 +68,7 @@ extension TodoItemListView {
                     }
                 }
             }
-            .frame(minWidth: 800)
+            .frame(minWidth: 1000)
             .padding()
         }
     }
@@ -90,7 +90,8 @@ extension TodoItemListView {
     }
     
     func monthItemView(item: EventItem) -> some View {
-        itemRowView(item: item, showImportance: false, showTag: true,  showDeadline: false, isVertical: true)
+        itemRowView(item: item, showImportance: true, showTag: true,  showDeadline: false, isVertical: true)
+            .frame(maxWidth: 200)
     }
     
 }
