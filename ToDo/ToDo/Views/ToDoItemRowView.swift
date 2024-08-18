@@ -38,7 +38,7 @@ struct ToDoItemRowView: View {
                 
                 HStack {
                     if showImportance {
-                        tagView(title: item.importance.description, color: item.importance.titleColor)
+                        tagView(title: item.importance.simpleDescription, color: item.importance.titleColor)
                     }
                     
                     if let tag, showTag {

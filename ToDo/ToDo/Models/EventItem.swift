@@ -159,6 +159,17 @@ enum ImportanceTag: String, Codable, Identifiable, Comparable {
         }
     }
     
+    var simpleDescription: String {
+        switch self {
+        case .low:
+            return "低"
+        case .mid:
+            return "中"
+        case .high:
+            return "高"
+        }
+    }
+    
     var titleColor: Color {
         switch self {
         case .low:

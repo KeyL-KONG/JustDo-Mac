@@ -121,7 +121,7 @@ struct TodoItemListView: View {
                 }
             } else if selection == .calendar {
                 if calendarMode == .week {
-                    weekView()
+                    weekView2()
                 } else {
                     monthView()
                 }

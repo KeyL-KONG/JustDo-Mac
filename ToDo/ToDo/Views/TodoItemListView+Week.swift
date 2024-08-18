@@ -71,7 +71,7 @@ extension TodoItemListView {
                         .id(date)
                         .frame(minWidth: 200)
                     }
-                }
+                }.frame(minWidth: 800)
             }.onAppear {
                 if let currentDate = weekDates.first(where: { $0.isInToday
                 }) {
@@ -80,4 +80,97 @@ extension TodoItemListView {
             }
         }
     }
+    
+    func weekView2() -> some View {
+        ScrollView {
+            Grid(horizontalSpacing: 10, verticalSpacing: 10) {
+                GridRow {
+                    ForEach(0..<7) { index in
+                        let date = weekDates[index]
+                        HStack(alignment: .center) {
+                            Spacer()
+                            Text(date.simpleDayAndWeekStr).bold()
+                                .background {
+                                    if date.isToday {
+                                        Circle()
+                                            .fill(.cyan)
+                                            .frame(width: 5, height: 5)
+                                            .vSpacing(.bottom)
+                                            .offset(y: 12)
+                                    }
+                                }
+                            Spacer()
+                        }.padding()
+                    }
+                }
+                
+                GridRow {
+                    ForEach(0..<7) { index in
+                        let date = weekDates[index]
+                        let dayItems = items.filter { event in
+                            guard let planTime = event.planTime else { return false }
+                            return planTime.isInSameDay(as: date)
+                        }
+                        let bgColor = dayItems.isEmpty ? Color.clear : Color.init(hex: "e9f7ef")
+                        VStack(alignment: .leading) {
+                            let unfinishItems = dayItems.filter { !$0.isFinish }
+                            let finishItems = dayItems.filter { $0.isFinish }
+                            
+                            if unfinishItems.count > 0 {
+                                VStack {
+                                    HStack {
+                                        Text("未完成").bold()
+                                        Spacer()
+                                    }.padding(.horizontal, 5).padding(.top, 5)
+                                    ForEach(unfinishItems, id: \.self) { item in
+                                        weekItemView(item: item, selectColor: Color(hex: "fad7a0"))
+                                    }
+                                }
+                                .background(Color.init(hex: "fdebd0"))
+                                .cornerRadius(10)
+                                
+                                if finishItems.isEmpty {
+                                    Spacer()
+                                }
+                            }
+                            
+                            
+                            if finishItems.count > 0 {
+                                VStack {
+                                    HStack {
+                                        Text("已完成").bold()
+                                        Spacer()
+                                    }.padding(.horizontal, 5).padding(.top, 5)
+                                    ForEach(finishItems, id: \.self) { item in
+                                        weekItemView(item: item, selectColor: Color.init(hex: "a9dfbf"))
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.top, (unfinishItems.isEmpty ? 0 : 10))
+                                .background(Color.init(hex: "d4efdf"))
+                                .cornerRadius(10)
+                                
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            .frame(minWidth: 1000)
+            .padding()
+        }
+    }
+    
+    func weekItemView(item: EventItem, selectColor: Color) -> some View {
+        let itemColor = selectItemID == item.id ? selectColor : .clear
+        return itemRowView(item: item, showTag: true, showDeadline: false, showMark: true, isVertical: true)
+            .contentShape(Rectangle())
+            .cornerRadius(5)
+            .background(itemColor)
+            .padding(5)
+            .onTapGesture {
+                selectItemID = item.id
+            }
+    }
+    
 }
