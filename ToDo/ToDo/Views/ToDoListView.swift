@@ -110,7 +110,7 @@ struct ToDoListView: View {
                         print("select item: \(item.title)")
                     }
                 }
-                .searchable(text: $searchText)
+                .frame(minWidth: 400)
         } detail: {
             ToDoEditView(selectItem: selectItem, updateEvent: {
                 toggleRefresh.toggle()
