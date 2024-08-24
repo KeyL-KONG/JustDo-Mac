@@ -30,6 +30,7 @@ extension LQDateInterval {
 enum EventActionType: String {
     case task
     case project
+    case tag
     
     var title: String {
         switch self {
@@ -37,6 +38,8 @@ enum EventActionType: String {
             return "任务"
         case .project:
             return "项目"
+        case .tag:
+            return "标签"
         }
     }
 }

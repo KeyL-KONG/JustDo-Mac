@@ -19,21 +19,21 @@ struct TodoProjectDetailItem: Identifiable {
 
 extension TodoItemListView {
     
-    var projectItems: [TodoProjectDetailItem] {
-        var detailItems = [TodoProjectDetailItem]()
-        let projectList = itemList.filter { $0.actionType == .project }
-        projectList.forEach { project in
-            let eventItems = modelData.itemList.filter { $0.projectId.count > 0 && $0.projectId == project.id  && $0.fatherId.isEmpty }.compactMap { event in
-                
-                let subDetailItems = modelData.itemList.filter { $0.fatherId.count > 0 && $0.fatherId == event.id }.compactMap { TodoProjectDetailItem(title: $0.title, item: $0)
-                }
-                return TodoProjectDetailItem(title: event.title, item: event, detailItems: subDetailItems)
-            }
-            let detailItem = TodoProjectDetailItem(title: project.title, item: project, detailItems: eventItems)
-            detailItems.append(detailItem)
-        }
-        return detailItems
-    }
+//    var projectItems: [TodoProjectDetailItem] {
+//        var detailItems = [TodoProjectDetailItem]()
+//        let projectList = itemList.filter { $0.actionType == .project }
+//        projectList.forEach { project in
+//            let eventItems = modelData.itemList.filter { $0.projectId.count > 0 && $0.projectId == project.id  && $0.fatherId.isEmpty }.compactMap { event in
+//                
+//                let subDetailItems = modelData.itemList.filter { $0.fatherId.count > 0 && $0.fatherId == event.id }.compactMap { TodoProjectDetailItem(title: $0.title, item: $0)
+//                }
+//                return TodoProjectDetailItem(title: event.title, item: event, detailItems: subDetailItems)
+//            }
+//            let detailItem = TodoProjectDetailItem(title: project.title, item: project, detailItems: eventItems)
+//            detailItems.append(detailItem)
+//        }
+//        return detailItems
+//    }
     
     func projectItems(with tag: ItemTag) -> [TodoProjectDetailItem] {
         var detailItems = [TodoProjectDetailItem]()
@@ -43,6 +43,7 @@ extension TodoItemListView {
                 
                 let subDetailItems = modelData.itemList.filter { $0.fatherId.count > 0 && $0.fatherId == event.id }.compactMap { TodoProjectDetailItem(title: $0.title, item: $0)
                 }
+                print("sub detail items:\(subDetailItems.count)")
                 return TodoProjectDetailItem(title: event.title, item: event, detailItems: subDetailItems)
             }
             let detailItem = TodoProjectDetailItem(title: project.title, item: project, detailItems: eventItems)
@@ -69,19 +70,20 @@ extension TodoItemListView {
                                         if let subItems = detailItem.detailItems, subItems.count > 0 {
                                             DisclosureGroup {
                                                 ForEach(subItems, id: \.self.item.id) { subItem in
-                                                    itemRowView(item: subItem.item, showDeadline: false)
+                                                    projectItemRowView(item: subItem.item)
                                                 }
                                             } label: {
-                                                itemRowView(item: detailItem.item, showDeadline: false)
+                                                projectItemRowView(item: detailItem.item)
                                             }
 
 
-                                        } else {
-                                            itemRowView(item: detailItem.item, showDeadline: false)
+                                        } 
+                                        else {
+                                            projectItemRowView(item: detailItem.item)
                                         }
                                     }
                                 } label: {
-                                    itemRowView(item: project.item, showDeadline: false)
+                                    projectItemRowView(item: project.item)
                                 }
 
                             }
@@ -91,6 +93,10 @@ extension TodoItemListView {
                 
             }
         }
+    }
+    
+    func projectItemRowView(item: EventItem) -> some View {
+        return itemRowView(item: item, showTag: false, showDeadline: false, showItemCount: true)
     }
     
     func addProjectSubItem(root: EventItem) {

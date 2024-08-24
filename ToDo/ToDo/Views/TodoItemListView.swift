@@ -211,8 +211,8 @@ struct TodoItemListView: View {
         }
     }
     
-    func itemRowView(item: any BasicTaskProtocol, date: Date = .now, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false) -> some View {
-        ToDoItemRowView(item: item, date: date, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical).environmentObject(modelData)
+    func itemRowView(item: any BasicTaskProtocol, date: Date = .now, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false, showItemCount: Bool = false) -> some View {
+        ToDoItemRowView(item: item, date: date, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical, showItemCount: showItemCount).environmentObject(modelData)
         .contextMenu {
             if let item = item as? EventItem {
                 if item.actionType == .task {
@@ -326,6 +326,11 @@ struct TodoItemListView: View {
         } else if selection == .project {
             item.actionType = .project
             item.title = "新建项目"
+        }
+        if let workTag = modelData.tagList.first(where: { $0.title == "工作"}) {
+            if item.actionType == .project || selectionMode == .work {
+                item.tag = workTag.id
+            }
         }
         modelData.updateItem(item) {
             self.addItemEvent(item)

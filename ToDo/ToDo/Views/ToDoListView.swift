@@ -66,7 +66,7 @@ struct ToDoListView: View {
                 return event.actionType == .task
             })
         case .all:
-            break
+            itemList = itemList.filter { $0.actionType != .tag }
         case .list(let itemTag):
             itemList = itemList.filter { event in
                 itemTag.id == event.tag && event.actionType == .task

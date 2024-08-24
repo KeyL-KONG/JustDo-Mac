@@ -100,7 +100,7 @@ extension EventItem {
 //    
 //    case work, learn, life
 //    
-//    static var allCases: [ItemTag] {
+//    static var allCases: [ItemTag] { O
 //        return [.work, .learn, .life]
 //    }
 //    

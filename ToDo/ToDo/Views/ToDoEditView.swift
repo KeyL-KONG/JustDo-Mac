@@ -16,7 +16,7 @@ struct ToDoEditView: View {
     
     @State var titleText: String = ""
     @State var actionType: EventActionType = .task
-    @State var actionList: [EventActionType] = [.task, .project]
+    @State var actionList: [EventActionType] = [.task, .project, .tag]
     
     @State var selectedTag: String = ""
     

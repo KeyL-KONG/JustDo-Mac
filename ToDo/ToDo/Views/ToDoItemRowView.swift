@@ -19,6 +19,7 @@ struct ToDoItemRowView: View {
     var showDeadline: Bool = false
     var showMark: Bool = false
     var isVerticalLayout: Bool = false
+    var showItemCount: Bool = false
     
     var tag: ItemTag? {
         modelData.tagList.first { $0.id == item.tag }
@@ -93,6 +94,14 @@ struct ToDoItemRowView: View {
                 
                 if let item = self.item as? EventItem, showImportance {
                     tagView(title: item.importance.description, color: item.importance.titleColor)
+                }
+                
+                if showItemCount {
+                    let totalCount = modelData.itemList.filter { ($0.fatherId.count > 0 && $0.fatherId == item.id) || ($0.projectId.count > 0 && $0.projectId == item.id)}.count
+                    let finishCount = modelData.itemList.filter { ($0.fatherId.count > 0 && $0.fatherId == item.id) || ($0.projectId.count > 0 && $0.projectId == item.id) && $0.isFinish }.count
+                    if totalCount > 0 {
+                        Text(" \(finishCount)/\(totalCount)").foregroundStyle(Color.init(hex: "b3b6b7"))
+                    }
                 }
                 
                 if let item = self.item as? EventItem, let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
