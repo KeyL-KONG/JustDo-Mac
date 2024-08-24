@@ -243,6 +243,8 @@ struct ToDoEditView: View {
         selectedItem.mark = mark
         if setPlanTime {
             selectedItem.planTime = planTime
+        } else {
+            selectedItem.planTime = nil
         }
         if setFinishTime {
             selectedItem.finishTime = finishTime
