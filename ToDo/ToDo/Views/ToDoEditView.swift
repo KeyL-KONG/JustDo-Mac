@@ -143,14 +143,15 @@ struct ToDoEditView: View {
                 
                 Section(header: Text("备注")) {
                     TextEditor(text: $mark)
+                        .font(.system(size: 14))
                         .padding(5)
                         .scrollContentBackground(.hidden)
                         .background(Color.init(hex: "#D6EAF8"))
-                        .frame(minHeight: 50)
+                        .frame(minHeight: 100)
                         .cornerRadius(8)
                 }
                 
-                if intervals.count > 0 {
+                //if intervals.count > 0 {
                     Section(header:
                         HStack(alignment: .center) {
                             Text("统计时间")
@@ -175,7 +176,7 @@ struct ToDoEditView: View {
                         }
                         .id(UUID())
                     })
-                }
+                //}
                 
             }
         }
