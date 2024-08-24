@@ -326,8 +326,13 @@ extension EventModel {
 
 extension EventModel {
     
-    func itemTotalTime(with items: [EventItem]) -> Int {
-        var totalTime = intervals.compactMap { $0.interval }.reduce(0, +)
+    func itemTotalTime(with items: [EventItem], date: Date? = nil) -> Int {
+        var totalTime = intervals.filter({ interval in
+            if let date = date {
+                return date.isInSameDay(as: interval.end)
+            }
+            return true
+        }).compactMap { $0.interval }.reduce(0, +)
         childrenIds.forEach { itemId in
             if let item = items.first(where: { $0.id == itemId }) {
                 if actionType == .project {

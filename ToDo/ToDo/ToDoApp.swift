@@ -31,7 +31,7 @@ struct ToDoApp: App {
                 }
         }
         
-        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
             Button("pause") {
                 if timerModel.isTiming {
                     timerModel.pauseTimer()

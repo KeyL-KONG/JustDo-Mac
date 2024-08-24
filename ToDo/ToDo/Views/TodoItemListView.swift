@@ -212,7 +212,7 @@ struct TodoItemListView: View {
     }
     
     func itemRowView(item: any BasicTaskProtocol, date: Date = .now, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false, showItemCount: Bool = false) -> some View {
-        ToDoItemRowView(item: item, date: date, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical, showItemCount: showItemCount).environmentObject(modelData)
+        ToDoItemRowView(item: item, date: date, selection: selection, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical, showItemCount: showItemCount).environmentObject(modelData)
         .contextMenu {
             if let item = item as? EventItem {
                 if item.actionType == .task {

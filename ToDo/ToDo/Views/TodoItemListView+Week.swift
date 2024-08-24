@@ -127,7 +127,7 @@ extension TodoItemListView {
                                         Spacer()
                                     }.padding(.horizontal, 5).padding(.top, 5)
                                     ForEach(unfinishItems, id: \.self) { item in
-                                        weekItemView(item: item, selectColor: Color(hex: "fad7a0"))
+                                        weekItemView(item: item, date: date, selectColor: Color(hex: "fad7a0"))
                                     }
                                 }
                                 .background(Color.init(hex: "fdebd0"))
@@ -146,7 +146,7 @@ extension TodoItemListView {
                                         Spacer()
                                     }.padding(.horizontal, 5).padding(.top, 5)
                                     ForEach(finishItems, id: \.self) { item in
-                                        weekItemView(item: item, selectColor: Color.init(hex: "a9dfbf"))
+                                        weekItemView(item: item, date: date, selectColor: Color.init(hex: "a9dfbf"))
                                     }
                                     
                                     if rewardItems.isEmpty {

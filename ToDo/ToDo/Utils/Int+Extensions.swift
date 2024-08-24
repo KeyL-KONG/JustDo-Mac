@@ -20,6 +20,12 @@ extension Int {
         }
     }
     
+    var minAndHourTimeStr: String {
+        let min = (self % 3600) / 60
+        let hour = self / 3600
+        return String(format: "%02d:%02d", hour, min)
+    }
+    
     var simpleTimeStr: String {
         let min = Int((self % 3600) / 60)
         let hour = Int(self / 3600)

@@ -17,25 +17,25 @@ struct DateIntervalView: View {
         
         HStack {
             DatePicker("", selection: $interval.start, displayedComponents: [.date, .hourAndMinute])
-                //.datePickerStyle(.compact)
-                .scaleEffect(0.6)
-                .frame(width: 100)
+                .datePickerStyle(.compact)
                 .onChange(of: interval.start) { newValue in
                     intervalChange(LQDateInterval(start: newValue, end: interval.end))
                     print(newValue)
                 }
-                Spacer()
-            Text("-").font(.system(size: 10))
-            Spacer()
+               
+            Spacer(minLength: 10)
+            
             DatePicker("", selection: $interval.end, displayedComponents: [.date, .hourAndMinute])
-                //.datePickerStyle(.compact)
-                .scaleEffect(0.6)
-                .frame(width: 100)
+                .datePickerStyle(.compact)
                 .onChange(of: interval.end) { newValue in
                     intervalChange(LQDateInterval(start: interval.start, end: newValue))
                     print(newValue)
                 }
-        }.frame(width: 240)
+            
+            Spacer(minLength: 10)
+            
+            Text(interval.interval.simpleTimeStr)
+        }
     }
     
 }
