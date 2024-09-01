@@ -334,7 +334,7 @@ extension EventModel {
             return true
         }).compactMap { $0.interval }.reduce(0, +)
         childrenIds.forEach { itemId in
-            if let item = items.first(where: { $0.id == itemId }) {
+            if let item = items.first(where: { $0.id == itemId && $0.id != self.id }) {
                 if actionType == .project {
                     totalTime += item.intervals.compactMap { $0.interval }.reduce(0, +)
                 } else {

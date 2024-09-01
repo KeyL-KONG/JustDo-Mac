@@ -23,15 +23,22 @@ struct ToDoApp: App {
     var body: some Scene {
         
         WindowGroup {
-            ToDoListView(timerModel: timerModel)
+            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel))
                 .environmentObject(modelData)
                 .onAppear {
                     print("main view appear")
                     modelData.loadFromServer()
                 }
+            
+    
+            Button("", action: {
+                print("handle event change")
+                self.handleEventChange()
+            })
+            .keyboardShortcut("1", modifiers: .command)
         }
         
-        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
             Button("pause") {
                 if timerModel.isTiming {
                     timerModel.pauseTimer()
@@ -52,15 +59,11 @@ struct ToDoApp: App {
                 handleRestartEvent()
             }
             
-            // TODO: 如何实时更新内容
-//            Button(title) {
-//                
-//            }.disabled(true)
-            
         }
         .onChange(of: timerModel.title) { oldValue, newValue in
             self.title =  timerModel.title.isEmpty ? "无事项" : "<\(timerModel.title)> 进行中"
         }
+        
     }
     
     func handleRestartEvent() {
@@ -96,6 +99,17 @@ struct ToDoApp: App {
         item.intervals.append(dateInterval)
         item.isPlay = false
         modelData.updateItem(item)
+    }
+    
+    func handleEventChange() {
+        guard let item = timerModel.timingItem else {
+             return
+        }
+        if item.isPlay {
+            handleStopEvent()
+        } else {
+            handleRestartEvent()
+        }
     }
     
 }

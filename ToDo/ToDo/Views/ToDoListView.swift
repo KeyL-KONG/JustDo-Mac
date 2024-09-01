@@ -8,9 +8,13 @@
 import SwiftUI
 import LeanCloud
 
-struct ToDoListView: View {
+struct ToDoListView: View, Equatable {
+    static func == (lhs: ToDoListView, rhs: ToDoListView) -> Bool {
+        return lhs.timerModel.title == rhs.timerModel.title
+    }
     
     @EnvironmentObject var modelData: ModelData
+    @State var uniqueID: String = ""
     @ObservedObject var timerModel: TimerModel
     @State private var selection: ToDoSection = .today
     @State private var selectItem: EventItem? = nil
@@ -90,6 +94,11 @@ struct ToDoListView: View {
     
     
     var body: some View {
+        if toggleRefresh {
+            Text("")
+        } else {
+            Text("")
+        }
         NavigationSplitView {
             SidebarView(selection: $selection, todayItems: items(with: .today)).environmentObject(modelData)
                 .onChange(of: selection) { oldValue, newValue in
@@ -107,15 +116,16 @@ struct ToDoListView: View {
                     if let item = modelData.itemList.first(where: { $0.id == newValue
                     }) {
                         self.selectItem = item
+                        toggleRefresh = !toggleRefresh
                         print("select item: \(item.title)")
                     }
                 }
                 .frame(minWidth: 400)
         } detail: {
             ToDoEditView(selectItem: selectItem, updateEvent: {
-                toggleRefresh.toggle()
+                //toggleRefresh.toggle()
             }).environmentObject(modelData)
-                .id(UUID().uuidString)
+                .id(selectItemID)
             
         }
         .onAppear {
