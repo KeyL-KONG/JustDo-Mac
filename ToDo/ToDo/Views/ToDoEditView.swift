@@ -41,7 +41,9 @@ struct ToDoEditView: View {
     @State var selectFather: String = "无"
     var fatherListTitle: [String] {
         guard selectProject.count > 1, let selectItem = self.selectItem, let projectItem = modelData.itemList.first(where: { $0.title == selectProject && $0.actionType == .project }) else { return [] }
-        return ["无"] + modelData.itemList.filter { $0.projectId == projectItem.id && $0.id != selectItem.id }.compactMap { $0.title }
+        return ["无"] + modelData.itemList.filter { $0.projectId == projectItem.id && $0.id != selectItem.id }.sorted(by: { first, second in
+            return first.childrenIds.count > second.childrenIds.count
+        }).compactMap { return $0.childrenIds.count > 0 ? "\($0.title) (\($0.childrenIds.count))" : "\($0.title)" }
     }
     
     @State var isFinish: Bool = false
@@ -222,7 +224,11 @@ struct ToDoEditView: View {
                 isFinish = selectedItem.isFinish
                 selectReward = modelData.rewardList.filter({ $0.id == selectedItem.rewardId }).first?.title ?? "无"
                 selectProject = modelData.itemList.filter { $0.id == selectedItem.projectId}.first?.title ?? "无"
-                selectFather = modelData.itemList.filter { $0.id == selectedItem.fatherId}.first?.title ?? "无"
+                if let fatherItem = modelData.itemList.filter({ $0.id == selectedItem.fatherId}).first {
+                    selectFather = fatherItem.childrenIds.count > 0 ? "\(fatherItem.title) (\(fatherItem.childrenIds.count))" : "\(fatherItem.title)"
+                } else {
+                    selectFather = "无"
+                }
                 actionType = selectedItem.actionType
                 if selectedItem.mark.count > 0 {
                     self.isEdit = false
