@@ -55,6 +55,8 @@ struct ToDoEditView: View {
     
     @State var intervals: [LQDateInterval] = []
     
+    @State var isEdit: Bool = true
+    
     var body: some View {
         VStack {
             List {
@@ -141,14 +143,27 @@ struct ToDoEditView: View {
                     
                 })
                 
-                Section(header: Text("备注")) {
-                    TextEditor(text: $mark)
-                        .font(.system(size: 14))
-                        .padding(5)
-                        .scrollContentBackground(.hidden)
-                        .background(Color.init(hex: "#D6EAF8"))
-                        .frame(minHeight: 100)
-                        .cornerRadius(8)
+                Section(header: HStack(content: {
+                    Text("备注")
+                    Spacer()
+                    Button("\(isEdit ? "预览" : "编辑")") {
+                        self.isEdit = !self.isEdit
+                        if !self.isEdit {
+                            self.saveTask()
+                        }
+                    }
+                })) {
+                    if isEdit {
+                        TextEditor(text: $mark)
+                            .font(.system(size: 14))
+                            .padding(5)
+                            .scrollContentBackground(.hidden)
+                            .background(Color.init(hex: "#D6EAF8"))
+                            .frame(minHeight: 100)
+                            .cornerRadius(8)
+                    } else {
+                        MarkdownWebView(mark)
+                    }
                 }
                 
                 //if intervals.count > 0 {
@@ -209,6 +224,9 @@ struct ToDoEditView: View {
                 selectProject = modelData.itemList.filter { $0.id == selectedItem.projectId}.first?.title ?? "无"
                 selectFather = modelData.itemList.filter { $0.id == selectedItem.fatherId}.first?.title ?? "无"
                 actionType = selectedItem.actionType
+                if selectedItem.mark.count > 0 {
+                    self.isEdit = false
+                }
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task

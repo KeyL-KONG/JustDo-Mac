@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090C72232C8409E100FA21C5 /* MarkdownWebView.swift */; };
+		090C722B2C8409E100FA21C5 /* template in Resources */ = {isa = PBXBuildFile; fileRef = 090C72252C8409E100FA21C5 /* template */; };
+		090C722C2C8409E100FA21C5 /* script in Resources */ = {isa = PBXBuildFile; fileRef = 090C72262C8409E100FA21C5 /* script */; };
+		090C722D2C8409E100FA21C5 /* default-iOS in Resources */ = {isa = PBXBuildFile; fileRef = 090C72282C8409E100FA21C5 /* default-iOS */; };
+		090C722E2C8409E100FA21C5 /* default-macOS in Resources */ = {isa = PBXBuildFile; fileRef = 090C72292C8409E100FA21C5 /* default-macOS */; };
 		097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */; };
 		097A04102C6C588300521483 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040F2C6C588300521483 /* Array+Extensions.swift */; };
 		097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A04112C71ED9600521483 /* TodoItemListView+Today.swift */; };
@@ -46,6 +51,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		090C72232C8409E100FA21C5 /* MarkdownWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownWebView.swift; sourceTree = "<group>"; };
+		090C72252C8409E100FA21C5 /* template */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = template; sourceTree = "<group>"; };
+		090C72262C8409E100FA21C5 /* script */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = script; sourceTree = "<group>"; };
+		090C72282C8409E100FA21C5 /* default-iOS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-iOS"; sourceTree = "<group>"; };
+		090C72292C8409E100FA21C5 /* default-macOS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-macOS"; sourceTree = "<group>"; };
 		097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Month.swift"; sourceTree = "<group>"; };
 		097A040F2C6C588300521483 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		097A04112C71ED9600521483 /* TodoItemListView+Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Today.swift"; sourceTree = "<group>"; };
@@ -100,6 +110,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		090C72212C8409D600FA21C5 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				090C72222C8409E100FA21C5 /* MarkdownWebView */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		090C72222C8409E100FA21C5 /* MarkdownWebView */ = {
+			isa = PBXGroup;
+			children = (
+				090C72232C8409E100FA21C5 /* MarkdownWebView.swift */,
+				090C72242C8409E100FA21C5 /* Resources */,
+			);
+			path = MarkdownWebView;
+			sourceTree = "<group>";
+		};
+		090C72242C8409E100FA21C5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				090C72252C8409E100FA21C5 /* template */,
+				090C72262C8409E100FA21C5 /* script */,
+				090C72272C8409E100FA21C5 /* stylesheets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		090C72272C8409E100FA21C5 /* stylesheets */ = {
+			isa = PBXGroup;
+			children = (
+				090C72282C8409E100FA21C5 /* default-iOS */,
+				090C72292C8409E100FA21C5 /* default-macOS */,
+			);
+			path = stylesheets;
+			sourceTree = "<group>";
+		};
 		09F80BCE2C66540F00650366 = {
 			isa = PBXGroup;
 			children = (
@@ -121,6 +167,7 @@
 		09F80BD92C66540F00650366 /* ToDo */ = {
 			isa = PBXGroup;
 			children = (
+				090C72212C8409D600FA21C5 /* Components */,
 				09FB5D552C69A33000C079ED /* Timer */,
 				09F80C142C66F62700650366 /* Views */,
 				09F80C092C665A5B00650366 /* Utils */,
@@ -302,8 +349,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				090C722B2C8409E100FA21C5 /* template in Resources */,
 				09F80BE32C66541000650366 /* Preview Assets.xcassets in Resources */,
+				090C722E2C8409E100FA21C5 /* default-macOS in Resources */,
+				090C722D2C8409E100FA21C5 /* default-iOS in Resources */,
 				09F80BDF2C66541000650366 /* Assets.xcassets in Resources */,
+				090C722C2C8409E100FA21C5 /* script in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +411,7 @@
 				09F80C012C665A3F00650366 /* WishModel.swift in Sources */,
 				09F80BFE2C665A3F00650366 /* UserManager.swift in Sources */,
 				09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */,
+				090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */,
 				09F80C062C665A3F00650366 /* RewardModel.swift in Sources */,
 				09F80C0E2C665A5B00650366 /* Int+Extensions.swift in Sources */,
 				09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */,
