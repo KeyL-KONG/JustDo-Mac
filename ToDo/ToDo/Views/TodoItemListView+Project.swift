@@ -113,4 +113,18 @@ extension TodoItemListView {
         modelData.updateItem(item)
     }
     
+    func copyTaskItem(item: EventItem) {
+        let newItem = EventItem()
+        newItem.title = item.title
+        newItem.actionType = item.actionType
+        newItem.tag = item.tag
+        newItem.projectId = item.projectId
+        newItem.fatherId = item.fatherId
+        newItem.importance = item.importance
+        newItem.eventType = item.eventType
+        newItem.rewardId = item.rewardId
+        newItem.planTime = item.planTime
+        modelData.updateItem(newItem)
+    }
+    
 }

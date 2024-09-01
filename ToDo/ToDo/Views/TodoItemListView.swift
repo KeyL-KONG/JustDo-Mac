@@ -268,6 +268,12 @@ struct TodoItemListView: View {
                     Text((item.isFinish ? "unFinish" : "finish")).foregroundStyle(.blue)
                 }
                 
+                Button(action: {
+                    copyTaskItem(item: item)
+                }, label: {
+                    Text("复制").foregroundStyle(.green)
+                })
+                
                 Button {
                     Self.deleteItem = item
                     showDeleteAlert.toggle()
