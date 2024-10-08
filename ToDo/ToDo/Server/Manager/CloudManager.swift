@@ -65,21 +65,24 @@ class CloudManager {
         let group = DispatchGroup.init()
         for page in 0 ..< pages {
             group.enter()
-            let className = type.className()
-            let query = LCQuery(className: className)
-            //query.whereKey("user", .equalTo(user))
-            query.limit = 100
-            query.skip = page * 100
-            query.find { result in
-                switch result {
-                case .success(objects: let objs):
-                    results.append(contentsOf: objs)
-                    break
-                case .failure(error: let error):
-                    resultError = error
-                    break
+            let delayTime = Double(page) * 0.01
+            DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
+                let className = type.className()
+                let query = LCQuery(className: className)
+                //query.whereKey("user", .equalTo(user))
+                query.limit = 100
+                query.skip = page * 100
+                query.find { result in
+                    switch result {
+                    case .success(objects: let objs):
+                        results.append(contentsOf: objs)
+                        break
+                    case .failure(error: let error):
+                        resultError = error
+                        break
+                    }
+                    group.leave()
                 }
-                group.leave()
             }
         }
         
