@@ -237,6 +237,9 @@ struct ReviewListView: View {
     private static var selectSummaryModel: SummaryModel? = nil
     @State var showingSummaryView: Bool = false
     
+    @State private var isExpanded: Bool = true
+    @State private var expandList: [Bool] = Array(repeating: true, count: 100)
+    
     var body: some View {
         VStack {
             if timeTab == .day {
@@ -274,30 +277,25 @@ struct ReviewListView: View {
                         }
                     })) {
                         ForEach(Array(eventDetailList.enumerated()), id: \.1.id) { index, item in
-                            DisclosureGroup(
-                                content: {
-                                    
-                                    if timeTab == .week {
-                                        VStack(alignment: .leading, spacing: 5) {
-                                            chartView(with: item)
-                                            detailItemView(with: item)
-                                        }
-                                    } else {
+                            DisclosureGroup(isExpanded: $expandList[index]) {
+                                if timeTab == .week {
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        chartView(with: item)
                                         detailItemView(with: item)
                                     }
-                                    
-                                },
-                                label: {
-                                    HStack(content: {
-                                        Text(item.tag.title).foregroundStyle(item.tag.titleColor)
-                                        Spacer()
-                                        Text(item.totalTime.simpleTimeStr).font(.system(size: 12)).foregroundStyle(.gray).bold()
-                                        if let percentTime = EventDetailItem.percentTime(totalTime: item.totalTime, date: selectDate, timeTab: timeTab) {
-                                            Text(percentTime).font(.system(size: 10)).foregroundStyle(item.tag.titleColor).bold()
-                                        }
-                                    })
+                                } else {
+                                    detailItemView(with: item)
                                 }
-                            )
+                            } label: {
+                                HStack(content: {
+                                    Text(item.tag.title).foregroundStyle(item.tag.titleColor)
+                                    Spacer()
+                                    Text(item.totalTime.simpleTimeStr).font(.system(size: 12)).foregroundStyle(.gray).bold()
+                                    if let percentTime = EventDetailItem.percentTime(totalTime: item.totalTime, date: selectDate, timeTab: timeTab) {
+                                        Text(percentTime).font(.system(size: 10)).foregroundStyle(item.tag.titleColor).bold()
+                                    }
+                                })
+                            }
                         }
                     }
                 }
