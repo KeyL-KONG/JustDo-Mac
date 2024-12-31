@@ -34,9 +34,19 @@ extension RewardTabType {
 enum TaskType {
     case task
     case reward
+    
+    var type: String {
+        switch self {
+        case .task:
+            return "task"
+        case .reward:
+            return "reward"
+        }
+    }
 }
 
 protocol BasicTaskProtocol: Identifiable {
+    var updateAt:Date? { get set }
     var type: TaskType { get }
     var id: String { get set }
     var generateId: String { get set }
@@ -280,6 +290,10 @@ extension RewardModel {
         intervals.filter { dateInTimeTab($0.end, selectDate: selectDate, tab: tabTab)}
             .compactMap { $0.interval }
             .reduce(0, +)
+    }
+    
+    func intervals(with tab: TimeTab, selectDate: Date? = nil) -> [LQDateInterval] {
+        return intervals.filter { dateInTimeTab($0.end, selectDate: selectDate, tab: tab)}
     }
     
     func summaryScore(with tabType: TimeTab) -> Int {

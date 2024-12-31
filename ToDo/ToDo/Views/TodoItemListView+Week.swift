@@ -10,7 +10,7 @@ import SwiftUI
 extension TodoItemListView {
     
     var weekDates: [Date] {
-        currentDate.fetchWeekDates()
+        currentDate.weekDays
     }
     
     var weekDateStr: String {

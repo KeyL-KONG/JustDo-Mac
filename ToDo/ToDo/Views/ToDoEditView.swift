@@ -271,7 +271,7 @@ struct ToDoEditView: View {
         if setPlanTime {
             selectedItem.planTime = planTime
         } else {
-            selectedItem.disablePlanTime = true
+            //selectedItem.disablePlanTime = true
             selectedItem.planTime = nil
         }
         if setFinishTime {

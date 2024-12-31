@@ -118,7 +118,7 @@ struct ToDoApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
  
     func applicationWillFinishLaunching(_ notification: Notification) {
-        LCApplication.logLevel = .debug
+        //LCApplication.logLevel = .debug
         let appId = "sVkf4GuCkJf9r8q9BjTVax8b-gzGzoHsz"
         let appKey = "sD7s2RQAGL77oRNg9rCkQIzE"
         let url = "https://svkf4guc.lc-cn-n1-shared.com"

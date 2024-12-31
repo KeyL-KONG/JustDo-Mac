@@ -17,7 +17,22 @@ final class ModelData: ObservableObject {
     @Published var rewardList: [RewardModel] = []
     @Published var tagList: [ItemTag] = []
     
+    @Published var readList: [ReadModel] = []
+    @Published var readTagList: [ReadTag] = []
+    @Published var noteList: [NoteModel] = []
+    @Published var noteTagList: [TagModel] = []
+    
+    @Published var summaryItemList: [SummaryItem] = []
+    @Published var summaryModelList: [SummaryModel] = []
+    @Published var summaryTagList: [SummaryTag] = []
+    
     private let cache = CacheManager()
+    
+    var tryLoadReadTagTimes = 0
+    
+    var tryLoadNoteTagTimes = 0
+    
+    var tryLoadSummaryTimes = 0
     
     public func saveItem(_ item: EventItem) {
         if itemList.contains(where: { $0.id == item.id || $0.generateId == item.generateId }) {
@@ -73,14 +88,23 @@ final class ModelData: ObservableObject {
     
     func loadFromServer() {
         loadTag {
-            self.loadMainData()
+            self.loadMainData {
+                self.loadSummaryList {
+                    self.loadReadList {
+                        self.loadNoteList {
+                            
+                        }
+                    }
+                }
+            }
         }
     }
     
-    func loadMainData() {
+    func loadMainData(completion: (() -> ())? = nil) {
         loadReward {
-            self.loadEvent()
-            self.loadWish()
+            self.loadEvent {
+                completion?()
+            }
         }
     }
     

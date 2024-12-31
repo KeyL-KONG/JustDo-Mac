@@ -54,16 +54,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var eventType: EventValueType = .num
     var isFinish: Bool = false
     var finishTime: Date? = nil
-    var _planTime: Date? = nil
-    var planTime: Date? {
-        get {
-            return disablePlanTime ? nil : _planTime
-        }
-        set {
-            _planTime = newValue
-        }
-    }
-    var disablePlanTime: Bool = false
+    var planTime: Date? = nil
+    var setPlanTime: Bool = false
     var isPlay: Bool = false
     var playTime: Date? = nil
     var intervals: [LQDateInterval] = []
@@ -102,7 +94,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.importance = ImportanceTag(rawValue: try container.decode(String.self, forKey: .importance)) ?? .mid
         self.finishTime = try container.decodeIfPresent(Date.self, forKey: .finishTime)
         self.playTime = try container.decodeIfPresent(Date.self, forKey: .playTime)
-        self._planTime = try container.decodeIfPresent(Date.self, forKey: .planTime)
+        self.planTime = try container.decodeIfPresent(Date.self, forKey: .planTime)
         
         self.tag = try container.decode(String.self, forKey: .tag)
         self.eventType = EventValueType(rawValue: try container.decode(Int.self, forKey: .eventType)) ?? .num
@@ -126,7 +118,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.fatherId = try container.decode(String.self, forKey: .fatherId)
         self.childrenIds = try container.decode([String].self, forKey: .childrenIds).uniqueArray
         self.projectId = try container.decode(String.self, forKey: .projectId)
-        self.disablePlanTime = try container.decode(Bool.self, forKey: .disablePlanTime)
+        self.setPlanTime = try container.decode(Bool.self, forKey: .setPlanTime)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -151,8 +143,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let finishTime {
             try container.encode(finishTime, forKey: .finishTime)
         }
-        if let _planTime {
-            try container.encode(_planTime, forKey: .planTime)
+        if let planTime {
+            try container.encode(planTime, forKey: .planTime)
         }
         if let playTime {
             try container.encode(playTime, forKey: .playTime)
@@ -161,7 +153,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(fatherId, forKey: .fatherId)
         try container.encode(childrenIds.uniqueArray, forKey: .childrenIds)
         try container.encode(projectId, forKey: .projectId)
-        try container.encode(disablePlanTime, forKey: .disablePlanTime)
+        try container.encode(setPlanTime, forKey: .setPlanTime)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -175,7 +167,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.finishState = finishState
         self.finishText = finishText
         self.createTime = createTime
-        self._planTime = planTime
+        self.planTime = planTime
         self.finishTime = finishTime
         self.finishRating = finishRating
         self.difficultRating = difficultRating
@@ -212,9 +204,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
             self.finishState = .normal
         }
         finishText = cloudObj.get(EventModelKeys.finishText.rawValue)?.stringValue ?? ""
-        isFinish = cloudObj.get(EventModelKeys.isFinish.rawValue)?.boolValue ?? false
+        isFinish = (cloudObj.get(EventModelKeys.isFinish.rawValue) as? LCBool)?.value ?? false
         finishTime = cloudObj.get(EventModelKeys.finishTime.rawValue)?.dateValue
-        _planTime = cloudObj.get(EventModelKeys.planTime.rawValue)?.dateValue
+        planTime = cloudObj.get(EventModelKeys.planTime.rawValue)?.dateValue
         difficultText = cloudObj.get(EventModelKeys.difficultText.rawValue)?.stringValue ?? ""
         isPlay = cloudObj.get(EventModelKeys.isPlay.rawValue)?.boolValue ?? false
         if let dates = cloudObj.get(EventModelKeys.intervals.rawValue)?.arrayValue as? [Date] {
@@ -244,7 +236,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.fatherId = cloudObj.get(EventModelKeys.fatherId.rawValue)?.stringValue ?? ""
         self.childrenIds = (cloudObj.get(EventModelKeys.childrenIds.rawValue)?.arrayValue as? [String] ?? []).uniqueArray
         self.projectId = cloudObj.get(EventModelKeys.projectId.rawValue)?.stringValue ?? ""
-        self.disablePlanTime = cloudObj.get(EventModelKeys.disablePlanTime.rawValue)?.boolValue ?? false
+        self.setPlanTime = cloudObj.get(EventModelKeys.setPlanTime.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -259,7 +251,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let finishTime = finishTime {
             try cloudObj.set(EventModelKeys.finishTime.rawValue, value: finishTime.lcDate)
         }
-        if let planTime = _planTime {
+        if let planTime = planTime {
             try cloudObj.set(EventModelKeys.planTime.rawValue, value: planTime.lcDate)
         }
         try cloudObj.set(EventModelKeys.finishRating.rawValue, value: finishRating.lcNumber)
@@ -288,12 +280,17 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.fatherId.rawValue, value: fatherId.stringValue)
         try cloudObj.set(EventModelKeys.childrenIds.rawValue, value: childrenIds.uniqueArray.lcArray)
         try cloudObj.set(EventModelKeys.projectId.rawValue, value: projectId.lcString)
-        try cloudObj.set(EventModelKeys.disablePlanTime.rawValue, value: disablePlanTime.lcBool)
+        try cloudObj.set(EventModelKeys.setPlanTime.rawValue, value: setPlanTime.lcBool)
     }
     
 }
 
 extension EventModel: BasicTaskProtocol {
+
+    func totalTime(with tabTab: TimeTab) -> Int {
+        return 0
+    }
+    
     
     var type: TaskType {
         .task
@@ -313,6 +310,7 @@ extension EventModel {
         case isFinish = "isFinish"
         case finishTime = "finishTime"
         case planTime = "planTime"
+        case setPlanTime = "setPlanTime"
         case finishState = "finishState"
         case finishText = "finishText"
         case finishRating = "finishRating"
@@ -333,7 +331,6 @@ extension EventModel {
         case fatherId
         case childrenIds
         case projectId
-        case disablePlanTime
     }
     
 }
@@ -348,7 +345,7 @@ extension EventModel {
             return true
         }).compactMap { $0.interval }.reduce(0, +)
         childrenIds.forEach { itemId in
-            if let item = items.first(where: { $0.id == itemId && $0.id != self.id }) {
+            if let item = items.first(where: { $0.id == itemId }) {
                 if actionType == .project {
                     totalTime += item.intervals.compactMap { $0.interval }.reduce(0, +)
                 } else {

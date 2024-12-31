@@ -75,6 +75,8 @@ struct ToDoListView: View, Equatable {
             itemList = itemList.filter { event in
                 itemTag.id == event.tag && event.actionType == .task
             }
+        default:
+            break
         }
         return itemList.sorted { first, second in
             if first.isFinish != second.isFinish {
@@ -108,25 +110,35 @@ struct ToDoListView: View, Equatable {
                     }
                 }
         } content: {
-            TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
-                selectItemID = item.id
-            }, timerModel: timerModel).environmentObject(modelData)
-                //.id(UUID().uuidString)
-                .onChange(of: selectItemID) { oldValue, newValue in
-                    if let item = modelData.itemList.first(where: { $0.id == newValue
-                    }) {
-                        self.selectItem = item
-                        toggleRefresh = !toggleRefresh
-                        print("select item: \(item.title)")
+            if selection == .review {
+                ReviewView()
+                    .environmentObject(modelData)
+                    .frame(minWidth: 400)
+            } else {
+                TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
+                    selectItemID = item.id
+                }, timerModel: timerModel).environmentObject(modelData)
+                    //.id(UUID().uuidString)
+                    .onChange(of: selectItemID) { oldValue, newValue in
+                        if let item = modelData.itemList.first(where: { $0.id == newValue
+                        }) {
+                            self.selectItem = item
+                            toggleRefresh = !toggleRefresh
+                            print("select item: \(item.title)")
+                        }
                     }
-                }
-                .frame(minWidth: 400)
-        } detail: {
-            ToDoEditView(selectItem: selectItem, updateEvent: {
-                //toggleRefresh.toggle()
-            }).environmentObject(modelData)
-                .id(selectItemID)
+                    .frame(minWidth: 400)
+            }
             
+        } detail: {
+            if selection == .review || selection == .summary {
+                EmptyView().frame(width: 0)
+            } else {
+                ToDoEditView(selectItem: selectItem, updateEvent: {
+                    //toggleRefresh.toggle()
+                }).environmentObject(modelData)
+                    .id(selectItemID)
+            }
         }
         .onAppear {
             selectItemID = itemList.first?.id ?? ""
