@@ -117,6 +117,7 @@ struct ReviewListView: View {
     
     @State private var weekSlider: [[Date.WeekDay]] = []
     @State private var currentWeekIndex: Int = 1
+    private let maxWeekIndex: Int = 2
     @Namespace private var animation
     
     var eventListItem: [EventItem] {
@@ -490,12 +491,13 @@ extension ReviewListView {
             let font = Font.system(size: 20)
             if timeTab == .day || timeTab == .all {
                 Text(titleText).font(font).foregroundColor(.accentColor)
-            } else {
+            } else { 
                 Button {
                     updateSelectDate(next: false)
                 } label: {
-                    Label("", systemImage: "arrow.left").font(font).foregroundColor(.blue)
+                    Image(systemName: "chevron.left").foregroundColor(.blue).font(.system(size: 20)).bold()
                 }
+                    .buttonStyle(BorderlessButtonStyle())
                 
                 Spacer()
 
@@ -516,9 +518,10 @@ extension ReviewListView {
                 Button {
                     updateSelectDate(next: true)
                 } label: {
-                    Label("", systemImage: "arrow.right").font(font).foregroundColor((disableRightButton ? .gray : .blue))
+                    Image(systemName: "chevron.right").foregroundColor((disableRightButton ? .gray : .blue)).font(.system(size: 20)).bold()
                 }.disabled(disableRightButton)
-                    .opacity((disableRightButton ? 0.5 : 1.0))
+                    .buttonStyle(BorderlessButtonStyle())
+                
             }
         }.padding(.horizontal, 15)
             .padding(.top, 5)
@@ -619,20 +622,29 @@ extension ReviewListView {
     @ViewBuilder
     func DayHeaderView() -> some View {
         VStack(alignment: .leading, spacing: 6) {
+            HStack(content: {
+                
+                let disableLeftButton = currentWeekIndex <= 0
+                Button {
+                    currentWeekIndex -= 1
+                } label: {
+                    Image(systemName: "chevron.left").foregroundColor(disableLeftButton ? .gray : .blue).font(.system(size: 20)).bold()
+                }.disabled(disableLeftButton)
+                    .buttonStyle(BorderlessButtonStyle())
+                
+                let week = weekSlider.count > currentWeekIndex ? weekSlider[currentWeekIndex] : []
+                WeekView(week)
+                    .padding(.horizontal, 15)
+                
+                let disableRightButton = currentWeekIndex >= maxWeekIndex
+                Button {
+                    currentWeekIndex += 1
+                } label: {
+                    Image(systemName: "chevron.right").foregroundColor((disableRightButton ? .gray : .blue)).font(.system(size: 20)).bold()
+                }.disabled(disableRightButton)
+                    .buttonStyle(BorderlessButtonStyle())
             
-            /// Week Slider
-            TabView(selection: $currentWeekIndex,
-                    content:  {
-                ForEach(weekSlider.indices, id: \.self) { index in
-                    let week = weekSlider[index]
-                    WeekView(week)
-                        .padding(.horizontal, 15)
-                        .tag(index)
-                }
             })
-#if os(iOS)
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            #endif
             .frame(height: 90)
         }
         .hSpacing(.leading)
@@ -642,7 +654,7 @@ extension ReviewListView {
     
     @ViewBuilder
     func WeekView(_ weeks: [Date.WeekDay]) -> some View {
-        HStack(spacing: 0, content: {
+        HStack(spacing: 10, content: {
             ForEach(weeks) { day in
                 VStack(spacing: 8, content: {
                     Text(day.date.format("E"))

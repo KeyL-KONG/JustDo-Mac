@@ -266,10 +266,9 @@ extension Date {
     
     func fetchWeek(_ date: Date = .init()) -> [WeekDay] {
         let calendar = Calendar.current
-        let startOfDate = calendar.startOfDay(for: date)
         var week: [WeekDay] = []
         (0..<7).forEach { index in
-            if let weekDay = calendar.date(byAdding: .day, value: index, to: startOfWeek) {
+            if let weekDay = calendar.date(byAdding: .day, value: index, to: date.startOfWeek) {
                 week.append(.init(date: weekDay))
             }
         }
