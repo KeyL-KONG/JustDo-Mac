@@ -113,7 +113,13 @@ struct ReviewListView: View {
     
     @State var timeTab: TimeTab
     @EnvironmentObject var modelData: ModelData
-    @State var selectDate: Date = .now
+    @State var selectDate: Date = .now {
+        didSet {
+            print("select date: \(selectDate)")
+            updateTitleText()
+            updateSelectIndexes()
+        }
+    }
     
     @State private var weekSlider: [[Date.WeekDay]] = []
     @State private var currentWeekIndex: Int = 1
@@ -199,7 +205,7 @@ struct ReviewListView: View {
     }
     
     var summaryModel: SummaryModel? {
-        modelData.summaryModelList.first { model in
+        modelData.summaryModelList.filter { model in
             guard model.timeTab == timeTab else {
                 return false
             }
@@ -213,7 +219,8 @@ struct ReviewListView: View {
             case .all:
                 return model.summaryDate.isInSameYear(as: selectDate)
             }
-        }
+        }.sorted { $0.createTime?.timeIntervalSince1970 ?? 0 > $1.createTime?.timeIntervalSince1970 ?? 0
+        }.first
     }
     
     var highEventListItem: [EventItem] {
@@ -227,12 +234,16 @@ struct ReviewListView: View {
     @State var summaryContent: String = ""
     @State var summaryReviewIndex: Int = 3
     @State var summaryReviewText: String = ""
+    @State var summaryReviewEditMode: Bool = false
     @State var summaryMoodIndex: Int = 3
     @State var summaryMoodText: String = ""
+    @State var summaryMoodEditMode: Bool = false
     @State var summaryBodyIndex: Int = 3
     @State var summaryBodyText: String = ""
+    @State var summaryBodyEditMode: Bool = false
     @State var summaryEffectIndex: Int = 3
     @State var summaryEffectText: String = ""
+    @State var summaryEffectEditMode: Bool = false
     
     private static var selectSummaryModel: SummaryModel? = nil
     @State var showingSummaryView: Bool = false
@@ -342,14 +353,19 @@ struct ReviewListView: View {
                 
                 Section {
                     
-                    if let reviewText = summaryModel?.reviewText, reviewText.count > 0 {
-                        MarkdownWebView(reviewText, customStylesheet: stylesheet)
+                    if !summaryReviewEditMode {
+                        MarkdownWebView(summaryReviewText, customStylesheet: stylesheet)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 Self.checkType = .review
                                 Self.selectSummaryModel = summaryModel
                                 self.showingSummaryView.toggle()
                             }
+                    } else {
+                        TextEditor(text: $summaryReviewText)
+                            .font(.system(size: 14))
+                            .frame(minHeight: 50)
+                            .border(.blue, width: 1)
                     }
                     
                 } header: {
@@ -357,26 +373,34 @@ struct ReviewListView: View {
                         Text("整体情况")
                         RatingView(maxRating: 5, rating: $summaryReviewIndex, size: 15, spacing: 2.5, onChange: { index in
                             self.summaryReviewIndex = index
+                            self.saveSummaryModel()
                         }).previewLayout(.sizeThatFits)
                         Spacer()
-                        Button("编辑") {
-                            Self.checkType = .review
-                            Self.selectSummaryModel = summaryModel
-                            self.showingSummaryView.toggle()
+                        let title = summaryReviewEditMode ? "预览" : "编辑"
+                        Button(title) {
+                            self.summaryReviewEditMode = !self.summaryReviewEditMode
+                            if !self.summaryReviewEditMode {
+                                self.saveSummaryModel()
+                            }
                         }.font(.system(size: 14))
                     }
                 }
                 
                 Section {
                     
-                    if let effectText = summaryModel?.effectText, effectText.count > 0 {
-                        MarkdownWebView(effectText, customStylesheet: stylesheet)
+                    if !summaryEffectEditMode {
+                        MarkdownWebView(summaryEffectText, customStylesheet: stylesheet)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 Self.checkType = .effect
                                 Self.selectSummaryModel = summaryModel
                                 self.showingSummaryView.toggle()
                             }
+                    } else {
+                        TextEditor(text: $summaryEffectText)
+                            .font(.system(size: 14))
+                            .frame(minHeight: 50)
+                            .border(.blue, width: 1)
                     }
                     
                 } header: {
@@ -385,27 +409,35 @@ struct ReviewListView: View {
                         
                         RatingView(maxRating: 5, rating: $summaryEffectIndex, size: 15, spacing: 2.5, onChange: { index in
                             self.summaryEffectIndex = index
+                            self.saveSummaryModel()
                         }).previewLayout(.sizeThatFits)
                         
                         Spacer()
-                        Button("编辑") {
-                            Self.checkType = .effect
-                            Self.selectSummaryModel = summaryModel
-                            self.showingSummaryView.toggle()
+                        let title = summaryEffectEditMode ? "预览" : "编辑"
+                        Button(title) {
+                            self.summaryEffectEditMode = !self.summaryEffectEditMode
+                            if !self.summaryEffectEditMode {
+                                self.saveSummaryModel()
+                            }
                         }.font(.system(size: 14))
                     }
                 }
                 
                 Section {
                     
-                    if let moodeText = summaryModel?.moodeText, moodeText.count > 0 {
-                        MarkdownWebView(moodeText, customStylesheet: stylesheet)
+                    if !summaryMoodEditMode {
+                        MarkdownWebView(summaryMoodText, customStylesheet: stylesheet)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 Self.checkType = .mood
                                 Self.selectSummaryModel = summaryModel
                                 self.showingSummaryView.toggle()
                             }
+                    } else {
+                        TextEditor(text: $summaryMoodText)
+                            .font(.system(size: 14))
+                            .frame(minHeight: 50)
+                            .border(.blue, width: 1)
                     }
                     
                 } header: {
@@ -413,12 +445,15 @@ struct ReviewListView: View {
                         Text("心情指数")
                         RatingView(maxRating: 5, rating: $summaryMoodIndex, size: 15, spacing: 2.5, onChange: { index in
                             self.summaryMoodIndex = index
+                            self.saveSummaryModel()
                         }).previewLayout(.sizeThatFits)
                         Spacer()
-                        Button("编辑") {
-                            Self.checkType = .mood
-                            Self.selectSummaryModel = summaryModel
-                            self.showingSummaryView.toggle()
+                        let title = summaryMoodEditMode ? "预览" : "编辑"
+                        Button(title) {
+                            self.summaryMoodEditMode = !self.summaryMoodEditMode
+                            if !self.summaryMoodEditMode {
+                                self.saveSummaryModel()
+                            }
                         }.font(.system(size: 14))
                     }
                 }
@@ -427,14 +462,19 @@ struct ReviewListView: View {
                 
                 Section {
                     
-                    if let bodyText = summaryModel?.bodyText, bodyText.count > 0 {
-                        MarkdownWebView(bodyText, customStylesheet: stylesheet)
+                    if !summaryBodyEditMode {
+                        MarkdownWebView(summaryBodyText, customStylesheet: stylesheet)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 Self.checkType = .body
                                 Self.selectSummaryModel = summaryModel
                                 self.showingSummaryView.toggle()
                             }
+                    } else {
+                        TextEditor(text: $summaryBodyText)
+                            .font(.system(size: 14))
+                            .frame(minHeight: 50)
+                            .border(.blue, width: 1)
                     }
                     
                 } header: {
@@ -442,12 +482,15 @@ struct ReviewListView: View {
                         Text("身体指数")
                         RatingView(maxRating: 5, rating: $summaryBodyIndex, size: 15, spacing: 2.5, onChange: { index in
                             self.summaryBodyIndex = index
+                            self.saveSummaryModel()
                         }).previewLayout(.sizeThatFits)
                         Spacer()
-                        Button("编辑") {
-                            Self.checkType = .body
-                            Self.selectSummaryModel = summaryModel
-                            self.showingSummaryView.toggle()
+                        let title = summaryBodyEditMode ? "预览" : "编辑"
+                        Button(title) {
+                            self.summaryBodyEditMode = !self.summaryBodyEditMode
+                            if !self.summaryBodyEditMode {
+                                self.saveSummaryModel()
+                            }
                         }.font(.system(size: 14))
                     }
                 }
@@ -456,13 +499,15 @@ struct ReviewListView: View {
         .onChange(of: timeTab, { oldValue, newValue in
             if oldValue != newValue {
                 updateTitleText()
+                updateSelectIndexes()
             }
         })
-        .onChange(of: selectDate, { oldValue, newValue in
-            if oldValue != newValue {
-                updateTitleText()
-            }
-        })
+//        .onChange(of: selectDate, { oldValue, newValue in
+//            if oldValue != newValue {
+//                updateTitleText()
+//                updateSelectIndexes()
+//            }
+//        })
         .onAppear {
             if weekSlider.isEmpty {
                 let currentWeek = Date().fetchWeek()
@@ -489,7 +534,7 @@ extension ReviewListView {
             let font = Font.system(size: 20)
             if timeTab == .day || timeTab == .all {
                 Text(titleText).font(font).foregroundColor(.accentColor)
-            } else { 
+            } else {
                 Button {
                     updateSelectDate(next: false)
                 } label: {
@@ -523,6 +568,50 @@ extension ReviewListView {
             }
         }.padding(.horizontal, 15)
             .padding(.top, 5)
+    }
+    
+    func updateSelectIndexes() {
+        if let summaryModel {
+            self.summaryReviewIndex = summaryModel.reviewType.rawValue
+            self.summaryMoodIndex = summaryModel.moodType.rawValue
+            self.summaryBodyIndex = summaryModel.bodyType.rawValue
+            self.summaryEffectIndex = summaryModel.effectType.rawValue
+            
+            self.summaryReviewText = summaryModel.reviewText
+            self.summaryMoodText = summaryModel.moodeText
+            self.summaryBodyText = summaryModel.bodyText
+            self.summaryEffectText = summaryModel.effectText
+        } else {
+            self.summaryReviewIndex = 3
+            self.summaryMoodIndex = 3
+            self.summaryBodyIndex = 3
+            self.summaryEffectIndex = 3
+            
+            self.summaryReviewText = ""
+            self.summaryMoodText = ""
+            self.summaryBodyText = ""
+            self.summaryEffectText = ""
+            let summaryModel = SummaryModel()
+            summaryModel.summaryDate = selectDate
+            summaryModel.timeTab = timeTab
+            modelData.updateSummaryModel(summaryModel)
+        }
+    }
+    
+    func saveSummaryModel() {
+        guard let summaryModel else { return }
+        summaryModel.reviewType = SummaryReviewType(rawValue: self.summaryReviewIndex) ?? .normal
+        summaryModel.reviewText = summaryReviewText
+        
+        summaryModel.moodType = SummaryMoodType(rawValue: self.summaryMoodIndex) ?? .normal
+        summaryModel.moodeText = summaryMoodText
+        
+        summaryModel.bodyType = SummaryBodyType(rawValue: self.summaryBodyIndex) ?? .normal
+        summaryModel.bodyText = summaryBodyText
+        
+        summaryModel.effectType = SummaryEffectType(rawValue: self.summaryEffectIndex) ?? .normal
+        summaryModel.effectText = summaryEffectText
+        modelData.updateSummaryModel(summaryModel)
     }
     
     func updateSelectDate(next: Bool) {
