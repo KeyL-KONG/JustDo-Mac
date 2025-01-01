@@ -22,6 +22,11 @@ struct ToDoListView: View, Equatable {
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
+    @State var selectedTask: EventTaskItem? {
+        didSet {
+            print("select task")
+        }
+    }
     
     var itemList: [EventItem] {
         return items(with: selection)
@@ -94,7 +99,6 @@ struct ToDoListView: View, Equatable {
         }
     }
     
-    
     var body: some View {
         if toggleRefresh {
             Text("")
@@ -111,7 +115,9 @@ struct ToDoListView: View, Equatable {
                 }
         } content: {
             if selection == .review {
-                ReviewView()
+                ReviewView(selectTaskChange: { task in
+                    self.selectedTask = task
+                })
                     .environmentObject(modelData)
                     .frame(minWidth: 400)
             } else {
@@ -132,7 +138,18 @@ struct ToDoListView: View, Equatable {
             
         } detail: {
             if selection == .review || selection == .summary {
-                EmptyView().frame(width: 0)
+                if let selectedTask, let eventItem = modelData.itemList.first(where: { $0.id == selectedTask.id
+                }), selectedTask.type == .task {
+                    ToDoEditView(selectItem: eventItem) {
+                        
+                    }.environmentObject(modelData).id(eventItem.id)
+                } else if let selectedTask, let rewardItem = modelData.rewardList.first(where: { $0.id == selectedTask.id }), selectedTask.type == .reward {
+                    EditRewardView(selectedItem: rewardItem).environmentObject(modelData).id(rewardItem.id)
+                }
+                else {
+                    EmptyView()
+                }
+                
             } else {
                 ToDoEditView(selectItem: selectItem, updateEvent: {
                     //toggleRefresh.toggle()

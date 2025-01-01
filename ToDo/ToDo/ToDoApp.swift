@@ -30,12 +30,11 @@ struct ToDoApp: App {
                     modelData.loadFromServer()
                 }
             
-    
-            Button("", action: {
-                print("handle event change")
-                self.handleEventChange()
-            })
-            .keyboardShortcut("1", modifiers: .command)
+//            Button("", action: {
+//                print("handle event change")
+//                self.handleEventChange()
+//            })
+//            .keyboardShortcut("1", modifiers: .command)
         }
         
         MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {

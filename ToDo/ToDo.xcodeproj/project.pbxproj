@@ -24,6 +24,7 @@
 		093E79082D23A010006E5120 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E79072D23A00C006E5120 /* ReviewView.swift */; };
 		093E790A2D23BD57006E5120 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E79092D23BD57006E5120 /* RatingView.swift */; };
 		093E790C2D23BD7D006E5120 /* markdown.css in Resources */ = {isa = PBXBuildFile; fileRef = 093E790B2D23BD7D006E5120 /* markdown.css */; };
+		093E790E2D2572B8006E5120 /* EditRewardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E790D2D2572B8006E5120 /* EditRewardView.swift */; };
 		097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */; };
 		097A04102C6C588300521483 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040F2C6C588300521483 /* Array+Extensions.swift */; };
 		097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A04112C71ED9600521483 /* TodoItemListView+Today.swift */; };
@@ -80,6 +81,7 @@
 		093E79072D23A00C006E5120 /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
 		093E79092D23BD57006E5120 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		093E790B2D23BD7D006E5120 /* markdown.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = markdown.css; sourceTree = "<group>"; };
+		093E790D2D2572B8006E5120 /* EditRewardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRewardView.swift; sourceTree = "<group>"; };
 		097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Month.swift"; sourceTree = "<group>"; };
 		097A040F2C6C588300521483 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		097A04112C71ED9600521483 /* TodoItemListView+Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Today.swift"; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				093E790D2D2572B8006E5120 /* EditRewardView.swift */,
 				093E79072D23A00C006E5120 /* ReviewView.swift */,
 				09F80C152C66F63200650366 /* SidebarView.swift */,
 				09F80C172C66F7F700650366 /* ToDoListView.swift */,
@@ -509,6 +512,7 @@
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,
 				09F80C1A2C66F88C00650366 /* TodoItemListView.swift in Sources */,
 				09FB5D572C69A33B00C079ED /* TimerModel.swift in Sources */,
+				093E790E2D2572B8006E5120 /* EditRewardView.swift in Sources */,
 				09F80C082C665A3F00650366 /* GoalModel.swift in Sources */,
 				09F80C002C665A3F00650366 /* CloudManager.swift in Sources */,
 				093E79032D2385AD006E5120 /* SummaryItem.swift in Sources */,

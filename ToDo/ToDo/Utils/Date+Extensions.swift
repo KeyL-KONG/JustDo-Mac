@@ -118,6 +118,10 @@ extension Date {
         }
         return format("MM-dd HH:mm")
     }
+    
+    var simpleTimeStr: String {
+        format("HH:mm")
+    }
 
     var simpleHourMinTimeStr: String {
         format("HH:mm")

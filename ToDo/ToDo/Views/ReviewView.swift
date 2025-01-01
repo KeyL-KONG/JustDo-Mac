@@ -79,31 +79,40 @@ struct ReviewView: View {
     
     var tabs: [TimeTab] = [.day, .week, .month, .all]
     
+    @State var selectTaskChange: ((EventTaskItem?) -> ())
+    
     var body: some View {
         TabView {
-            ReviewListView(timeTab: .day).environmentObject(modelData)
+            ReviewListView(timeTab: .day, selectTaskChange: selectTaskChange).environmentObject(modelData)
                 .tabItem {
                     Label(TimeTab.day.title, image: "")
                 }
                 .tag(TimeTab.day)
             
-            ReviewListView(timeTab: .week).environmentObject(modelData)
+            ReviewListView(timeTab: .week, selectTaskChange: selectTaskChange).environmentObject(modelData)
                 .tabItem {
                     Label(TimeTab.week.title, image: "")
                 }
                 .tag(TimeTab.week)
             
-            ReviewListView(timeTab: .month).environmentObject(modelData)
+            ReviewListView(timeTab: .month, selectTaskChange: selectTaskChange).environmentObject(modelData)
                 .tabItem {
                     Label(TimeTab.month.title, image: "")
                 }
                 .tag(TimeTab.month)
             
-            ReviewListView(timeTab: .all).environmentObject(modelData)
+            ReviewListView(timeTab: .all, selectTaskChange: selectTaskChange).environmentObject(modelData)
                 .tabItem {
                     Label(TimeTab.all.title, image: "")
                 }
                 .tag(TimeTab.all)
+        }
+        .toolbar {
+            Button {
+                modelData.loadFromServer()
+            } label: {
+                Label("Refresh", systemImage: "arrow.clockwise")
+            }
         }
     }
 }
@@ -118,6 +127,7 @@ struct ReviewListView: View {
             print("select date: \(selectDate)")
             updateTitleText()
             updateSelectIndexes()
+            resetSelectTask()
         }
     }
     
@@ -250,6 +260,9 @@ struct ReviewListView: View {
     
     @State private var isExpanded: Bool = true
     @State private var expandList: [Bool] = Array(repeating: true, count: 100)
+    
+    @State var selectTaskChange: ((EventTaskItem?) -> ())
+    @State var selectTask: EventTaskItem? = nil
     
     var body: some View {
         VStack {
@@ -496,12 +509,12 @@ struct ReviewListView: View {
                 }
             }
         }
-        .onChange(of: timeTab, { oldValue, newValue in
-            if oldValue != newValue {
-                updateTitleText()
-                updateSelectIndexes()
-            }
-        })
+//        .onChange(of: timeTab, { oldValue, newValue in
+//            if oldValue != newValue {
+//                updateTitleText()
+//                updateSelectIndexes()
+//            }
+//        })
 //        .onChange(of: selectDate, { oldValue, newValue in
 //            if oldValue != newValue {
 //                updateTitleText()
@@ -521,6 +534,7 @@ struct ReviewListView: View {
             }
             summaryContent = summaryModel?.content ?? ""
             updateTitleText()
+            resetSelectTask()
         }
     }
 }
@@ -598,6 +612,11 @@ extension ReviewListView {
         }
     }
     
+    func resetSelectTask() {
+        selectTask = nil
+        selectTaskChange(nil)
+    }
+    
     func saveSummaryModel() {
         guard let summaryModel else { return }
         summaryModel.reviewType = SummaryReviewType(rawValue: self.summaryReviewIndex) ?? .normal
@@ -659,6 +678,7 @@ extension ReviewListView {
     func detailItemView(with item: EventDetailItem) -> some View {
         let detailItems = item.detailItems?.sorted(by: { $0.totalTime > $1.totalTime })
         return ForEach(detailItems ?? []) { detailItem in
+            let selected = selectTask?.id ?? "" == detailItem.id
             HStack {
                 if let subItem = detailItem.items.first {
                     if subItem.type == .task {
@@ -674,9 +694,11 @@ extension ReviewListView {
                 }
             }.contentShape(Rectangle())
                 .onTapGesture {
-                    self.openEvent(id: detailItem.id)
+                    self.selectTask = detailItem.items.first
+                    self.selectTaskChange(detailItem.items.first)
                 }
                 .id(UUID())
+                .background(selected ? .gray.opacity(0.5) : .clear)
             
         }
     }

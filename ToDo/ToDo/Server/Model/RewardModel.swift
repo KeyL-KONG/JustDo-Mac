@@ -31,6 +31,23 @@ extension RewardTabType {
     }
 }
 
+enum RewardFixTimeType: Int {
+    case onlyWeek
+    case onlyWeekend
+    case everyday
+    
+    var title: String {
+        switch self {
+        case .onlyWeek:
+            return "工作日"
+        case .onlyWeekend:
+            return "周末"
+        case .everyday:
+            return "每天"
+        }
+    }
+}
+
 enum TaskType {
     case task
     case reward
@@ -83,6 +100,9 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
     var fatherId: String = ""
     var childrenIds: [String] = []
     
+    var fixTimeType: RewardFixTimeType = .everyday
+    var fixTimes: [LQDateInterval] = []
+    
     required init() {
         
     }
@@ -114,6 +134,17 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         self.rewardCount = try container.decode(Int.self, forKey: .rewardCount)
         self.fatherId = try container.decode(String.self, forKey: .fatherId)
         self.childrenIds = try container.decode([String].self, forKey: .childrenId)
+            
+        self.fixTimeType = RewardFixTimeType(rawValue: try container.decode(Int.self, forKey: .fixTimeType)) ?? .everyday
+        
+        var fixedTimeIntervals = [LQDateInterval]()
+        let fixedDates = try container.decode([[Date]].self, forKey: .fixTimes)
+        fixedDates.forEach { pair in
+            if let first = pair.first, let second = pair.last {
+                fixedTimeIntervals.append(LQDateInterval(start: first, end: second))
+            }
+        }
+        self.fixTimes = fixedTimeIntervals
     }
     
     func encode(to encoder: Encoder) throws {
@@ -134,6 +165,9 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         try container.encode(self.rewardCount, forKey: .rewardCount)
         try container.encode(self.fatherId, forKey: .fatherId)
         try container.encode(self.childrenIds, forKey: .childrenId)
+        
+        try container.encode(self.fixTimeType.rawValue, forKey: .fixTimeType)
+        try container.encode(self.fixTimes.compactMap { [$0.start, $0.end]}, forKey: .fixTimes)
     }
     
     init(id: String, title: String, mark: String, tag: String, eventType: EventValueType, isFinish: Bool, createTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType, rewardValueType: RewardValueType = .time, rewardValue: Int = 0, rewardCount: Int = 0, intervals: [LQDateInterval] = []) {
@@ -191,6 +225,16 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         self.rewardCount = cloudObj.get(RewardModelKeys.rewardCount.rawValue)?.intValue ?? 0
         self.fatherId = cloudObj.get(RewardModelKeys.fatherId.rawValue)?.stringValue ?? ""
         self.childrenIds = cloudObj.get(RewardModelKeys.childrenId.rawValue)?.arrayValue as? [String] ?? []
+        
+        self.fixTimeType = RewardFixTimeType(rawValue: cloudObj.get(RewardModelKeys.fixTimeType.rawValue)?.intValue ?? 0) ?? .everyday
+        if let dates = cloudObj.get(RewardModelKeys.fixTimes.rawValue)?.arrayValue as? [Date] {
+            var intervals: [LQDateInterval] = []
+            for i in stride(from: 0, to: dates.count - 1, by: 2) {
+                let interval = LQDateInterval(start: dates[i], end: dates[i+1])
+                intervals.append(interval)
+            }
+            self.fixTimes = intervals
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -217,6 +261,15 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         try cloudObj.set(RewardModelKeys.rewardCount.rawValue, value: rewardCount.lcNumber)
         try cloudObj.set(RewardModelKeys.fatherId.rawValue, value: fatherId.stringValue)
         try cloudObj.set(RewardModelKeys.childrenId.rawValue, value: childrenIds.lcArray)
+        
+        try cloudObj.set(RewardModelKeys.fixTimeType.rawValue, value: fixTimeType.rawValue.lcNumber)
+        if fixTimes.count > 0 {
+            var dates = [Date]()
+            for interval in fixTimes {
+                dates += [interval.start, interval.end]
+            }
+            try cloudObj.set(RewardModelKeys.fixTimes.rawValue, value: dates.lcArray)
+        }
     }
     
 }
@@ -264,11 +317,19 @@ extension RewardModel {
         case rewardCount
         case fatherId
         case childrenId
+        
+        case fixTimeType
+        case fixTimes
     }
 }
 
 
 extension RewardModel {
+    
+    var fixedTimeList: [RewardTimeItem] {
+        return fixTimes.compactMap { RewardTimeItem(interval: $0, title: self.title, type: .fixedTime, id: self.id) }
+            .sorted { $0.interval.start > $1.interval.start }
+    }
     
     var isRootReward: Bool {
         fatherId.isEmpty
@@ -409,6 +470,7 @@ extension RewardModel {
 enum RewardTimeType {
     case interval
     case task
+    case fixedTime
 }
 
 struct RewardTimeItem {
