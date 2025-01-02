@@ -35,10 +35,14 @@ extension EventItem {
         }
     }
     
-    func totalTime(with tabTab: TimeTab) -> Int {
-        intervals.filter { dateInTimeTab($0.start, tab: tabTab)}
+    func totalTime(with tabTab: TimeTab, selectDate: Date = .now) -> Int {
+        intervals.filter { dateInTimeTab($0.start, tab: tabTab, selectDate: selectDate)}
             .compactMap { $0.interval }
             .reduce(0, +)
+    }
+    
+    func intervals(with tab: TimeTab, selectDate: Date = .now) -> [LQDateInterval] {
+        intervals.filter { dateInTimeTab($0.start, tab: tab, selectDate: selectDate)}
     }
     
     func summaryScore(with tabType: TimeTab) -> Int {
@@ -60,14 +64,14 @@ extension EventItem {
         }
     }
     
-    func dateInTimeTab(_ date: Date, tab: TimeTab) -> Bool {
+    func dateInTimeTab(_ date: Date, tab: TimeTab, selectDate: Date = .now) -> Bool {
         switch tab {
         case .day:
-            return date.isInToday
+            return date.isInSameDay(as: selectDate)
         case .week:
-            return date.isInThisWeek
+            return date.isInSameWeek(as: selectDate)
         case .month:
-            return date.isInThisMonth
+            return date.isInSameMonth(as: selectDate)
         case .all:
             return true
         }
@@ -97,13 +101,13 @@ extension EventItem {
 //    var id: String {
 //        return description
 //    }
-//    
+//
 //    case work, learn, life
-//    
-//    static var allCases: [ItemTag] { O
+//
+//    static var allCases: [ItemTag] {
 //        return [.work, .learn, .life]
 //    }
-//    
+//
 //    var description: String {
 //        switch self {
 //        case .work:
@@ -114,7 +118,7 @@ extension EventItem {
 //            return "life"
 //        }
 //    }
-//    
+//
 //    var titleColor: Color {
 //        switch self {
 //        case .work:
@@ -133,8 +137,6 @@ enum ImportanceTag: String, Codable, Identifiable, Comparable {
         return description
     }
     
-    case low, mid, high
-    
     static var allCases: [ImportanceTag] = [.high, .mid, .low]
     
     var value: Int {
@@ -147,6 +149,8 @@ enum ImportanceTag: String, Codable, Identifiable, Comparable {
             return 2
         }
     }
+    
+    case low, mid, high
     
     var description: String {
         switch self {
@@ -169,6 +173,7 @@ enum ImportanceTag: String, Codable, Identifiable, Comparable {
             return "高"
         }
     }
+
     
     var titleColor: Color {
         switch self {
@@ -193,7 +198,7 @@ enum ImportanceTag: String, Codable, Identifiable, Comparable {
 
 enum EventValueType: Int {
     case num
-    case time 
+    case time
     case count
     
     var description: String {
@@ -238,7 +243,40 @@ enum FinishState: String, Codable, Identifiable {
     }
 }
 
-enum TimeTab: Int, Identifiable {
+enum ProgressTimeTab: String, Identifiable {
+    var id: String {
+        switch self {
+        case .day: return "day"
+        case .week: return "week"
+        case .month: return "month"
+        case .all: return "all"
+        case .custom: return "custom"
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .day:
+            return "每天"
+        case .week:
+            return "每周"
+        case .month:
+            return "每月"
+        case .custom:
+            return "自定义"
+        case .all:
+            return "所有"
+        }
+    }
+    
+    case day
+    case week
+    case month
+    case all
+    case custom
+}
+
+enum TimeTab: String, Identifiable {
     var id: String {
         switch self {
         case .day: return "day"
@@ -261,10 +299,10 @@ enum TimeTab: Int, Identifiable {
         }
     }
     
-    case day
-    case week
-    case month
-    case all
+    case day = "day"
+    case week = "week"
+    case month = "month"
+    case all = "all"
 }
 
 enum RewardType: Int {
@@ -341,21 +379,14 @@ extension Date {
     
     var weekday: Int {
         var calendar = Calendar.current
-        calendar.firstWeekday = 2
+        calendar.firstWeekday = 1
         return calendar.component(.weekday, from: self)
     }
     
     var weekOfMonth: Int {
         var calendar = Calendar.current
-        calendar.firstWeekday = 2
+        calendar.firstWeekday = 1
         return calendar.component(.weekOfMonth, from: self)
-    }
-    
-    var weekFormatString: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "zh_CN")
-        dateFormatter.dateFormat = "E"
-        return dateFormatter.string(from: self)
     }
     
     var formatString: String {
@@ -389,8 +420,9 @@ extension Date {
     var isInThePast:   Bool { self < Date() }
     
     var firstDayOfMonth: Date {
+        let currentDate = Date()
         let calendar = Calendar.current
-        let firstDayComponents = calendar.dateComponents([.year, .month], from: self)
+        let firstDayComponents = calendar.dateComponents([.year, .month], from: currentDate)
         return calendar.date(from: firstDayComponents) ?? self
     }
 

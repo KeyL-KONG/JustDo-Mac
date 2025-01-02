@@ -72,7 +72,10 @@ struct ToDoEditView: View {
                     }
                     
                     Picker("选择标签", selection: $selectedTag) {
-                        ForEach(modelData.tagList.map({$0.title}), id: \.self) { title in
+                        ForEach(modelData.tagList.sorted(by: { first, second in
+                            let eventList = modelData.itemList
+                            return eventList.filter { $0.tag == first.id }.count > eventList.filter { $0.tag == second.id}.count
+                        }).map({$0.title}), id: \.self) { title in
                             if let tag = modelData.tagList.first(where: { $0.title == title}) {
                                 Text(tag.title).tag(tag)
                             }
@@ -268,6 +271,7 @@ struct ToDoEditView: View {
         if setPlanTime {
             selectedItem.planTime = planTime
         } else {
+            //selectedItem.disablePlanTime = true
             selectedItem.planTime = nil
         }
         if setFinishTime {

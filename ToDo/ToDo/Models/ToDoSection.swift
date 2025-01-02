@@ -9,6 +9,8 @@ import Foundation
 
 enum ToDoSection: Identifiable, CaseIterable, Hashable {
     case today
+    case review
+    case summary
     case calendar
     case project
     case unplan
@@ -22,6 +24,10 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "today"
         case .calendar:
             return "calendar"
+        case .review:
+            return "review"
+        case .summary:
+            return "summary"
         case .project:
             return "project"
         case .unplan:
@@ -41,6 +47,10 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "today"
         case .project:
             return "project"
+        case .review:
+            return "review"
+        case .summary:
+            return "summary"
         case .calendar:
             return "calendar"
         case .unplan:
@@ -60,6 +70,10 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "checklist.unchecked"
         case .calendar:
             return "calendar"
+        case .review:
+            return "tray.full.fill"
+        case .summary:
+            return "square.and.pencil.circle.fill"
         case .project:
             return "paperplane.circle.fill"
         case .unplan:
@@ -74,7 +88,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     }
     
     static var allCases: [ToDoSection] {
-        return [.today, .calendar, .project, .recent, .unplan, .all]
+        return [.today, .calendar, .review, .summary, .project, .unplan, .all]
     }
     
 }

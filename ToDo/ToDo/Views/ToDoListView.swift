@@ -22,6 +22,11 @@ struct ToDoListView: View, Equatable {
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
+    @State var selectedTask: EventTaskItem? {
+        didSet {
+            print("select task")
+        }
+    }
     
     var itemList: [EventItem] {
         return items(with: selection)
@@ -75,6 +80,8 @@ struct ToDoListView: View, Equatable {
             itemList = itemList.filter { event in
                 itemTag.id == event.tag && event.actionType == .task
             }
+        default:
+            break
         }
         return itemList.sorted { first, second in
             if first.isFinish != second.isFinish {
@@ -92,7 +99,6 @@ struct ToDoListView: View, Equatable {
         }
     }
     
-    
     var body: some View {
         if toggleRefresh {
             Text("")
@@ -108,25 +114,48 @@ struct ToDoListView: View, Equatable {
                     }
                 }
         } content: {
-            TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
-                selectItemID = item.id
-            }, timerModel: timerModel).environmentObject(modelData)
-                //.id(UUID().uuidString)
-                .onChange(of: selectItemID) { oldValue, newValue in
-                    if let item = modelData.itemList.first(where: { $0.id == newValue
-                    }) {
-                        self.selectItem = item
-                        toggleRefresh = !toggleRefresh
-                        print("select item: \(item.title)")
+            if selection == .review {
+                ReviewView(selectTaskChange: { task in
+                    self.selectedTask = task
+                })
+                    .environmentObject(modelData)
+                    .frame(minWidth: 400)
+            } else {
+                TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
+                    selectItemID = item.id
+                }, timerModel: timerModel).environmentObject(modelData)
+                    //.id(UUID().uuidString)
+                    .onChange(of: selectItemID) { oldValue, newValue in
+                        if let item = modelData.itemList.first(where: { $0.id == newValue
+                        }) {
+                            self.selectItem = item
+                            toggleRefresh = !toggleRefresh
+                            print("select item: \(item.title)")
+                        }
                     }
-                }
-                .frame(minWidth: 400)
-        } detail: {
-            ToDoEditView(selectItem: selectItem, updateEvent: {
-                //toggleRefresh.toggle()
-            }).environmentObject(modelData)
-                .id(selectItemID)
+                    .frame(minWidth: 400)
+            }
             
+        } detail: {
+            if selection == .review || selection == .summary {
+                if let selectedTask, let eventItem = modelData.itemList.first(where: { $0.id == selectedTask.id
+                }), selectedTask.type == .task {
+                    ToDoEditView(selectItem: eventItem) {
+                        
+                    }.environmentObject(modelData).id(eventItem.id)
+                } else if let selectedTask, let rewardItem = modelData.rewardList.first(where: { $0.id == selectedTask.id }), selectedTask.type == .reward {
+                    EditRewardView(selectedItem: rewardItem).environmentObject(modelData).id(rewardItem.id)
+                }
+                else {
+                    EmptyView()
+                }
+                
+            } else {
+                ToDoEditView(selectItem: selectItem, updateEvent: {
+                    //toggleRefresh.toggle()
+                }).environmentObject(modelData)
+                    .id(selectItemID)
+            }
         }
         .onAppear {
             selectItemID = itemList.first?.id ?? ""
