@@ -38,7 +38,7 @@ struct ToDoApp: App {
             .keyboardShortcut("1", modifiers: .command)
         }
         
-        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
             Button("pause") {
                 if timerModel.isTiming {
                     timerModel.pauseTimer()
