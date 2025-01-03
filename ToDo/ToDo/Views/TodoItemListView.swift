@@ -226,6 +226,7 @@ struct TodoItemListView: View {
                             }
                         } else {
                             Button {
+                                timerModel.timingItem = item
                                 timerModel.restartTimer()
                                 handleRestartEvent(item: item)
                             } label: {

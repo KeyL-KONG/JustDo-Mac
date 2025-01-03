@@ -200,6 +200,13 @@ struct ToDoEditView: View {
                 
             }
         }
+        .onChange(of: modelData.toggleToRefresh, { oldValue, newValue in
+            if let selectItem, let item = modelData.itemList.first(where: { $0.id == selectItem.id
+            }) {
+                self.intervals = item.intervals.sorted(by: { $0.end.timeIntervalSince1970 >= $1.end.timeIntervalSince1970
+                })
+            }
+        })
         .toolbar(content: {
             Spacer()
             Button("保存") {
@@ -213,7 +220,7 @@ struct ToDoEditView: View {
                 mark = selectedItem.mark
                 selectedTag = modelData.tagList.filter({ $0.id == selectedItem.tag}).first?.title ?? ""
                 importantTag = selectedItem.importance
-                intervals = selectedItem.intervals.sorted(by: { $0.start.timeIntervalSince1970 >= $1.start.timeIntervalSince1970
+                intervals = selectedItem.intervals.sorted(by: { $0.end.timeIntervalSince1970 >= $1.end.timeIntervalSince1970
                 })
                 eventType = selectedItem.eventType
                 if let planTime = selectedItem.planTime {

@@ -349,7 +349,7 @@ extension EventModel {
                 if actionType == .project {
                     totalTime += item.intervals.compactMap { $0.interval }.reduce(0, +)
                 } else {
-                    totalTime += item.itemTotalTime(with: items)
+                    totalTime += item.itemTotalTime(with: items, date: date)
                 }
             }
         }
