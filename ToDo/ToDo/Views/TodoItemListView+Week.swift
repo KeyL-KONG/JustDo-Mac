@@ -108,8 +108,7 @@ extension TodoItemListView {
                     ForEach(0..<7) { index in
                         let date = weekDates[index]
                         let dayItems = items.filter { event in
-                            guard let planTime = event.planTime else { return false }
-                            return planTime.isInSameDay(as: date)
+                            return event.intervals(with: .day, selectDate: date).count > 0
                         }
                         VStack(alignment: .leading) {
                             let unfinishItems = dayItems.filter { !$0.isFinish }

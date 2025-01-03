@@ -97,7 +97,9 @@ struct ToDoApp: App {
         let dateInterval = LQDateInterval(start: playTime, end: .now)
         item.intervals.append(dateInterval)
         item.isPlay = false
-        modelData.updateItem(item)
+        modelData.updateItem(item) {
+            self.modelData.toggleToRefresh.toggle()
+        }
     }
     
     func handleEventChange() {

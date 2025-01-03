@@ -206,7 +206,7 @@ struct EditRewardView: View {
                 title = selectedItem.title
                 mark = selectedItem.mark
                 selectedTag = modelData.tagList.filter({ $0.id == selectedItem.tag}).first?.title ?? ""
-                intervals = selectedItem.intervals.sorted(by: { $0.start.timeIntervalSince1970 >= $1.start.timeIntervalSince1970
+                intervals = selectedItem.intervals.sorted(by: { $0.end.timeIntervalSince1970 >= $1.end.timeIntervalSince1970
                 })
                 rewardType = selectedItem.rewardType
                 eventType = selectedItem.eventType

@@ -26,6 +26,8 @@ final class ModelData: ObservableObject {
     @Published var summaryModelList: [SummaryModel] = []
     @Published var summaryTagList: [SummaryTag] = []
     
+    @Published var toggleToRefresh: Bool = false
+    
     private let cache = CacheManager()
     
     var tryLoadReadTagTimes = 0
