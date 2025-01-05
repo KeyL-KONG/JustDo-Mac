@@ -34,6 +34,8 @@ struct TodoItemListView: View {
     
     @EnvironmentObject var modelData: ModelData
     @ObservedObject var timerModel: TimerModel
+
+    @State var expandedItems: Set<String> = []
     
     let recentThreshold: Int = 7
     var recentItems: [EventItem] {
@@ -110,12 +112,14 @@ struct TodoItemListView: View {
                     Section(header: Text("待规划")) {
                         ForEach(unplanItemList) { item in
                             itemRowView(item: item, showDeadline: false)
+                                .id(UUID())
                         }
                     }
                     
                     Section(header: Text("已过期")) {
                         ForEach(expiredItemList) { item in
                             itemRowView(item: item, showDeadline: true)
+                                .id(UUID())
                         }
                     }
                 }

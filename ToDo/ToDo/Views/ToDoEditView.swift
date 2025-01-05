@@ -190,9 +190,14 @@ struct ToDoEditView: View {
                             DateIntervalView(interval: interval, index: index) { change in
                                 intervals[index] = change
                             }
-                        }
-                        .onDelete { indexSet in
-                            intervals.remove(atOffsets: indexSet)
+                            .contextMenu {
+                                Button {
+                                    self.intervals.remove(at: index)
+                                    self.saveTask()
+                                } label: {
+                                    Text("删除").foregroundStyle(.red)
+                                }
+                            }
                         }
                         .id(UUID())
                     })
@@ -266,7 +271,8 @@ struct ToDoEditView: View {
             modelData.updateItem(projectItem)
         }
         
-        if let fatherItem = modelData.itemList.filter({ $0.title == selectFather }).first {
+        let selectFatherTitle = selectFather.replacingOccurrences(of: " \\(\\d+\\)", with: "", options: .regularExpression)
+        if let fatherItem = modelData.itemList.filter({ $0.title == selectFatherTitle }).first {
             selectedItem.fatherId = fatherItem.id
             fatherItem.childrenIds.append(selectedItem.id)
             modelData.updateItem(fatherItem)

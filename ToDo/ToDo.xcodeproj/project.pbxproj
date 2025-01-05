@@ -25,6 +25,8 @@
 		093E790A2D23BD57006E5120 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E79092D23BD57006E5120 /* RatingView.swift */; };
 		093E790C2D23BD7D006E5120 /* markdown.css in Resources */ = {isa = PBXBuildFile; fileRef = 093E790B2D23BD7D006E5120 /* markdown.css */; };
 		093E790E2D2572B8006E5120 /* EditRewardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E790D2D2572B8006E5120 /* EditRewardView.swift */; };
+		093E79102D295C60006E5120 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E790F2D295C60006E5120 /* AddItemView.swift */; };
+		093E79122D297ADD006E5120 /* SummaryEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E79112D297AD9006E5120 /* SummaryEditView.swift */; };
 		097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */; };
 		097A04102C6C588300521483 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040F2C6C588300521483 /* Array+Extensions.swift */; };
 		097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A04112C71ED9600521483 /* TodoItemListView+Today.swift */; };
@@ -82,6 +84,8 @@
 		093E79092D23BD57006E5120 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		093E790B2D23BD7D006E5120 /* markdown.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = markdown.css; sourceTree = "<group>"; };
 		093E790D2D2572B8006E5120 /* EditRewardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRewardView.swift; sourceTree = "<group>"; };
+		093E790F2D295C60006E5120 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
+		093E79112D297AD9006E5120 /* SummaryEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryEditView.swift; sourceTree = "<group>"; };
 		097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Month.swift"; sourceTree = "<group>"; };
 		097A040F2C6C588300521483 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		097A04112C71ED9600521483 /* TodoItemListView+Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Today.swift"; sourceTree = "<group>"; };
@@ -311,6 +315,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				093E79112D297AD9006E5120 /* SummaryEditView.swift */,
 				093E790D2D2572B8006E5120 /* EditRewardView.swift */,
 				093E79072D23A00C006E5120 /* ReviewView.swift */,
 				09F80C152C66F63200650366 /* SidebarView.swift */,
@@ -323,6 +328,7 @@
 				09FF8CD62C6A4B7800A74F55 /* TodoItemListView+Project.swift */,
 				097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */,
 				097A04112C71ED9600521483 /* TodoItemListView+Today.swift */,
+				093E790F2D295C60006E5120 /* AddItemView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -485,6 +491,7 @@
 				09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */,
 				09F80BDD2C66540F00650366 /* ContentView.swift in Sources */,
 				09F80C052C665A3F00650366 /* BaseModel.swift in Sources */,
+				093E79102D295C60006E5120 /* AddItemView.swift in Sources */,
 				09F80BFD2C665A3F00650366 /* DataManager.swift in Sources */,
 				093E78FE2D23855D006E5120 /* ModelData+ReadList.swift in Sources */,
 				093E78FF2D23855D006E5120 /* ModelData+NoteList.swift in Sources */,
@@ -517,6 +524,7 @@
 				09F80C002C665A3F00650366 /* CloudManager.swift in Sources */,
 				093E79032D2385AD006E5120 /* SummaryItem.swift in Sources */,
 				093E79042D2385AD006E5120 /* SummaryTag.swift in Sources */,
+				093E79122D297ADD006E5120 /* SummaryEditView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

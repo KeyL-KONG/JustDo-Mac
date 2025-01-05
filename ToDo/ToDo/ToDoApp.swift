@@ -29,13 +29,19 @@ struct ToDoApp: App {
                     print("main view appear")
                     modelData.loadFromServer()
                 }
-            
-//            Button("", action: {
-//                print("handle event change")
-//                self.handleEventChange()
-//            })
-//            .keyboardShortcut("1", modifiers: .command)
         }
+        
+        MenuBarExtra {
+            AddItemView()
+                .environmentObject(modelData)
+        } label: {
+//            Image(systemName: "checkmark.circle.fill")
+//                .imageScale(.large)
+//                .foregroundStyle(.tint)
+            Text("Tips").font(.largeTitle)
+        }
+        .menuBarExtraStyle(.window)
+
         
         MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
             Button("pause") {
@@ -57,7 +63,6 @@ struct ToDoApp: App {
                 timerModel.restartTimer()
                 handleRestartEvent()
             }
-            
         }
         .onChange(of: timerModel.title) { oldValue, newValue in
             self.title =  timerModel.title.isEmpty ? "无事项" : "<\(timerModel.title)> 进行中"
@@ -129,6 +134,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             print(error)
         }
+    }
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        print("did finish")
+    }
+    
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        return true
     }
     
 }
