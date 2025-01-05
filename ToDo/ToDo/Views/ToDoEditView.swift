@@ -32,7 +32,11 @@ struct ToDoEditView: View {
         return ["无"] + modelData.rewardList.filter { $0.tag == tagId }.compactMap { $0.title }
     }
     
-    @State var selectProject: String = ""
+    @State var selectProject: String = "" {
+        didSet {
+            print("select project: \(selectProject)")
+        }
+    }
     var projectListTitle: [String] {
         let tagId = modelData.tagList.filter{ $0.title == selectedTag }.first?.id ?? ""
         return ["无"] + modelData.itemList.filter { $0.tag == tagId && $0.actionType == .project}.compactMap { $0.title }

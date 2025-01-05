@@ -258,13 +258,14 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.difficultRating.rawValue, value: difficultRating.lcNumber)
         try cloudObj.set(EventModelKeys.difficultText.rawValue, value: difficultText.lcString)
         try cloudObj.set(EventModelKeys.isPlay.rawValue, value: isPlay.lcBool)
+        
+        var dates = [Date]()
         if intervals.count > 0 {
-            var dates = [Date]()
             for interval in intervals {
                 dates += [interval.start, interval.end]
             }
-            try cloudObj.set(EventModelKeys.intervals.rawValue, value: dates.lcArray)
         }
+        try cloudObj.set(EventModelKeys.intervals.rawValue, value: dates.lcArray)
         try cloudObj.set(EventModelKeys.generateId.rawValue, value: generateId.lcString)
         try cloudObj.set(EventModelKeys.rewardType.rawValue, value: rewardType.rawValue.lcNumber)
         try cloudObj.set(EventModelKeys.rewardValueType.rawValue, value: rewardValueType.rawValue.lcNumber)

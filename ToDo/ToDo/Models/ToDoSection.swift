@@ -88,7 +88,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     }
     
     static var allCases: [ToDoSection] {
-        return [.today, .calendar, .review, .summary, .project, .unplan, .all]
+        return [.today, .calendar, .review, .project, .unplan, .all]
     }
     
 }

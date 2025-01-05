@@ -40,6 +40,15 @@ extension TodoItemListView {
             
             let items = subItemList
                 .filter { $0.fatherId == parentId }
+                .sorted(by: { event1, event2 in
+                    if event1.isFinish, !event2.isFinish {
+                        return true
+                    } else if event2.isFinish, !event1.isFinish {
+                        return false
+                    } else {
+                        return event1.planTime?.timeIntervalSince1970 ?? 0 >= event2.planTime?.timeIntervalSince1970 ?? 0
+                    }
+                })
                 .compactMap { item in
                     // 递归获取当前项目的子任务
                     let subItems = buildSubItems(for: item.id)
@@ -63,6 +72,15 @@ extension TodoItemListView {
             // 获取项目的直接子任务（fatherId为空的）
             let eventItems = subItemList
                 .filter { $0.projectId == project.id && $0.fatherId.isEmpty }
+                .sorted(by: { event1, event2 in
+                    if !event1.isFinish, event2.isFinish {
+                        return true
+                    } else if !event2.isFinish, event1.isFinish {
+                        return false
+                    } else {
+                        return event1.planTime?.timeIntervalSince1970 ?? 0 >= event2.planTime?.timeIntervalSince1970 ?? 0
+                    }
+                })
                 .compactMap { event in
                     // 为每个子任务构建其子任务树
                     let subItems = buildSubItems(for: event.id)
