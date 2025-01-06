@@ -79,7 +79,7 @@ struct ReviewView: View {
     
     var tabs: [TimeTab] = [.day, .week, .month, .all]
     
-    @State var selectTaskChange: ((EventTaskItem?) -> ())
+    @State var selectTaskChange: ((BaseModel?) -> ())
     
     var body: some View {
         TabView {
@@ -214,6 +214,13 @@ struct ReviewListView: View {
         }
     }
     
+    var summaryItemList: [SummaryItem] {
+        modelData.summaryItemList.filter { item in
+            guard let createTime = item.createTime else { return false }
+            return dateInTimeTab(createTime, selectDate: selectDate, tab: timeTab)
+        }
+    }
+    
     var summaryModel: SummaryModel? {
         modelData.summaryModelList.filter { model in
             guard model.timeTab == timeTab else {
@@ -261,8 +268,8 @@ struct ReviewListView: View {
     @State private var isExpanded: Bool = true
     @State private var expandList: [Bool] = Array(repeating: true, count: 100)
     
-    @State var selectTaskChange: ((EventTaskItem?) -> ())
-    @State var selectTask: EventTaskItem? = nil
+    @State var selectTaskChange: ((BaseModel?) -> ())
+    @State var selectTask: BaseModel? = nil
     
     var body: some View {
         VStack {
@@ -321,6 +328,24 @@ struct ReviewListView: View {
                                 })
                             }
                         }
+                    }
+                }
+                
+                if summaryItemList.count > 0 {
+                    Section {
+                        ForEach(summaryItemList, id: \.self.id) { item in
+                            let selected = selectTask?.id ?? "" == item.id
+                            Text(item.content).foregroundStyle(.gray)
+                                .id(UUID())
+                                .contentShape(Rectangle())
+                                .background(selected ? .gray.opacity(0.5) : .clear)
+                                .onTapGesture {
+                                    self.selectTask = item
+                                    self.selectTaskChange(item)
+                                }
+                        }
+                    } header: {
+                        Text("感想")
                     }
                 }
                 
@@ -694,8 +719,11 @@ extension ReviewListView {
                 }
             }.contentShape(Rectangle())
                 .onTapGesture {
-                    self.selectTask = detailItem.items.first
-                    self.selectTaskChange(detailItem.items.first)
+                    if let taskId = detailItem.items.first?.id, let event = modelData.itemList.first(where: { $0.id == taskId
+                    }) {
+                        self.selectTask = event
+                        self.selectTaskChange(event)
+                    }
                 }
                 .id(UUID())
                 .background(selected ? .gray.opacity(0.5) : .clear)

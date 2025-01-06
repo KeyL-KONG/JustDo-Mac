@@ -32,7 +32,11 @@ struct ToDoEditView: View {
         return ["无"] + modelData.rewardList.filter { $0.tag == tagId }.compactMap { $0.title }
     }
     
-    @State var selectProject: String = ""
+    @State var selectProject: String = "" {
+        didSet {
+            print("select project: \(selectProject)")
+        }
+    }
     var projectListTitle: [String] {
         let tagId = modelData.tagList.filter{ $0.title == selectedTag }.first?.id ?? ""
         return ["无"] + modelData.itemList.filter { $0.tag == tagId && $0.actionType == .project}.compactMap { $0.title }
@@ -190,9 +194,14 @@ struct ToDoEditView: View {
                             DateIntervalView(interval: interval, index: index) { change in
                                 intervals[index] = change
                             }
-                        }
-                        .onDelete { indexSet in
-                            intervals.remove(atOffsets: indexSet)
+                            .contextMenu {
+                                Button {
+                                    self.intervals.remove(at: index)
+                                    self.saveTask()
+                                } label: {
+                                    Text("删除").foregroundStyle(.red)
+                                }
+                            }
                         }
                         .id(UUID())
                     })
@@ -266,7 +275,8 @@ struct ToDoEditView: View {
             modelData.updateItem(projectItem)
         }
         
-        if let fatherItem = modelData.itemList.filter({ $0.title == selectFather }).first {
+        let selectFatherTitle = selectFather.replacingOccurrences(of: " \\(\\d+\\)", with: "", options: .regularExpression)
+        if let fatherItem = modelData.itemList.filter({ $0.title == selectFatherTitle }).first {
             selectedItem.fatherId = fatherItem.id
             fatherItem.childrenIds.append(selectedItem.id)
             modelData.updateItem(fatherItem)

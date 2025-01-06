@@ -17,12 +17,12 @@ struct ToDoListView: View, Equatable {
     @State var uniqueID: String = ""
     @ObservedObject var timerModel: TimerModel
     @State private var selection: ToDoSection = .today
-    @State private var selectItem: EventItem? = nil
+    @State private var selectItem: BaseModel? = nil
     @State private var selectItemID: String = ""
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
-    @State var selectedTask: EventTaskItem? {
+    @State var selectedTask: BaseModel? {
         didSet {
             print("select task")
         }
@@ -100,11 +100,6 @@ struct ToDoListView: View, Equatable {
     }
     
     var body: some View {
-        if toggleRefresh {
-            Text("")
-        } else {
-            Text("")
-        }
         NavigationSplitView {
             SidebarView(selection: $selection, todayItems: items(with: .today)).environmentObject(modelData)
                 .onChange(of: selection) { oldValue, newValue in
@@ -131,6 +126,9 @@ struct ToDoListView: View, Equatable {
                             self.selectItem = item
                             toggleRefresh = !toggleRefresh
                             print("select item: \(item.title)")
+                        } else if let item = modelData.summaryItemList.first(where: { $0.id == newValue }) {
+                            self.selectItem = item
+                            toggleRefresh = !toggleRefresh
                         }
                     }
                     .frame(minWidth: 400)
@@ -139,22 +137,32 @@ struct ToDoListView: View, Equatable {
         } detail: {
             if selection == .review || selection == .summary {
                 if let selectedTask, let eventItem = modelData.itemList.first(where: { $0.id == selectedTask.id
-                }), selectedTask.type == .task {
+                }) {
                     ToDoEditView(selectItem: eventItem) {
-                        
+                        toggleRefresh.toggle()
                     }.environmentObject(modelData).id(eventItem.id)
-                } else if let selectedTask, let rewardItem = modelData.rewardList.first(where: { $0.id == selectedTask.id }), selectedTask.type == .reward {
+                } else if let selectedTask, let rewardItem = modelData.rewardList.first(where: { $0.id == selectedTask.id }) {
                     EditRewardView(selectedItem: rewardItem).environmentObject(modelData).id(rewardItem.id)
+                }
+                else if let selectedTask, let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectedTask.id
+                }) {
+                    SummaryEditView(summaryItem: summaryItem).id(summaryItem.id).environmentObject(modelData)
                 }
                 else {
                     EmptyView()
                 }
                 
             } else {
-                ToDoEditView(selectItem: selectItem, updateEvent: {
-                    //toggleRefresh.toggle()
-                }).environmentObject(modelData)
-                    .id(selectItemID)
+                if let eventItem = selectItem as? EventItem {
+                    ToDoEditView(selectItem: eventItem, updateEvent: {
+                        //toggleRefresh.toggle()
+                    }).environmentObject(modelData)
+                        .id(selectItemID)
+                } else if let summaryItem = selectItem as? SummaryItem {
+                    SummaryEditView(summaryItem: summaryItem)
+                        .environmentObject(modelData).id(selectItemID)
+                }
+                
             }
         }
         .onAppear {

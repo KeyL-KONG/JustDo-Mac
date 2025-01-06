@@ -41,6 +41,13 @@ extension TodoItemListView {
         }
     }
     
+    var summaryItemList: [SummaryItem] {
+        modelData.summaryItemList.filter { item in
+            guard let createDate = item.createTime else { return false }
+            return createDate.isInSameDay(as: .now)
+        }
+    }
+    
     func todayView() -> some View {
         List(selection: $selectItemID) {
             Section(header: Text("今日事项")) {
@@ -60,6 +67,18 @@ extension TodoItemListView {
                      itemRowView(item: item, showDeadline: true)
                 }
             }
+            
+            Section(header: Text("今日想法")) {
+                ForEach(summaryItemList, id: \.self.id) { item in
+                    summaryItemView(item: item)
+                }
+            }
+        }
+    }
+    
+    func summaryItemView(item: SummaryItem) -> some View {
+        HStack {
+            Text(item.content)
         }
     }
     
