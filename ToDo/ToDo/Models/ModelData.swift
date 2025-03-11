@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-typealias EventItem = EventModel
+ typealias EventItem = EventModel
 
 final class ModelData: ObservableObject {
     

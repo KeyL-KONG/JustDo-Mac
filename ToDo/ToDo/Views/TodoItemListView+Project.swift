@@ -17,6 +17,17 @@ struct TodoProjectDetailItem: Identifiable {
     }
 }
 
+struct CustomDisclosureStyle: DisclosureGroupStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading) {
+            configuration.label
+            if configuration.isExpanded {
+                configuration.content
+            }
+        }
+    }
+}
+
 extension TodoItemListView {
     
     var subItemList: [EventItem] {
@@ -108,13 +119,12 @@ extension TodoItemListView {
     
     func projectView() -> some View {
         VStack {
-            List(selection: $selectItemID) {
+            List {
                 ForEach(tagList, id: \.self) { tag in
                     let projectItems = projectItems(with: tag)
                     if projectItems.count > 0 {
                         Section(header: Text(tag.title)) {
                             ForEach(projectItems) { project in
-                                // 使用递归视图替换原来的嵌套 DisclosureGroup
                                 recursiveItemView(item: project)
                             }
                         }
@@ -194,8 +204,19 @@ extension TodoItemListView {
                         
                         projectItemRowView(item: item.item)
                     }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectItemID = item.id
+                    }
                     .padding(.leading, CGFloat(level) * 20)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(selectItemID == item.id ? Color.accentColor.opacity(0.1) : Color.clear)
+                    )
                 }
+                    .disclosureGroupStyle(CustomDisclosureStyle())
             )
         } else {
             return AnyView(
@@ -207,6 +228,16 @@ extension TodoItemListView {
                     projectItemRowView(item: item.item)
                 }
                 .padding(.leading, CGFloat(level) * 20)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    selectItemID = item.id
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(selectItemID == item.id ? Color.accentColor.opacity(0.1) : Color.clear)
+                )
             )
         }
     }
