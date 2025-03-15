@@ -25,6 +25,7 @@ final class ModelData: ObservableObject {
     @Published var summaryItemList: [SummaryItem] = []
     @Published var summaryModelList: [SummaryModel] = []
     @Published var summaryTagList: [SummaryTag] = []
+    @Published var taskTimeItems: [TaskTimeItem] = []
     
     @Published var toggleToRefresh: Bool = false
     
@@ -36,6 +37,58 @@ final class ModelData: ObservableObject {
     
     var tryLoadSummaryTimes = 0
     
+    public func loadTimeItems(_ completion: (() -> ())? = nil) {
+        cache.asyncLoadCache(type: .timeItem) { items in
+            if let events = items as? [TaskTimeItem], self.taskTimeItems.isEmpty {
+                self.taskTimeItems = events
+                print("load events from cache: \(items.count)")
+                completion?()
+            }
+        }
+        DataManager.shared.query(type: TaskTimeItem.self) { [weak self] items, error in
+            let callCompletion = self?.taskTimeItems.isEmpty ?? false
+            if let items = items, items.count > 0 {
+                self?.taskTimeItems = items.reduce([], { partialResult, model in
+                    return partialResult.contains { $0.id == model.id } ? partialResult : partialResult + [model]
+                })
+                self?.cache.asyncStoreCache(type: .timeItem, items: self?.taskTimeItems ?? [])
+            }
+            if callCompletion {
+                completion?()
+            }
+        }
+    }
+    
+    public func updateTimeItem(_ item: TaskTimeItem, completion: (() -> ())? = nil) {
+        if let index = taskTimeItems.firstIndex(where: { $0.id == item.id }) {
+            taskTimeItems[index] = item
+        } else {
+            taskTimeItems.append(item)
+        }
+        saveTimeItemToServer(items: [item]) { error in
+            completion?()
+        }
+    }
+    
+    func saveTimeItemToServer(items: [TaskTimeItem], completion: ((Error?) -> ())? = nil) {
+        DataManager.shared.save(with: TaskTimeItem.modelClassName(), models: items) { error in
+            if let error = error {
+                print(error)
+            }
+            completion?(error)
+        }
+    }
+    
+    public func deleteTimeItem(_ item: TaskTimeItem) {
+        guard let index = taskTimeItems.firstIndex(where: { $0.id == item.id }) else { return }
+        taskTimeItems.remove(at: index)
+        DataManager.shared.delete(models: [item]) { error in
+            if let error = error {
+                print(error)
+            }
+        }
+    }
+
     public func saveItem(_ item: EventItem) {
         if itemList.contains(where: { $0.id == item.id || $0.generateId == item.generateId }) {
             return
@@ -104,8 +157,10 @@ final class ModelData: ObservableObject {
     
     func loadMainData(completion: (() -> ())? = nil) {
         loadReward {
-            self.loadEvent {
-                completion?()
+            self.loadTimeItems {
+                self.loadEvent {
+                    completion?()
+                }
             }
         }
     }

@@ -63,6 +63,13 @@ struct ToDoEditView: View {
     
     @State var isEdit: Bool = true
     
+    var taskTimeItems: [TaskTimeItem] {
+        modelData.taskTimeItems.filter { item in
+            guard let selectItem else { return false }
+            return item.eventId == selectItem.id
+        }
+    }
+    
     var body: some View {
         VStack {
             List {
@@ -151,61 +158,65 @@ struct ToDoEditView: View {
                     }
                     
                 })
+
                 
-                Section(header: HStack(content: {
-                    Text("备注")
-                    Spacer()
-                    Button("\(isEdit ? "预览" : "编辑")") {
-                        self.isEdit = !self.isEdit
-                        if !self.isEdit {
-                            self.saveTask()
+                
+Section(header:
+                    HStack(alignment: .center) {
+                        Text("时间记录")
+                        Spacer()
+                        Button {
+                            let item = TaskTimeItem(startTime: .now, endTime: .now, content: "新记录")
+                            item.eventId = selectItem?.id ?? ""
+                            modelData.updateTimeItem(item)
+                        } label: {
+                            Text("添加记录").font(.system(size: 14))
                         }
                     }
-                })) {
-                    if isEdit {
-                        TextEditor(text: $mark)
-                            .font(.system(size: 14))
-                            .padding(5)
-                            .scrollContentBackground(.hidden)
-                            .background(Color.init(hex: "#D6EAF8"))
-                            .frame(minHeight: 100)
-                            .cornerRadius(8)
-                    } else {
-                        MarkdownWebView(mark)
-                    }
-                }
-                
-                //if intervals.count > 0 {
-                    Section(header:
-                        HStack(alignment: .center) {
-                            Text("统计时间")
-                            Spacer()
-                            Button {
-                                let interval = LQDateInterval(start: .now, end: .now)
-                                self.intervals = [interval] + intervals
-                                print("add time interval")
-                            } label: {
-                                Text("添加时间").font(.system(size: 14))
-                            }
-                        }
-                    , content: {
-                        ForEach(intervals.indices, id: \.self) { index in
-                            let interval = intervals[index]
-                            DateIntervalView(interval: interval, index: index) { change in
-                                intervals[index] = change
-                            }
+                ) {
+                    ForEach(taskTimeItems) { item in
+                        TimeLineRowView(item: item)
                             .contextMenu {
-                                Button {
-                                    self.intervals.remove(at: index)
-                                    self.saveTask()
+                                Button(role: .destructive) {
+                                    modelData.deleteTimeItem(item)
                                 } label: {
-                                    Text("删除").foregroundStyle(.red)
+                                    Label("删除", systemImage: "trash")
                                 }
                             }
-                        }
-                        .id(UUID())
-                    })
-                //}
+                    }
+                }
+//                
+//                //if intervals.count > 0 {
+//                    Section(header:
+//                        HStack(alignment: .center) {
+//                            Text("统计时间")
+//                            Spacer()
+//                            Button {
+//                                let interval = LQDateInterval(start: .now, end: .now)
+//                                self.intervals = [interval] + intervals
+//                                print("add time interval")
+//                            } label: {
+//                                Text("添加时间").font(.system(size: 14))
+//                            }
+//                        }
+//                    , content: {
+//                        ForEach(intervals.indices, id: \.self) { index in
+//                            let interval = intervals[index]
+//                            DateIntervalView(interval: interval, index: index) { change in
+//                                intervals[index] = change
+//                            }
+//                            .contextMenu {
+//                                Button {
+//                                    self.intervals.remove(at: index)
+//                                    self.saveTask()
+//                                } label: {
+//                                    Text("删除").foregroundStyle(.red)
+//                                }
+//                            }
+//                        }
+//                        .id(UUID())
+//                    })
+//                //}
                 
             }
         }

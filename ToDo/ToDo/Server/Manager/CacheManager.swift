@@ -14,6 +14,7 @@ struct CacheManager {
         case reward
         case event
         case wish
+        case timeItem
         
         var cacheKey: String {
             switch self {
@@ -25,6 +26,8 @@ struct CacheManager {
                 return "com.cache.event"
             case .wish:
                 return "com.cache.wish"
+            case .timeItem:
+                return "com.cache.timitem"
             }
         }
         
@@ -38,6 +41,8 @@ struct CacheManager {
                 return EventModel.self
             case .wish:
                 return WishModel.self
+            case .timeItem:
+                return TaskTimeItem.self
             }
         }
     }

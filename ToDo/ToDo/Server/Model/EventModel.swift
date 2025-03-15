@@ -70,6 +70,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var projectId: String = ""
     var fatherId: String = ""
     var childrenIds: [String] = []
+    var taskIds: [String] = []
     
     // 废弃字段
     var finishState: FinishState = .normal
@@ -117,6 +118,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.actionType = EventActionType(rawValue: try container.decode(String.self, forKey: .actionType)) ?? .task
         self.fatherId = try container.decode(String.self, forKey: .fatherId)
         self.childrenIds = try container.decode([String].self, forKey: .childrenIds).uniqueArray
+        self.taskIds = try container.decode([String].self, forKey: .taskIds).uniqueArray
         self.projectId = try container.decode(String.self, forKey: .projectId)
         self.setPlanTime = try container.decode(Bool.self, forKey: .setPlanTime)
     }
@@ -152,6 +154,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(actionType.rawValue, forKey: .actionType)
         try container.encode(fatherId, forKey: .fatherId)
         try container.encode(childrenIds.uniqueArray, forKey: .childrenIds)
+        try container.encode(taskIds.uniqueArray, forKey: .taskIds)
         try container.encode(projectId, forKey: .projectId)
         try container.encode(setPlanTime, forKey: .setPlanTime)
     }
@@ -235,6 +238,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.actionType = EventActionType(rawValue: cloudObj.get(EventModelKeys.actionType.rawValue)?.stringValue ?? "") ?? .task
         self.fatherId = cloudObj.get(EventModelKeys.fatherId.rawValue)?.stringValue ?? ""
         self.childrenIds = (cloudObj.get(EventModelKeys.childrenIds.rawValue)?.arrayValue as? [String] ?? []).uniqueArray
+        self.taskIds = (cloudObj.get(EventModelKeys.taskIds.rawValue)?.arrayValue as? [String] ?? []).uniqueArray
         self.projectId = cloudObj.get(EventModelKeys.projectId.rawValue)?.stringValue ?? ""
         self.setPlanTime = cloudObj.get(EventModelKeys.setPlanTime.rawValue)?.boolValue ?? false
     }
@@ -280,6 +284,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.actionType.rawValue, value: actionType.rawValue.lcString)
         try cloudObj.set(EventModelKeys.fatherId.rawValue, value: fatherId.stringValue)
         try cloudObj.set(EventModelKeys.childrenIds.rawValue, value: childrenIds.uniqueArray.lcArray)
+        try cloudObj.set(EventModelKeys.taskIds.rawValue, value: taskIds.uniqueArray.lcArray)
         try cloudObj.set(EventModelKeys.projectId.rawValue, value: projectId.lcString)
         try cloudObj.set(EventModelKeys.setPlanTime.rawValue, value: setPlanTime.lcBool)
     }
@@ -331,6 +336,7 @@ extension EventModel {
         case actionType
         case fatherId
         case childrenIds
+        case taskIds
         case projectId
     }
     

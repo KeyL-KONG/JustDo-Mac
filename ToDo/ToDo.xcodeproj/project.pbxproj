@@ -30,6 +30,8 @@
 		097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */; };
 		097A04102C6C588300521483 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040F2C6C588300521483 /* Array+Extensions.swift */; };
 		097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A04112C71ED9600521483 /* TodoItemListView+Today.swift */; };
+		09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */; };
+		09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714602D85D318009DB18E /* TimeLineRowView.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -89,6 +91,8 @@
 		097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Month.swift"; sourceTree = "<group>"; };
 		097A040F2C6C588300521483 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		097A04112C71ED9600521483 /* TodoItemListView+Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Today.swift"; sourceTree = "<group>"; };
+		09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTimeItem.swift; sourceTree = "<group>"; };
+		09D714602D85D318009DB18E /* TimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineRowView.swift; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -284,6 +288,7 @@
 		09F80BF42C665A3F00650366 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */,
 				093E79002D23858E006E5120 /* Summary */,
 				093E78F92D238533006E5120 /* Read */,
 				093E78F42D23852D006E5120 /* Note */,
@@ -315,6 +320,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				09D714602D85D318009DB18E /* TimeLineRowView.swift */,
 				093E79112D297AD9006E5120 /* SummaryEditView.swift */,
 				093E790D2D2572B8006E5120 /* EditRewardView.swift */,
 				093E79072D23A00C006E5120 /* ReviewView.swift */,
@@ -495,6 +501,7 @@
 				09F80BFD2C665A3F00650366 /* DataManager.swift in Sources */,
 				093E78FE2D23855D006E5120 /* ModelData+ReadList.swift in Sources */,
 				093E78FF2D23855D006E5120 /* ModelData+NoteList.swift in Sources */,
+				09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */,
 				09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */,
 				097A04102C6C588300521483 /* Array+Extensions.swift in Sources */,
 				09F80C162C66F63200650366 /* SidebarView.swift in Sources */,
@@ -510,6 +517,7 @@
 				09F80BEC2C665A3100650366 /* EventItem.swift in Sources */,
 				09F80C032C665A3F00650366 /* EventModel.swift in Sources */,
 				09F80C112C665A5B00650366 /* Date+Extensions.swift in Sources */,
+				09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */,
 				09F80C022C665A3F00650366 /* ItemTag.swift in Sources */,
 				09F80BFF2C665A3F00650366 /* CacheManager.swift in Sources */,
 				093E78F52D23852D006E5120 /* TagModel.swift in Sources */,
