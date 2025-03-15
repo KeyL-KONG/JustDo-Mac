@@ -35,15 +35,12 @@ struct ToDoApp: App {
             AddItemView()
                 .environmentObject(modelData)
         } label: {
-//            Image(systemName: "checkmark.circle.fill")
-//                .imageScale(.large)
-//                .foregroundStyle(.tint)
             Text("Tips").font(.largeTitle)
         }
         .menuBarExtraStyle(.window)
 
         
-        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
             Button("pause") {
                 if timerModel.isTiming {
                     timerModel.pauseTimer()
