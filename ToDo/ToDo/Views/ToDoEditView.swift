@@ -63,75 +63,91 @@ struct ToDoEditView: View {
     
     @State var isEdit: Bool = true
     
+    @State var isExpandType: Bool = false
+    
     var taskTimeItems: [TaskTimeItem] {
         modelData.taskTimeItems.filter { item in
             guard let selectItem else { return false }
             return item.eventId == selectItem.id
-        }
+        }.sorted(by: {
+            $0.startTime.timeIntervalSince1970 > $1.startTime.timeIntervalSince1970
+        })
     }
     
     var body: some View {
         VStack {
             List {
-                Section {
+                
+                Section(header: HStack {
+                    Text("事项类型")
+                    Spacer()
+                    Button {
+                        isExpandType = !isExpandType
+                    } label: {
+                        let image = isExpandType ? "chevron.down" : "chevron.right"
+                        Image(systemName: image)
+                    }
+                }, content: {
                     TextField("任务标题", text: $titleText)
                     
-                    Picker("选择类型", selection: $actionType) {
-                        ForEach(actionList, id: \.self) { type in
-                            Text(type.title).tag(type)
+                    if isExpandType {
+                        Picker("选择类型", selection: $actionType) {
+                            ForEach(actionList, id: \.self) { type in
+                                Text(type.title).tag(type)
+                            }
                         }
-                    }
-                    
-                    Picker("选择标签", selection: $selectedTag) {
-                        ForEach(modelData.tagList.sorted(by: { first, second in
-                            let eventList = modelData.itemList
-                            return eventList.filter { $0.tag == first.id }.count > eventList.filter { $0.tag == second.id}.count
-                        }).map({$0.title}), id: \.self) { title in
-                            if let tag = modelData.tagList.first(where: { $0.title == title}) {
-                                Text(tag.title).tag(tag)
+                        
+                        Picker("选择标签", selection: $selectedTag) {
+                            ForEach(modelData.tagList.sorted(by: { first, second in
+                                let eventList = modelData.itemList
+                                return eventList.filter { $0.tag == first.id }.count > eventList.filter { $0.tag == second.id}.count
+                            }).map({$0.title}), id: \.self) { title in
+                                if let tag = modelData.tagList.first(where: { $0.title == title}) {
+                                    Text(tag.title).tag(tag)
+                                }
+                            }
+                        }
+                        
+                        if projectListTitle.count > 1 {
+                            Picker("选择项目", selection: $selectProject) {
+                                ForEach(projectListTitle, id: \.self) { projectTitle in
+                                    Text(projectTitle).tag(projectTitle)
+                                }
+                            }
+                        }
+                        
+                        if fatherListTitle.count > 1 {
+                            Picker("选择父任务", selection: $selectFather) {
+                                ForEach(fatherListTitle, id: \.self) { fatherTitle in
+                                    Text(fatherTitle).tag(fatherTitle)
+                                }
+                            }
+                        }
+                        
+                        Picker("选择优先级", selection: $importantTag) {
+                            ForEach(importanceList, id: \.self) { tag in
+                                Text(tag.description).tag(tag)
+                            }
+                        }
+                        
+                        Picker("选择事项类型", selection: $eventType) {
+                            ForEach(eventTypeList, id: \.self) { type in
+                                Text(type.description).tag(type)
+                            }
+                        }
+                        
+                        Picker("选择积分事项", selection: $selectReward) {
+                            ForEach(rewardListTitle, id: \.self) { rewardTitle in
+                                Text(rewardTitle).tag(rewardTitle)
                             }
                         }
                     }
                     
-                    if projectListTitle.count > 1 {
-                        Picker("选择项目", selection: $selectProject) {
-                            ForEach(projectListTitle, id: \.self) { projectTitle in
-                                Text(projectTitle).tag(projectTitle)
-                            }
-                        }
-                    }
-                    
-                    if fatherListTitle.count > 1 {
-                        Picker("选择父任务", selection: $selectFather) {
-                            ForEach(fatherListTitle, id: \.self) { fatherTitle in
-                                Text(fatherTitle).tag(fatherTitle)
-                            }
-                        }
-                    }
-                    
-                    Picker("选择优先级", selection: $importantTag) {
-                        ForEach(importanceList, id: \.self) { tag in
-                            Text(tag.description).tag(tag)
-                        }
-                    }
-                    
-                    Picker("选择事项类型", selection: $eventType) {
-                        ForEach(eventTypeList, id: \.self) { type in
-                            Text(type.description).tag(type)
-                        }
-                    }
-                    
-                    Picker("选择积分事项", selection: $selectReward) {
-                        ForEach(rewardListTitle, id: \.self) { rewardTitle in
-                            Text(rewardTitle).tag(rewardTitle)
-                        }
-                    }
                     
                     Toggle(isOn: $isFinish) {
                         Text("是否已完成")
                     }
-                    
-                }
+                })
                 
                 Section(header: Text("设置时间"), content: {
                     HStack {
@@ -161,7 +177,7 @@ struct ToDoEditView: View {
                 
                 Section(header:
                     HStack(alignment: .center) {
-                        Text("时间记录")
+                        Text("事件记录")
                         Spacer()
                         Button {
                             let item = TaskTimeItem(startTime: .now, endTime: .now, content: "新记录")

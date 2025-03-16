@@ -20,14 +20,36 @@ struct ToDoApp: App {
     
     @State var title: String = "无事项"
     
+    // 新增状态属性
+    @State private var showStopAlert = false
+    @State private var eventContent = ""
+    @State private var pendingItem: (item: EventItem, playTime: Date)?
+    
+    // 新增窗口场景
     var body: some Scene {
-        
         WindowGroup {
             EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel))
                 .environmentObject(modelData)
                 .onAppear {
                     print("main view appear")
                     modelData.loadFromServer()
+                }
+                .alert("编辑事件内容", isPresented: $showStopAlert) {
+                    TextField("请输入内容...", text: $eventContent)
+                    Button("取消", role: .cancel) {
+                        pendingItem = nil
+                        downWindow()
+                    }
+                    Button("确定") {
+                        downWindow()
+                        if let pendingItem {
+                            let taskItem = TaskTimeItem(startTime: pendingItem.playTime, endTime: .now, content: eventContent)
+                            taskItem.eventId = pendingItem.item.id
+                            modelData.updateTimeItem(taskItem)
+                        }
+                    }
+                } message: {
+                    Text("")
                 }
         }
         
@@ -89,32 +111,21 @@ struct ToDoApp: App {
     }
     
     func handleStopEvent() {
-        guard let item = timerModel.timingItem, let playTime = item.playTime else {
-            return
-        }
-        let interval = Int(Date.now.timeIntervalSince1970 - playTime.timeIntervalSince1970)
-        if interval < 60 {
-            return
-        }
-        let dateInterval = LQDateInterval(start: playTime, end: .now)
-        item.intervals.append(dateInterval)
-        item.isPlay = false
-        modelData.updateItem(item) {
-            self.modelData.toggleToRefresh.toggle()
-        }
+        guard let item = timerModel.timingItem, let playTime = item.playTime else { return }
+        pendingItem = (item, playTime)
+        timerModel.stopTimer()
+        showStopAlert.toggle()
+        // 打开新窗口
+        NSApp.activate(ignoringOtherApps: true)
+        let window = NSApp.windows.first
+        window?.level = .floating
+        window?.makeKeyAndOrderFront(nil)
     }
     
-    func handleEventChange() {
-        guard let item = timerModel.timingItem else {
-             return
-        }
-        if item.isPlay {
-            handleStopEvent()
-        } else {
-            handleRestartEvent()
-        }
+    func downWindow() {
+        let window = NSApp.windows.first
+        window?.level = .normal
     }
-    
 }
 
 #if os(macOS)

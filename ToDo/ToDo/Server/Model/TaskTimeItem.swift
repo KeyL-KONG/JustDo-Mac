@@ -7,6 +7,10 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
     var content: String = ""
     var eventId: String = ""
     
+    var interval: Int {
+        Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970)
+    }
+    
     enum TaskTimeKeys: String {
         case startTime
         case endTime

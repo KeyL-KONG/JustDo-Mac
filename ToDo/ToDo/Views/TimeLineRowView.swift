@@ -36,6 +36,10 @@ struct TimeLineRowView: View {
                     Text(item.startTime.simpleDateStr)
                     Text("-")
                     Text(item.endTime.simpleDateStr)
+                    if item.interval > 0 {
+                        Text("(\(item.interval.simpleTimeStr))")
+                    }
+                    
                     Spacer()
                     Button("编辑") {
                         isEditing = true
@@ -47,10 +51,10 @@ struct TimeLineRowView: View {
             if isEditing {
                 TextEditor(text: $item.content)
                     .font(.system(size: 14))
-                    .padding(5)
+                    .padding(10)
                     .scrollContentBackground(.hidden)
-                    .background(Color.init(hex: "#D6EAF8"))
-                    .frame(minHeight: 80)
+                    .background(Color.init(hex: "#e8f6f3"))
+                    .frame(minHeight: 120)
                     .cornerRadius(8)
             } else {
                 MarkdownWebView(item.content)
@@ -58,7 +62,7 @@ struct TimeLineRowView: View {
             
         }
         .padding()
-        .background(isEditing ? Color(.gray).opacity(0.5) : Color(.gray).opacity(0.7))
+        .background(isEditing ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
         .cornerRadius(10)
     }
     

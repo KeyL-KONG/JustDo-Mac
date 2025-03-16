@@ -29,9 +29,9 @@ struct ToDoItemRowView: View {
     var totalTime: Int {
         if let item = self.item as? EventItem {
             if selection == .today || selection == .calendar {
-                return item.itemTotalTime(with: modelData.itemList, date: date)
+                return item.itemTotalTime(with: modelData.itemList, taskItems: modelData.taskTimeItems, taskId: item.id, date: date)
             }
-            return item.itemTotalTime(with: modelData.itemList)
+            return item.itemTotalTime(with: modelData.itemList, taskItems: modelData.taskTimeItems, taskId: item.id)
         } else if let reward = self.item as? RewardModel {
             return reward.totalTime(with: .day, intervals: reward.intervals, selectDate: date)
         } else {
