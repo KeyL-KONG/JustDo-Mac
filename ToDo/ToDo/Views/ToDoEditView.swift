@@ -158,10 +158,8 @@ struct ToDoEditView: View {
                     }
                     
                 })
-
                 
-                
-Section(header:
+                Section(header:
                     HStack(alignment: .center) {
                         Text("时间记录")
                         Spacer()
@@ -175,14 +173,24 @@ Section(header:
                     }
                 ) {
                     ForEach(taskTimeItems) { item in
-                        TimeLineRowView(item: item)
-                            .contextMenu {
-                                Button(role: .destructive) {
-                                    modelData.deleteTimeItem(item)
-                                } label: {
-                                    Label("删除", systemImage: "trash")
+                        TimeLineRowView(
+                            item: item,
+                            isEditing: Binding(
+                                get: { return modelData.isEditing(id: item.id) },
+                                set: { value in
+                                    modelData.markEdit(id: item.id, edit: value)
                                 }
+                            )
+                        )
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                // 添加删除确认弹窗
+                                modelData.deleteTimeItem(item)
+                            } label: {
+                                Text("删除").foregroundColor(.red)
                             }
+                
+                        }
                     }
                 }
 //                
@@ -235,6 +243,7 @@ Section(header:
         })
         .onAppear {
             print("edit view appear")
+            modelData.removeEditStates()
             if let selectedItem = selectItem {
                 titleText = selectedItem.title
                 mark = selectedItem.mark

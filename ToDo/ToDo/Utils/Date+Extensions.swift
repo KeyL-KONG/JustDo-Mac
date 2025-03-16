@@ -113,9 +113,9 @@ extension Date {
     }
     
     var simpleDateStr: String {
-        if isToday {
-            return format("HH:mm")
-        }
+//        if isToday {
+//            return format("HH:mm")
+//        }
         return format("MM-dd HH:mm")
     }
     

@@ -32,6 +32,7 @@
 		097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A04112C71ED9600521483 /* TodoItemListView+Today.swift */; };
 		09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */; };
 		09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714602D85D318009DB18E /* TimeLineRowView.swift */; };
+		09D714632D865F34009DB18E /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714622D865F2F009DB18E /* StateManager.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -93,6 +94,7 @@
 		097A04112C71ED9600521483 /* TodoItemListView+Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Today.swift"; sourceTree = "<group>"; };
 		09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTimeItem.swift; sourceTree = "<group>"; };
 		09D714602D85D318009DB18E /* TimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineRowView.swift; sourceTree = "<group>"; };
+		09D714622D865F2F009DB18E /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 		09F80BEF2C665A3F00650366 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				09D714622D865F2F009DB18E /* StateManager.swift */,
 				09F80BF02C665A3F00650366 /* DataManager.swift */,
 				09F80BF12C665A3F00650366 /* UserManager.swift */,
 				09F80BF22C665A3F00650366 /* CacheManager.swift */,
@@ -522,6 +525,7 @@
 				09F80BFF2C665A3F00650366 /* CacheManager.swift in Sources */,
 				093E78F52D23852D006E5120 /* TagModel.swift in Sources */,
 				093E78F62D23852D006E5120 /* NoteModel.swift in Sources */,
+				09D714632D865F34009DB18E /* StateManager.swift in Sources */,
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
 				093E79062D2385B4006E5120 /* ModelData+Summary.swift in Sources */,
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,

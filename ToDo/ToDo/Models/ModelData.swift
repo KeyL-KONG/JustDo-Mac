@@ -9,8 +9,8 @@ import SwiftUI
 
  typealias EventItem = EventModel
 
-final class ModelData: ObservableObject {
-    
+class ModelData: ObservableObject {
+    @Published var editStates: [String: Bool] = [:]
     @Published var itemList: [EventItem] = []
     @Published var goalList: [GoalModel] = []
     @Published var wishList: [WishModel] = []
@@ -437,6 +437,21 @@ extension ModelData {
     
 }
 
+// MARK: state
+extension ModelData {
+    func isEditing(id: String) -> Bool {
+        return editStates[id] ?? false
+    }
+    
+    func markEdit(id: String, edit: Bool) {
+        editStates[id] = edit
+    }
+    
+    func removeEditStates() {
+        editStates.removeAll()
+    }
+}
+
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data
 
@@ -518,3 +533,5 @@ func saveItems(_ items: [EventItem]) {
     }
     UserDefaults.standard.set(jsonArray, forKey: Keys.items)
 }
+
+
