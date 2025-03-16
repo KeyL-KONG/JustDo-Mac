@@ -108,14 +108,14 @@ extension TodoItemListView {
                     ForEach(0..<7) { index in
                         let date = weekDates[index]
                         let dayItems = items.filter { event in
-                            return event.intervals(with: .day, selectDate: date).count > 0
+                            return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0
                         }
                         VStack(alignment: .leading) {
                             let unfinishItems = dayItems.filter { !$0.isFinish }
                             let finishItems = dayItems.filter { $0.isFinish }
                             
                             let rewardItems = modelData.rewardList.filter { reward in
-                                return reward.intervals.contains { $0.end.isInSameDay(as: date)
+                                return reward.intervals.contains { $0.start.isInSameDay(as: date)
                                 }
                             }
                             

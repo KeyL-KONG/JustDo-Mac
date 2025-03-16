@@ -74,6 +74,10 @@ struct ToDoEditView: View {
         })
     }
     
+    var taskTotalTime: Int {
+        taskTimeItems.compactMap { $0.interval}.reduce(0, +)
+    }
+    
     var body: some View {
         VStack {
             List {
@@ -178,6 +182,7 @@ struct ToDoEditView: View {
                 Section(header:
                     HStack(alignment: .center) {
                         Text("事件记录")
+                        Text("\(taskTotalTime.simpleTimeStr)")
                         Spacer()
                         Button {
                             let item = TaskTimeItem(startTime: .now, endTime: .now, content: "新记录")

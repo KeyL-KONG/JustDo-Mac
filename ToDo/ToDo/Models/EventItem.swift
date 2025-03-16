@@ -45,6 +45,12 @@ extension EventItem {
         intervals.filter { dateInTimeTab($0.start, tab: tab, selectDate: selectDate)}
     }
     
+    func timeTasks(with tab: TimeTab, tasks: [TaskTimeItem], selectDate: Date = .now) -> [TaskTimeItem] {
+        return tasks.filter { item in
+            return item.eventId == self.id && dateInTimeTab(item.startTime, tab: tab, selectDate: selectDate)
+        }
+    }
+    
     func summaryScore(with tabType: TimeTab) -> Int {
         switch eventType {
         case .num:
