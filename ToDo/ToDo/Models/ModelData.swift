@@ -11,11 +11,23 @@ import SwiftUI
 
 class ModelData: ObservableObject {
     @Published var editStates: [String: Bool] = [:]
-    @Published var itemList: [EventItem] = []
+    @Published var itemList: [EventItem] = [] {
+        didSet {
+            print("set itemlist: \(itemList.count)")
+        }
+    }
     @Published var goalList: [GoalModel] = []
     @Published var wishList: [WishModel] = []
-    @Published var rewardList: [RewardModel] = []
-    @Published var tagList: [ItemTag] = []
+    @Published var rewardList: [RewardModel] = [] {
+        didSet {
+            print("set rewardlist: \(rewardList.count)")
+        }
+    }
+    @Published var tagList: [ItemTag] = [] {
+        didSet {
+            print("set taglist: \(tagList.count)")
+        }
+    }
     
     @Published var readList: [ReadModel] = []
     @Published var readTagList: [ReadTag] = []
@@ -46,16 +58,16 @@ class ModelData: ObservableObject {
             }
         }
         DataManager.shared.query(type: TaskTimeItem.self) { [weak self] items, error in
-            let callCompletion = self?.taskTimeItems.isEmpty ?? false
+            //let callCompletion = self?.taskTimeItems.isEmpty ?? false
             if let items = items, items.count > 0 {
                 self?.taskTimeItems = items.reduce([], { partialResult, model in
                     return partialResult.contains { $0.id == model.id } ? partialResult : partialResult + [model]
                 })
                 self?.cache.asyncStoreCache(type: .timeItem, items: self?.taskTimeItems ?? [])
             }
-            if callCompletion {
+            //if callCompletion {
                 completion?()
-            }
+            //}
         }
     }
     
