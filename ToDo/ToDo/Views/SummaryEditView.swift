@@ -13,24 +13,28 @@ struct SummaryEditView: View {
     var summaryItem: SummaryItem
     @State var summaryContent: String = ""
     
+    @State var isEditing: Bool = true
+    
     var body: some View {
         VStack {
             List {
                 Section {
-                    ZStack(alignment: .topLeading) {
+                    if isEditing {
                         TextEditor(text: $summaryContent)
                             .font(.system(size: 14))
-                        
-                        if summaryContent.isEmpty {
-                            Text("在这里快速添加新的感想")
-                                .foregroundColor(Color(.placeholderTextColor))
-                                .padding(.top, 1)
-                                .padding(.leading, 5)
-                                .allowsHitTesting(false)
-                        }
+                            .padding(10)
+                            .scrollContentBackground(.hidden)
+                            .background(Color.init(hex: "#e8f6f3"))
+                            .frame(minHeight: 120)
+                            .cornerRadius(8)
+                    } else {
+                        Text(summaryContent)
+                            .background(Color.init(hex: "#d6eaf8"))
+                            .cornerRadius(8)
+                            .padding(10)
+                            .frame(minHeight: 120)
+                    
                     }
-                    .border(.blue, width: 1)
-                    .frame(minHeight: 100)
                 }
             }
         }.onAppear {
@@ -38,8 +42,11 @@ struct SummaryEditView: View {
         }
         .toolbar(content: {
             Spacer()
-            Button("保存") {
-                saveSummaryItem()
+            let text = isEditing ? "保存" : "编辑"
+            Button(text) {
+                if isEditing {
+                    saveSummaryItem()
+                }
             }.foregroundColor(.blue)
         })
     }

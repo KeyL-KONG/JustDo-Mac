@@ -50,27 +50,74 @@ extension TodoItemListView {
     
     func todayView() -> some View {
         List(selection: $selectItemID) {
-            Section(header: Text("今日事项")) {
-                ForEach(todayItems, id: \.self.id) { item in
-                     itemRowView(item: item, showDeadline: false)
+            Section(header: 
+                HStack {
+                    Text("今日事项")
+                    Spacer()
+                    Button(action: { isTodayExpanded.toggle() }) {
+                        Image(systemName: isTodayExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isTodayExpanded {
+                    ForEach(todayItems, id: \.self.id) { item in
+                        itemRowView(item: item, showDeadline: false)
+                    }
                 }
             }
             
-            Section(header: Text("即将截止")) {
-                ForEach(recentItems, id: \.self.id) { item in
-                     itemRowView(item: item, showDeadline: true)
+            Section(header:
+                HStack {
+                    Text("即将截止")
+                    Spacer()
+                    Button(action: { isDeadlineExpanded.toggle() }) {
+                        Image(systemName: isDeadlineExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isDeadlineExpanded {
+                    ForEach(recentItems, id: \.self.id) { item in
+                        itemRowView(item: item, showDeadline: true)
+                    }
                 }
             }
             
-            Section(header: Text("已过期")) {
-                ForEach(expiredItems, id: \.self.id) { item in
-                     itemRowView(item: item, showDeadline: true)
+            Section(header:
+                HStack {
+                    Text("已过期")
+                    Spacer()
+                    Button(action: { isExpiredExpanded.toggle() }) {
+                        Image(systemName: isExpiredExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isExpiredExpanded {
+                    ForEach(expiredItems, id: \.self.id) { item in
+                        itemRowView(item: item, showDeadline: true)
+                    }
                 }
             }
             
-            Section(header: Text("今日想法")) {
-                ForEach(summaryItemList, id: \.self.id) { item in
-                    summaryItemView(item: item)
+            Section(header:
+                HStack {
+                    Text("今日想法")
+                    Spacer()
+                    Button(action: { isSummaryExpanded.toggle() }) {
+                        Image(systemName: isSummaryExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isSummaryExpanded {
+                    ForEach(summaryItemList, id: \.self.id) { item in
+                        summaryItemView(item: item)
+                            .contextMenu {
+                                Button {
+                                    modelData.deleteSummaryItem(item)
+                                } label: {
+                                    Text("delete").foregroundStyle(.red)
+                                }
+                            }
+                    }
                 }
             }
         }

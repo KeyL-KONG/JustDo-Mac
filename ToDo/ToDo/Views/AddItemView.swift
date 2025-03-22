@@ -17,12 +17,21 @@ struct AddItemView: View {
                 ZStack(alignment: .topLeading) {
                     TextEditor(text: $newItemText)
                         .font(.system(size: 14))
-                        .onSubmit {
-                            addSummaryItem(content: newItemText)
-                            if !newItemText.isEmpty {
-                                newItemText = ""
+                        .onChange(of: newItemText) { newValue in
+                            if newValue.contains("\n") {
+                                newItemText = newValue.replacingOccurrences(of: "\n", with: "")
+                                addSummaryItem()
                             }
                         }
+                        .onSubmit {
+                            addSummaryItem()
+                        }
+                        .background(
+                            Button(action: addSummaryItem) {}
+                                .frame(width: 0, height: 0)
+                                .opacity(0)
+                                .keyboardShortcut(.return)
+                        )
                     
                     if newItemText.isEmpty {
                         Text("在这里快速添加新的感想")
@@ -36,7 +45,7 @@ struct AddItemView: View {
                 .padding(.top, 5)
                 
                 Button {
-                    addSummaryItem(content: newItemText)
+                    addSummaryItem()
                 } label: {
                     Image(systemName: "return")
                         .foregroundColor(.gray)
@@ -53,10 +62,12 @@ struct AddItemView: View {
         .cornerRadius(10)
     }
     
-    func addSummaryItem(content: String) {
-        guard content.count > 0 else { return }
+    func addSummaryItem() {
+        guard !newItemText.isEmpty else { return }
         let summaryItem = SummaryItem()
-        summaryItem.content = content
+        summaryItem.content = newItemText
         modelData.updateSummaryItem(summaryItem)
+        newItemText = ""
+        dismiss()
     }
 }

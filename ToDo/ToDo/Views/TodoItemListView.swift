@@ -36,6 +36,12 @@ struct TodoItemListView: View {
     @ObservedObject var timerModel: TimerModel
 
     @State var expandedItems: Set<String> = []
+
+    // 添加状态变量
+    @State var isTodayExpanded = true
+    @State var isDeadlineExpanded = true
+    @State var isExpiredExpanded = true
+    @State var isSummaryExpanded = false
     
     let recentThreshold: Int = 7
     var recentItems: [EventItem] {
