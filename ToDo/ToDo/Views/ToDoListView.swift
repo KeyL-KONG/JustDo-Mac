@@ -110,7 +110,7 @@ struct ToDoListView: View, Equatable {
                 }
         } content: {
             if selection == .review {
-                ReviewView(selectTaskChange: { task in
+                ReviewNewView(selectTaskChange: { task in
                     self.selectedTask = task
                 })
                     .environmentObject(modelData)

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct EventTaskItem {
+struct EventTaskItem: Identifiable {
     var id: String
     var title: String
     var type: TaskType
@@ -15,8 +15,9 @@ struct EventTaskItem {
     var mark: String
     var time: Int
     var intervals: [LQDateInterval]
+    var event: BaseModel?
     
-    init(id: String, title: String, type: TaskType, finish: Bool, mark: String, time: Int, intervals: [LQDateInterval]) {
+    init(id: String, title: String, type: TaskType, finish: Bool, mark: String, time: Int, intervals: [LQDateInterval], event: BaseModel? = nil) {
         self.id = id
         self.title = title
         self.type = type
@@ -24,6 +25,7 @@ struct EventTaskItem {
         self.mark = mark
         self.time = time
         self.intervals = intervals
+        self.event = event
     }
 }
 
@@ -534,18 +536,6 @@ struct ReviewListView: View {
                 }
             }
         }
-//        .onChange(of: timeTab, { oldValue, newValue in
-//            if oldValue != newValue {
-//                updateTitleText()
-//                updateSelectIndexes()
-//            }
-//        })
-//        .onChange(of: selectDate, { oldValue, newValue in
-//            if oldValue != newValue {
-//                updateTitleText()
-//                updateSelectIndexes()
-//            }
-//        })
         .onAppear {
             if weekSlider.isEmpty {
                 let currentWeek = Date().fetchWeek()
