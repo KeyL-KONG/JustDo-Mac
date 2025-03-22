@@ -104,13 +104,13 @@ struct TaskSaveView: View {
                     .padding()
             }
             
-            TextField("添加任务", text: $taskContent)
+            TextField("添加任务", text: $eventContent)
                 .focused($focusedField, equals: .event)
                 .onSubmit {
-                    addTaskTimeItem()
+                    addEventItem()
                 }
                 .background(
-                    Button(action: addTaskTimeItem) {}
+                    Button(action: addEventItem) {}
                         .frame(width: 0, height: 0)
                         .opacity(0)
                         .keyboardShortcut(.return)
@@ -145,7 +145,7 @@ struct TaskSaveView: View {
     }
     
     func addEventItem() {
-        var event = EventItem()
+        let event = EventItem()
         event.title = eventContent
         modelData.updateItem(event)
         
