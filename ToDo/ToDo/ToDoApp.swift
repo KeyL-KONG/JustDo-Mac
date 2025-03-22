@@ -66,6 +66,8 @@ struct ToDoApp: App {
 
         
         MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
+            TaskSaveView(timerModel: timerModel)
+                .environmentObject(modelData)
 //            Button("pause") {
 //                if timerModel.isTiming {
 //                    timerModel.pauseTimer()
@@ -73,19 +75,20 @@ struct ToDoApp: App {
 //                }
 //            }
             
-            Button("stop") {
-                self.handleStopEvent()
-                timerModel.stopTimer()
-            }
-            
-            Button("restart") {
-                if timerModel.isTiming {
-                    return
-                }
-                timerModel.restartTimer()
-                handleRestartEvent()
-            }
+//            Button("stop") {
+//                self.handleStopEvent()
+//                timerModel.stopTimer()
+//            }
+//            
+//            Button("restart") {
+//                if timerModel.isTiming {
+//                    return
+//                }
+//                timerModel.restartTimer()
+//                handleRestartEvent()
+//            }
         }
+        .menuBarExtraStyle(.window)
         .onChange(of: timerModel.title) { oldValue, newValue in
             self.title =  timerModel.title.isEmpty ? "无事项" : "<\(timerModel.title)> 进行中"
         }

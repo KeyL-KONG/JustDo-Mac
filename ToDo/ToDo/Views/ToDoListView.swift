@@ -54,9 +54,6 @@ struct ToDoListView: View, Equatable {
         switch section {
         case .today:
             itemList = itemList.filter { event in
-                guard let planTime = event.planTime else {
-                    return false
-                }
                 return event.actionType == .task
             }
         case .calendar:

@@ -26,6 +26,15 @@ extension TodoItemListView {
         }
     }
     
+    var unplanItems: [EventItem] {
+        items.filter { event in
+            guard let createTime = event.createTime else {
+                return false
+            }
+            return event.planTime == nil && createTime.isToday
+        }
+    }
+    
     var expiredItems: [EventItem] {
         items.filter { event in
             guard let planTime = event.planTime else {
@@ -76,7 +85,7 @@ extension TodoItemListView {
             
             Section(header:
                 HStack {
-                    Text("即将截止")
+                Text("即将截止 (\(recentItems.count))")
                     Spacer()
                     Button(action: { isDeadlineExpanded.toggle() }) {
                         Image(systemName: isDeadlineExpanded ? "chevron.down" : "chevron.right")
@@ -92,7 +101,7 @@ extension TodoItemListView {
             
             Section(header:
                 HStack {
-                    Text("已过期")
+                Text("已过期 (\(expiredItems.count))")
                     Spacer()
                     Button(action: { isExpiredExpanded.toggle() }) {
                         Image(systemName: isExpiredExpanded ? "chevron.down" : "chevron.right")
@@ -102,6 +111,22 @@ extension TodoItemListView {
                 if isExpiredExpanded {
                     ForEach(expiredItems, id: \.self.id) { item in
                         itemRowView(item: item, showDeadline: true)
+                    }
+                }
+            }
+            
+            Section(header:
+                HStack {
+                Text("待规划 (\(unplanItems.count))")
+                    Spacer()
+                Button(action: { isUnplanExpanded.toggle() }) {
+                        Image(systemName: isUnplanExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isUnplanExpanded {
+                    ForEach(unplanItems, id: \.self.id) { item in
+                        itemRowView(item: item, showDeadline: false)
                     }
                 }
             }

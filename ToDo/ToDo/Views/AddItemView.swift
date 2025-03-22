@@ -71,3 +71,86 @@ struct AddItemView: View {
         dismiss()
     }
 }
+
+
+struct TaskSaveView: View {
+    
+    @State var timerModel: TimerModel
+    @State var taskContent: String = ""
+    @State var eventContent: String = ""
+    @EnvironmentObject var modelData: ModelData
+    @Environment(\.dismiss) var dismiss
+    @FocusState private var focusedField: FocusedField?
+    
+    enum FocusedField {
+        case title
+        case event
+    }
+    
+    var body: some View {
+        VStack(spacing: 5) {
+            if timerModel.isTiming {
+                TextField("填写任务描述", text: $taskContent)
+                    .focused($focusedField, equals: .title)
+                    .onSubmit {
+                        addTaskTimeItem()
+                    }
+                    .background(
+                        Button(action: addTaskTimeItem) {}
+                            .frame(width: 0, height: 0)
+                            .opacity(0)
+                            .keyboardShortcut(.return)
+                    )
+                    .padding()
+            }
+            
+            TextField("添加任务", text: $taskContent)
+                .focused($focusedField, equals: .event)
+                .onSubmit {
+                    addTaskTimeItem()
+                }
+                .background(
+                    Button(action: addTaskTimeItem) {}
+                        .frame(width: 0, height: 0)
+                        .opacity(0)
+                        .keyboardShortcut(.return)
+                )
+                .padding()
+            
+            Spacer()
+            
+        }
+        .onAppear {
+            if timerModel.isTiming {
+                self.focusedField = .title
+            } else {
+                self.focusedField = .event
+            }
+        }
+    }
+    
+    func addTaskTimeItem() {
+        if let item = timerModel.timingItem, let playTime = item.playTime {
+            timerModel.stopTimer()
+            
+            let taskItem = TaskTimeItem(startTime: playTime, endTime: .now, content: taskContent)
+            taskItem.eventId = item.id
+            modelData.updateTimeItem(taskItem)
+            
+            item.isPlay = false
+            modelData.updateItem(item)
+        }
+        taskContent = ""
+        dismiss()
+    }
+    
+    func addEventItem() {
+        var event = EventItem()
+        event.title = eventContent
+        modelData.updateItem(event)
+        
+        eventContent = ""
+        dismiss()
+    }
+    
+}

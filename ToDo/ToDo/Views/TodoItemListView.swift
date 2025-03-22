@@ -39,8 +39,9 @@ struct TodoItemListView: View {
 
     // 添加状态变量
     @State var isTodayExpanded = true
-    @State var isDeadlineExpanded = true
-    @State var isExpiredExpanded = true
+    @State var isDeadlineExpanded = false
+    @State var isExpiredExpanded = false
+    @State var isUnplanExpanded = false
     @State var isSummaryExpanded = false
     
     let recentThreshold: Int = 7
