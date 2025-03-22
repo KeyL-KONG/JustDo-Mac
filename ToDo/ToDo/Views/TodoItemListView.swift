@@ -227,22 +227,22 @@ struct TodoItemListView: View {
             if let item = item as? EventItem {
                 if item.actionType == .task {
                     if item.isPlay {
-                        if timerModel.isTiming {
-                            Button {
-                                timerModel.pauseTimer()
-                                handlePauseEvent(item: item)
-                            } label: {
-                                Text("pause").foregroundStyle(.red)
-                            }
-                        } else {
-                            Button {
-                                timerModel.timingItem = item
-                                timerModel.restartTimer()
-                                handleRestartEvent(item: item)
-                            } label: {
-                                Text("restart").foregroundStyle(.blue)
-                            }
-                        }
+//                        if timerModel.isTiming {
+//                            Button {
+//                                timerModel.pauseTimer()
+//                                handlePauseEvent(item: item)
+//                            } label: {
+//                                Text("pause").foregroundStyle(.red)
+//                            }
+//                        } else {
+//                            Button {
+//                                timerModel.timingItem = item
+//                                timerModel.restartTimer()
+//                                handleRestartEvent(item: item)
+//                            } label: {
+//                                Text("restart").foregroundStyle(.blue)
+//                            }
+//                        }
                         
                         Button {
                             timerModel.stopTimer()
@@ -251,7 +251,8 @@ struct TodoItemListView: View {
                             Text("stop").foregroundStyle(.red)
                         }
                         
-                    } else {
+                    }
+                    else {
                         Button {
                             if timerModel.startTimer(item: item) {
                                 item.isPlay = true
@@ -317,11 +318,10 @@ struct TodoItemListView: View {
         guard let playTime = item.playTime else {
             return
         }
-        let interval = Int(Date.now.timeIntervalSince1970 - playTime.timeIntervalSince1970)
-        if let timingItem = timerModel.timingItem, timingItem.id == item.id, interval > 60 {
-            let dateInterval = LQDateInterval(start: playTime, end: .now)
-            item.intervals.append(dateInterval)
-        }
+        let taskItem = TaskTimeItem(startTime: playTime, endTime: .now, content: "")
+        taskItem.eventId = item.id
+        modelData.updateTimeItem(taskItem)
+
         item.isPlay = false
         modelData.updateItem(item)
     }

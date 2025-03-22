@@ -14,7 +14,15 @@ extension TodoItemListView {
             guard let planTime = event.planTime else {
                 return false
             }
-            return planTime.isToday
+            return planTime.isToday || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInToday })
+        }.sorted { event1, event2 in
+            if event1.isFinish != event2.isFinish {
+                return event1.isFinish ? false : true
+            } else if event1.importance != event2.importance {
+                return event1.importance.value > event2.importance.value
+            } else {
+                return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
+            }
         }
     }
     

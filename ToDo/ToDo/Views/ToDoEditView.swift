@@ -256,6 +256,9 @@ struct ToDoEditView: View {
                 })
             }
         })
+        .onChange(of: isFinish, { oldValue, newValue in
+            saveTask()
+        })
         .toolbar(content: {
             Spacer()
             Button("保存") {

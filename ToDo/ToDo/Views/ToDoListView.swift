@@ -155,7 +155,7 @@ struct ToDoListView: View, Equatable {
             } else {
                 if let eventItem = selectItem as? EventItem {
                     ToDoEditView(selectItem: eventItem, updateEvent: {
-                        //toggleRefresh.toggle()
+                        //modelData.notifyEventItemsUpdate()
                     }).environmentObject(modelData)
                         .id(selectItemID)
                 } else if let summaryItem = selectItem as? SummaryItem {

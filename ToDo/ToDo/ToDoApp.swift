@@ -46,6 +46,9 @@ struct ToDoApp: App {
                             let taskItem = TaskTimeItem(startTime: pendingItem.playTime, endTime: .now, content: eventContent)
                             taskItem.eventId = pendingItem.item.id
                             modelData.updateTimeItem(taskItem)
+                            
+                            pendingItem.item.isPlay = false
+                            modelData.updateItem(pendingItem.item)
                         }
                     }
                 } message: {
@@ -63,12 +66,12 @@ struct ToDoApp: App {
 
         
         MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
-            Button("pause") {
-                if timerModel.isTiming {
-                    timerModel.pauseTimer()
-                    handlePauseEvent()
-                }
-            }
+//            Button("pause") {
+//                if timerModel.isTiming {
+//                    timerModel.pauseTimer()
+//                    handlePauseEvent()
+//                }
+//            }
             
             Button("stop") {
                 self.handleStopEvent()

@@ -49,6 +49,10 @@ class ModelData: ObservableObject {
     
     var tryLoadSummaryTimes = 0
     
+    public func notifyEventItemsUpdate() {
+        self.itemList = self.itemList
+    }
+    
     public func loadTimeItems(_ completion: (() -> ())? = nil) {
         cache.asyncLoadCache(type: .timeItem) { items in
             if let events = items as? [TaskTimeItem], self.taskTimeItems.isEmpty {
@@ -116,6 +120,7 @@ class ModelData: ObservableObject {
             itemList.append(item)
         }
         saveToServer(items: [item]) { error in
+            self.itemList = self.itemList
             completion?()
         }
     }

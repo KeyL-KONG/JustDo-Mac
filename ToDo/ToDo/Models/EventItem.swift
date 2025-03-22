@@ -100,6 +100,14 @@ extension EventItem {
         return intervals.sorted(by: { $0.start.timeIntervalSince1970 >= $1.start.timeIntervalSince1970})
     }
     
+    func tagPriority(tags: [ItemTag]) -> Int {
+        guard let selectTag = tags.first(where: { $0.id == self.tag
+        }) else {
+            return 0
+        }
+        return selectTag.priority
+    }
+    
 }
 
 
