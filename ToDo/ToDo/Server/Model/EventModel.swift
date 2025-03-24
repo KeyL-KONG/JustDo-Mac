@@ -65,6 +65,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var rewardCount: Int = 0
     var fixedReward: Bool = false
     var rewardId: String = ""
+    var isCollect: Bool = false // 新增收藏字段
     
     var actionType: EventActionType = .task
     var projectId: String = ""
@@ -78,6 +79,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var difficultRating: Int = 3
     var finishText: String = ""
     var difficultText: String = ""
+
+    
 
     required init() {
         super.init()
@@ -115,6 +118,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.rewardCount = try container.decode(Int.self, forKey: .rewardCount)
         self.fixedReward = try container.decode(Bool.self, forKey: .fixedReward)
         self.rewardId = try container.decode(String.self, forKey: .rewardId)
+        self.isCollect = try container.decode(Bool.self, forKey: .isCollect) // 新增解码
         self.actionType = EventActionType(rawValue: try container.decode(String.self, forKey: .actionType)) ?? .task
         self.fatherId = try container.decode(String.self, forKey: .fatherId)
         self.childrenIds = try container.decode([String].self, forKey: .childrenIds).uniqueArray
@@ -142,6 +146,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(self.importance, forKey: .importance)
         try container.encode(self.fixedReward, forKey: .fixedReward)
         try container.encode(self.rewardId, forKey: .rewardId)
+        try container.encode(self.isCollect, forKey: .isCollect) // 新增编码
         if let finishTime {
             try container.encode(finishTime, forKey: .finishTime)
         }
@@ -241,6 +246,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.taskIds = (cloudObj.get(EventModelKeys.taskIds.rawValue)?.arrayValue as? [String] ?? []).uniqueArray
         self.projectId = cloudObj.get(EventModelKeys.projectId.rawValue)?.stringValue ?? ""
         self.setPlanTime = cloudObj.get(EventModelKeys.setPlanTime.rawValue)?.boolValue ?? false
+        self.isCollect = cloudObj.get(EventModelKeys.isCollect.rawValue)?.boolValue ?? false // 新增云端解析
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -287,6 +293,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.taskIds.rawValue, value: taskIds.uniqueArray.lcArray)
         try cloudObj.set(EventModelKeys.projectId.rawValue, value: projectId.lcString)
         try cloudObj.set(EventModelKeys.setPlanTime.rawValue, value: setPlanTime.lcBool)
+        try cloudObj.set(EventModelKeys.isCollect.rawValue, value: isCollect.lcBool)
     }
     
 }
@@ -332,7 +339,8 @@ extension EventModel {
         case eventType
         case playTime
         case rewardCount
-        case rewardId
+        case rewardId = "rewardId"
+        case isCollect = "isCollect" // 新增键
         case actionType
         case fatherId
         case childrenIds

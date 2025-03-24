@@ -46,11 +46,12 @@ struct TodoItemListView: View {
     
     let recentThreshold: Int = 7
     var recentItems: [EventItem] {
-        items.filter { event in
+        let todayItems = self.todayItems
+        return items.filter { event in
             guard let planTime = event.planTime else {
                 return false
             }
-            return !event.isFinish && planTime >= .now && !planTime.isInToday && planTime.daysBetweenDates(date: .now) <= 7
+            return !event.isFinish && planTime >= .now && !planTime.isInToday && planTime.daysBetweenDates(date: .now) <= 7 && !todayItems.contains(event)
         }.sorted { first, second in
             let firstDays = first.planTime?.daysBetweenDates(date: .now) ?? 0
             let secondDays = second.planTime?.daysBetweenDates(date: .now) ?? 0
@@ -329,6 +330,7 @@ struct TodoItemListView: View {
     
     func checkItem(_ item: EventItem) {
         item.isFinish = !item.isFinish
+        item.finishTime = .now
         modelData.updateItem(item)
     }
     

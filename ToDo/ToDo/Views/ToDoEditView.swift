@@ -65,6 +65,8 @@ struct ToDoEditView: View {
     
     @State var isExpandType: Bool = false
     
+    @State var isCollect: Bool = false
+    
     var taskTimeItems: [TaskTimeItem] {
         modelData.taskTimeItems.filter { item in
             guard let selectItem else { return false }
@@ -154,6 +156,10 @@ struct ToDoEditView: View {
                 })
                 
                 Section(header: Text("设置时间"), content: {
+                    Toggle(isOn: $isCollect) {
+                        Text("设置为固定事项")
+                    }
+            
                     HStack {
                         Toggle(isOn: $setPlanTime) {
                             Text("")
@@ -259,6 +265,9 @@ struct ToDoEditView: View {
         .onChange(of: isFinish, { oldValue, newValue in
             saveTask()
         })
+        .onChange(of: isCollect, { _, _ in
+            saveTask()
+        })
         .toolbar(content: {
             Spacer()
             Button("保存") {
@@ -296,6 +305,7 @@ struct ToDoEditView: View {
                 if selectedItem.mark.count > 0 {
                     self.isEdit = false
                 }
+                isCollect = selectedItem.isCollect
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -335,9 +345,9 @@ struct ToDoEditView: View {
             //selectedItem.disablePlanTime = true
             selectedItem.planTime = nil
         }
-        if setFinishTime {
-            selectedItem.finishTime = finishTime
-        }
+        
+        selectedItem.isCollect = isCollect
+        selectedItem.finishTime = finishTime
         selectedItem.importance = importantTag
         selectedItem.intervals = intervals
         selectedItem.eventType = eventType

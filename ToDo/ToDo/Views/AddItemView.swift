@@ -90,6 +90,8 @@ struct TaskSaveView: View {
     var body: some View {
         VStack(spacing: 5) {
             if timerModel.isTiming {
+                Text("任务【\(timerModel.title.prefix(15))】 进行中...")
+                
                 TextField("填写任务描述", text: $taskContent)
                     .focused($focusedField, equals: .title)
                     .onSubmit {
@@ -120,6 +122,7 @@ struct TaskSaveView: View {
             Spacer()
             
         }
+        .padding()
         .onAppear {
             if timerModel.isTiming {
                 self.focusedField = .title

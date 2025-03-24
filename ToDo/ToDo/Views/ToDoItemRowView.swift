@@ -89,7 +89,12 @@ struct ToDoItemRowView: View {
             }
         } else {
             HStack {
-                Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                if item.isCollect {
+                    Label("", systemImage: "star.fill")
+                } else {
+                    Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                }
+                
                 Text(item.title)
                 
                 if let tag, showTag {

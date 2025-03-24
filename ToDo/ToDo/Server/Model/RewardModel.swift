@@ -72,6 +72,7 @@ protocol BasicTaskProtocol: Identifiable {
     var tag: String { get set }
     var eventType: EventValueType { get set }
     var isFinish: Bool { get set }
+    var isCollect: Bool { get set }
     var finishTime: Date? { get set }
     var intervals: [LQDateInterval] { get set }
     var rewardType: RewardType { get set }
@@ -96,6 +97,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
     var rewardValueType: RewardValueType = .num
     var rewardValue: Int = 0
     var rewardCount: Int = 0
+    var isCollect: Bool = false // 新增收藏状态字段
     
     var fatherId: String = ""
     var childrenIds: [String] = []
@@ -132,6 +134,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         self.rewardValueType = RewardValueType(rawValue: try container.decode(Int.self, forKey: .rewardValueType)) ?? .num
         self.rewardValue = try container.decode(Int.self, forKey: .rewardValue)
         self.rewardCount = try container.decode(Int.self, forKey: .rewardCount)
+        self.isCollect = try container.decode(Bool.self, forKey: .isCollect) // 新增解码
         self.fatherId = try container.decode(String.self, forKey: .fatherId)
         self.childrenIds = try container.decode([String].self, forKey: .childrenId)
             
@@ -165,6 +168,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         try container.encode(self.rewardCount, forKey: .rewardCount)
         try container.encode(self.fatherId, forKey: .fatherId)
         try container.encode(self.childrenIds, forKey: .childrenId)
+        try container.encode(self.isCollect, forKey: .isCollect)
         
         try container.encode(self.fixTimeType.rawValue, forKey: .fixTimeType)
         try container.encode(self.fixTimes.compactMap { [$0.start, $0.end]}, forKey: .fixTimes)
@@ -223,6 +227,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         self.rewardValue = cloudObj.get(RewardModelKeys.rewardValue.rawValue)?.intValue ?? 0
         self.eventType = EventValueType(rawValue: cloudObj.get(RewardModelKeys.eventType.rawValue)?.intValue ?? 0) ?? .num
         self.rewardCount = cloudObj.get(RewardModelKeys.rewardCount.rawValue)?.intValue ?? 0
+        self.isCollect = cloudObj.get(RewardModelKeys.isCollect.rawValue)?.boolValue ?? false // 新增
         self.fatherId = cloudObj.get(RewardModelKeys.fatherId.rawValue)?.stringValue ?? ""
         self.childrenIds = cloudObj.get(RewardModelKeys.childrenId.rawValue)?.arrayValue as? [String] ?? []
         
@@ -259,6 +264,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         try cloudObj.set(RewardModelKeys.rewardValue.rawValue, value: rewardValue.lcNumber)
         try cloudObj.set(RewardModelKeys.eventType.rawValue, value: eventType.rawValue.lcNumber)
         try cloudObj.set(RewardModelKeys.rewardCount.rawValue, value: rewardCount.lcNumber)
+        try cloudObj.set(RewardModelKeys.isCollect.rawValue, value: isCollect.lcBool) // 新增
         try cloudObj.set(RewardModelKeys.fatherId.rawValue, value: fatherId.stringValue)
         try cloudObj.set(RewardModelKeys.childrenId.rawValue, value: childrenIds.lcArray)
         
@@ -315,6 +321,7 @@ extension RewardModel {
         case eventType
         case playTime
         case rewardCount
+        case isCollect
         case fatherId
         case childrenId
         
