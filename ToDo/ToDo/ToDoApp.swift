@@ -28,32 +28,38 @@ struct ToDoApp: App {
     // 新增窗口场景
     var body: some Scene {
         WindowGroup {
-            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel))
-                .environmentObject(modelData)
-                .onAppear {
-                    print("main view appear")
-                    modelData.loadFromServer()
-                }
-                .alert("编辑事件内容", isPresented: $showStopAlert) {
-                    TextField("请输入内容...", text: $eventContent)
-                    Button("取消", role: .cancel) {
-                        pendingItem = nil
-                        downWindow()
-                    }
-                    Button("确定") {
-                        downWindow()
-                        if let pendingItem {
-                            let taskItem = TaskTimeItem(startTime: pendingItem.playTime, endTime: .now, content: eventContent)
-                            taskItem.eventId = pendingItem.item.id
-                            modelData.updateTimeItem(taskItem)
-                            
-                            pendingItem.item.isPlay = false
-                            modelData.updateItem(pendingItem.item)
-                        }
-                    }
-                } message: {
-                    Text("")
-                }
+//            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel))
+//                .environmentObject(modelData)
+//                .onAppear {
+//                    print("main view appear")
+//                    modelData.loadFromServer()
+//                }
+//                .alert("编辑事件内容", isPresented: $showStopAlert) {
+//                    TextField("请输入内容...", text: $eventContent)
+//                    Button("取消", role: .cancel) {
+//                        pendingItem = nil
+//                        downWindow()
+//                    }
+//                    Button("确定") {
+//                        downWindow()
+//                        if let pendingItem {
+//                            let taskItem = TaskTimeItem(startTime: pendingItem.playTime, endTime: .now, content: eventContent)
+//                            taskItem.eventId = pendingItem.item.id
+//                            modelData.updateTimeItem(taskItem)
+//                            
+//                            pendingItem.item.isPlay = false
+//                            modelData.updateItem(pendingItem.item)
+//                        }
+//                    }
+//                } message: {
+//                    Text("")
+//                }
+            
+            if #available(macOS 15.0, *) {
+                WeekCalendarView(.constant(""), selection: .constant(nil), focused: .constant(.init(order: .current, days: [.now])), isDragging: false)
+            } else {
+                // Fallback on earlier versions
+            }
         }
         
         MenuBarExtra {

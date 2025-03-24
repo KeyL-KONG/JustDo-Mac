@@ -34,6 +34,9 @@
 		09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714602D85D318009DB18E /* TimeLineRowView.swift */; };
 		09D714632D865F34009DB18E /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714622D865F2F009DB18E /* StateManager.swift */; };
 		09D714652D86F8E5009DB18E /* ReviewNewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714642D86F8DD009DB18E /* ReviewNewView.swift */; };
+		09D714682D8FEBAB009DB18E /* DayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714672D8FEBA8009DB18E /* DayView.swift */; };
+		09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714692D9052E4009DB18E /* WeekView.swift */; };
+		09D7146C2D905661009DB18E /* WeekCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7146B2D90565A009DB18E /* WeekCalendarView.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -97,6 +100,9 @@
 		09D714602D85D318009DB18E /* TimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineRowView.swift; sourceTree = "<group>"; };
 		09D714622D865F2F009DB18E /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
 		09D714642D86F8DD009DB18E /* ReviewNewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewNewView.swift; sourceTree = "<group>"; };
+		09D714672D8FEBA8009DB18E /* DayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayView.swift; sourceTree = "<group>"; };
+		09D714692D9052E4009DB18E /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
+		09D7146B2D90565A009DB18E /* WeekCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekCalendarView.swift; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -151,6 +157,7 @@
 		090C72212C8409D600FA21C5 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				09D714662D8FEB99009DB18E /* Calendar */,
 				090C72222C8409E100FA21C5 /* MarkdownWebView */,
 			);
 			path = Components;
@@ -210,6 +217,16 @@
 				093E79022D2385AD006E5120 /* SummaryTag.swift */,
 			);
 			path = Summary;
+			sourceTree = "<group>";
+		};
+		09D714662D8FEB99009DB18E /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				09D7146B2D90565A009DB18E /* WeekCalendarView.swift */,
+				09D714692D9052E4009DB18E /* WeekView.swift */,
+				09D714672D8FEBA8009DB18E /* DayView.swift */,
+			);
+			path = Calendar;
 			sourceTree = "<group>";
 		};
 		09F80BCE2C66540F00650366 = {
@@ -502,9 +519,11 @@
 				09F80C0E2C665A5B00650366 /* Int+Extensions.swift in Sources */,
 				09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */,
 				09F80BDD2C66540F00650366 /* ContentView.swift in Sources */,
+				09D714682D8FEBAB009DB18E /* DayView.swift in Sources */,
 				09F80C052C665A3F00650366 /* BaseModel.swift in Sources */,
 				093E79102D295C60006E5120 /* AddItemView.swift in Sources */,
 				09F80BFD2C665A3F00650366 /* DataManager.swift in Sources */,
+				09D7146C2D905661009DB18E /* WeekCalendarView.swift in Sources */,
 				093E78FE2D23855D006E5120 /* ModelData+ReadList.swift in Sources */,
 				093E78FF2D23855D006E5120 /* ModelData+NoteList.swift in Sources */,
 				09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */,
@@ -530,6 +549,7 @@
 				093E78F62D23852D006E5120 /* NoteModel.swift in Sources */,
 				09D714632D865F34009DB18E /* StateManager.swift in Sources */,
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
+				09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */,
 				09D714652D86F8E5009DB18E /* ReviewNewView.swift in Sources */,
 				093E79062D2385B4006E5120 /* ModelData+Summary.swift in Sources */,
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,
