@@ -11,10 +11,7 @@ extension TodoItemListView {
     
     var todayItems: [EventItem] {
         items.filter { event in
-            guard let planTime = event.planTime else {
-                return false
-            }
-            return planTime.isToday || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInToday }) || (event.isFinish && (event.finishTime?.isToday) == true) || event.isCollect
+            return (event.planTime?.isToday ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInToday }) || (event.isFinish && (event.finishTime?.isToday) == true) || event.isCollect
         }.sorted { event1, event2 in
             if event1.isFinish != event2.isFinish {
                 return event1.isFinish ? false : true
@@ -31,7 +28,7 @@ extension TodoItemListView {
             guard let createTime = event.createTime else {
                 return false
             }
-            return event.planTime == nil && createTime.isToday
+            return event.planTime == nil && createTime.isToday && !event.isCollect
         }
     }
     

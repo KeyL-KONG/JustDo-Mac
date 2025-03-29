@@ -149,10 +149,22 @@ struct ToDoEditView: View {
                         }
                     }
                     
-                    
-                    Toggle(isOn: $isFinish) {
-                        Text("是否已完成")
+                    if isFinish {
+                        HStack {
+                            Toggle(isOn: $isFinish) {
+                                Text("是否已完成")
+                            }
+                            Spacer()
+                            DatePicker(selection: $finishTime, displayedComponents: [.date, .hourAndMinute]) {
+                                
+                            }
+                        }
+                    } else {
+                        Toggle(isOn: $isFinish) {
+                            Text("是否已完成")
+                        }
                     }
+                    
                 })
                 
                 Section(header: Text("设置时间"), content: {
@@ -170,18 +182,18 @@ struct ToDoEditView: View {
                         }
                     }
                     
-                    if actionType == .project {
-                        HStack {
-                            Toggle(isOn: $setFinishTime) {
-                                Text("")
-                            }.labelsHidden()
-                            
-                            DatePicker(selection: $finishTime, displayedComponents: .date) {
-                                Text("设置为完成时间")
-                            }
-                        }
-
-                    }
+//                    if actionType == .project {
+//                        HStack {
+//                            Toggle(isOn: $setFinishTime) {
+//                                Text("")
+//                            }.labelsHidden()
+//                            
+//                            DatePicker(selection: $finishTime, displayedComponents: .date) {
+//                                Text("设置为完成时间")
+//                            }
+//                        }
+//
+//                    }
                     
                 })
                 
@@ -263,6 +275,7 @@ struct ToDoEditView: View {
             }
         })
         .onChange(of: isFinish, { oldValue, newValue in
+            finishTime = .now
             saveTask()
         })
         .onChange(of: isCollect, { _, _ in
@@ -289,11 +302,12 @@ struct ToDoEditView: View {
                     self.planTime = planTime
                     setPlanTime = true
                 }
-                if let finishTime = selectedItem.finishTime {
-                    self.finishTime = finishTime
-                    setFinishTime = true
-                }
+//                if let finishTime = selectedItem.finishTime {
+//                    self.finishTime = finishTime
+//                    setFinishTime = true
+//                }
                 isFinish = selectedItem.isFinish
+                finishTime = selectedItem.finishTime ?? .now
                 selectReward = modelData.rewardList.filter({ $0.id == selectedItem.rewardId }).first?.title ?? "无"
                 selectProject = modelData.itemList.filter { $0.id == selectedItem.projectId}.first?.title ?? "无"
                 if let fatherItem = modelData.itemList.filter({ $0.id == selectedItem.fatherId}).first {
@@ -306,9 +320,11 @@ struct ToDoEditView: View {
                     self.isEdit = false
                 }
                 isCollect = selectedItem.isCollect
+                isExpandType = selectedItem.tag.isEmpty
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
+                isExpandType = true
             }
         }
     }
