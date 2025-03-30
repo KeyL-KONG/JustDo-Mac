@@ -53,13 +53,15 @@ struct ToDoListView: View, Equatable {
         
         switch section {
         case .today:
-            itemList = itemList.filter { event in
-                return event.actionType == .task
-            }
+//            itemList = itemList.filter { event in
+//                return event.actionType == .task
+//            }
+            break
         case .calendar:
-            itemList = itemList.filter({ event in
-                return event.actionType == .task
-            })
+//            itemList = itemList.filter({ event in
+//                return event.actionType == .task
+//            })
+            break
         case .project:
             itemList = itemList.filter({ $0.actionType == .project })
         case .unplan:
@@ -128,7 +130,7 @@ struct ToDoListView: View, Equatable {
                             toggleRefresh = !toggleRefresh
                         }
                     }
-                    .frame(minWidth: 400)
+                    .frame(minWidth: 1200)
             }
             
         } detail: {
@@ -155,6 +157,7 @@ struct ToDoListView: View, Equatable {
                         //modelData.notifyEventItemsUpdate()
                     }).environmentObject(modelData)
                         .id(selectItemID)
+                        .frame(minWidth: 400)
                 } else if let summaryItem = selectItem as? SummaryItem {
                     SummaryEditView(summaryItem: summaryItem)
                         .environmentObject(modelData).id(selectItemID)

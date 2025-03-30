@@ -42,17 +42,24 @@ struct ToDoItemRowView: View {
     var body: some View {
         if isVerticalLayout {
             VStack {
-                if item.type == .task {
-                    HStack {
-                        Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
-                        Text(item.title).font(.system(size: 12))
-                        Spacer()
-                    }
-                } else {
-                    HStack {
-                        Text(item.title).font(.system(size: 12))
-                        Spacer()
-                    }
+//                if item.type == .task {
+//                    HStack {
+//                        if !item.isFinish {
+//                            Label("", systemImage: "circle")
+//                        }
+//                        Text(item.title).font(.system(size: 12))
+//                        Spacer()
+//                    }
+//                } else {
+//                    HStack {
+//                        Text(item.title).font(.system(size: 12))
+//                        Spacer()
+//                    }
+//                }
+                
+                HStack {
+                    Text(item.title).font(.system(size: 12))
+                    Spacer()
                 }
                 
                 HStack {
@@ -79,14 +86,26 @@ struct ToDoItemRowView: View {
                     }
                     
                     Spacer()
-                }.padding(.leading, (item.type == .task ? 30 : 0))
-                
-                if showMark, item.mark.count > 0 {
-                    HStack {
-                        Text(item.mark).font(.system(size: 10)).foregroundColor(Color.init(hex: "95a5a6"))
-                    }.padding(.leading, 30)
                 }
+                
+//                if showMark, item.mark.count > 0 {
+//                    HStack {
+//                        Text(item.mark).font(.system(size: 10)).foregroundColor(Color.init(hex: "95a5a6"))
+//                    }.padding(.leading, 30)
+//                }
             }
+            .padding(5)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.init(hex: "ebdef0"), Color.init(hex: "e8daef")],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 4
+                    )
+            )
         } else {
             HStack {
                 if item.isCollect {

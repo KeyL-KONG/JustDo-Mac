@@ -279,7 +279,7 @@ struct ToDoEditView: View {
             saveTask()
         })
         .onChange(of: isCollect, { _, _ in
-            saveTask()
+            //saveTask()
         })
         .toolbar(content: {
             Spacer()

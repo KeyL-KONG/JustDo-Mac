@@ -11,7 +11,7 @@ extension TodoItemListView {
     
     var todayItems: [EventItem] {
         items.filter { event in
-            return (event.planTime?.isToday ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInToday }) || (event.isFinish && (event.finishTime?.isToday) == true) || event.isCollect
+            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true) || event.isCollect
         }.sorted { event1, event2 in
             if event1.isFinish != event2.isFinish {
                 return event1.isFinish ? false : true
@@ -28,7 +28,7 @@ extension TodoItemListView {
             guard let createTime = event.createTime else {
                 return false
             }
-            return event.planTime == nil && createTime.isToday && !event.isCollect
+            return event.planTime == nil && createTime.isInSameDay(as: selectDate) && !event.isCollect
         }
     }
     
@@ -59,13 +59,32 @@ extension TodoItemListView {
     var summaryItemList: [SummaryItem] {
         modelData.summaryItemList.filter { item in
             guard let createDate = item.createTime else { return false }
-            return createDate.isInSameDay(as: .now)
+            return createDate.isInSameDay(as: selectDate)
         }
     }
     
     func todayView() -> some View {
+        VStack {
+            DayHeaderView()
+            todayListView()
+        }
+        .onAppear {
+            if weekSlider.isEmpty {
+                let currentWeek = Date().fetchWeek()
+                if let firstDate = currentWeek.first?.date {
+                    weekSlider.append(firstDate.createPreviousWeek())
+                }
+                weekSlider.append(currentWeek)
+                if let lastDate = currentWeek.last?.date {
+                    weekSlider.append(lastDate.createNextWeek())
+                }
+            }
+        }
+    }
+    
+    func todayListView() -> some View {
         List(selection: $selectItemID) {
-            Section(header: 
+            Section(header:
                 HStack {
                     Text("今日事项")
                     Spacer()
@@ -76,7 +95,7 @@ extension TodoItemListView {
             ) {
                 if isTodayExpanded {
                     ForEach(todayItems, id: \.self.id) { item in
-                        itemRowView(item: item, showDeadline: false)
+                        itemRowView(item: item, date: selectDate, showDeadline: false)
                     }
                 }
             }
@@ -92,7 +111,7 @@ extension TodoItemListView {
             ) {
                 if isDeadlineExpanded {
                     ForEach(recentItems, id: \.self.id) { item in
-                        itemRowView(item: item, showDeadline: true)
+                        itemRowView(item: item, date: selectDate, showDeadline: true)
                     }
                 }
             }
@@ -108,7 +127,7 @@ extension TodoItemListView {
             ) {
                 if isExpiredExpanded {
                     ForEach(expiredItems, id: \.self.id) { item in
-                        itemRowView(item: item, showDeadline: true)
+                        itemRowView(item: item, date: selectDate, showDeadline: true)
                     }
                 }
             }
@@ -124,7 +143,7 @@ extension TodoItemListView {
             ) {
                 if isUnplanExpanded {
                     ForEach(unplanItems, id: \.self.id) { item in
-                        itemRowView(item: item, showDeadline: false)
+                        itemRowView(item: item, date: selectDate, showDeadline: false)
                     }
                 }
             }
@@ -158,6 +177,92 @@ extension TodoItemListView {
         HStack {
             Text(item.content)
         }
+    }
+    
+}
+
+
+extension TodoItemListView {
+    
+    @ViewBuilder
+    func DayHeaderView() -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(content: {
+                
+                let disableLeftButton = currentWeekIndex <= 0
+                Button {
+                    currentWeekIndex -= 1
+                } label: {
+                    Image(systemName: "chevron.left").foregroundColor(disableLeftButton ? .gray : .blue).font(.system(size: 20)).bold()
+                }.disabled(disableLeftButton)
+                    .buttonStyle(BorderlessButtonStyle())
+                
+                let week = weekSlider.count > currentWeekIndex ? weekSlider[currentWeekIndex] : []
+                WeekView(week)
+                    .padding(.horizontal, 15)
+                
+                let disableRightButton = currentWeekIndex >= maxWeekIndex
+                Button {
+                    currentWeekIndex += 1
+                } label: {
+                    Image(systemName: "chevron.right").foregroundColor((disableRightButton ? .gray : .blue)).font(.system(size: 20)).bold()
+                }.disabled(disableRightButton)
+                    .buttonStyle(BorderlessButtonStyle())
+            
+            })
+            .frame(height: 90)
+        }
+        .hSpacing(.leading)
+        .padding(5)
+        .background(.white)
+    }
+    
+    @ViewBuilder
+    func WeekView(_ weeks: [Date.WeekDay]) -> some View {
+        HStack(spacing: 10, content: {
+            ForEach(weeks) { day in
+                VStack(spacing: 8, content: {
+                    Text(day.date.format("E"))
+#if os(iOS)
+                        .font(.callout)
+                        .textScale(.secondary)
+                    #endif
+                        .fontWeight(.medium)
+                        .foregroundStyle(.gray)
+                    
+                    Text(day.date.format("dd"))
+#if os(iOS)
+                        .font(.callout)
+                        .textScale(.secondary)
+                    #endif
+                        .fontWeight(.bold)
+                        .foregroundStyle(isSameDate(day.date, selectDate) ? .white : .gray)
+                        .frame(width: 35, height: 35)
+                        .background(content: {
+                            if isSameDate(day.date, selectDate) {
+                                Circle().fill(.blue)
+                                    //.matchedGeometryEffect(id: "TABINDICATOR", in: animation)
+                            }
+                            
+                            if day.date.isToday {
+                                Circle()
+                                    .fill(.cyan)
+                                    .frame(width: 5, height: 5)
+                                    .vSpacing(.bottom)
+                                    .offset(y: 12)
+                            }
+                        })
+                        .background(.white.shadow(.drop(radius: 1)), in: .circle)
+                })
+                .hSpacing(.center)
+                .contentShape(.rect)
+                .onTapGesture {
+                    withAnimation {
+                        selectDate = day.date
+                    }
+                }
+            }
+        })
     }
     
 }

@@ -44,6 +44,19 @@ struct TodoItemListView: View {
     @State var isUnplanExpanded = false
     @State var isSummaryExpanded = false
     
+    // 日期
+    @State var currentWeekIndex: Int = 1
+    @State var weekSlider: [[Date.WeekDay]] = []
+    let maxWeekIndex: Int = 2
+    @State var selectDate: Date = .now {
+        didSet {
+            print("select date: \(selectDate)")
+//            updateTitleText()
+//            updateSelectIndexes()
+//            resetSelectTask()
+        }
+    }
+    
     let recentThreshold: Int = 7
     var recentItems: [EventItem] {
         let todayItems = self.todayItems

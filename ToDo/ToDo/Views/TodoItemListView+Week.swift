@@ -108,16 +108,28 @@ extension TodoItemListView {
                     ForEach(0..<7) { index in
                         let date = weekDates[index]
                         let dayItems = items.filter { event in
-                            return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0
+                            return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
                         }
                         VStack(alignment: .leading) {
-                            let unfinishItems = dayItems.filter { !$0.isFinish }
-                            let finishItems = dayItems.filter { $0.isFinish }
+                            let unfinishItems = dayItems.filter { item in
+                                guard let planTime = item.planTime else { return false }
+                                return planTime.isInSameDay(as: date) && !item.isFinish
+                            }
+                            let finishItems = dayItems.filter { !unfinishItems.contains($0) }
                             
                             let rewardItems = modelData.rewardList.filter { reward in
                                 return reward.intervals.contains { $0.start.isInSameDay(as: date)
                                 }
                             }
+                            
+//                            let totalTime: Int = (finishItems + unfinishItems).compactMap { event in
+//                                event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date)
+//                            }.compactMap { Int($0.interval) }.reduce(0, +)
+                            let totalTime = dayItems.compactMap { event in
+                                event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date)
+                            }.compactMap { items in
+                                items.compactMap { $0.interval }.reduce(0, +)
+                            }.reduce(0, +)
                             
                             if unfinishItems.count > 0 {
                                 VStack {
@@ -131,10 +143,6 @@ extension TodoItemListView {
                                 }
                                 .background(Color.init(hex: "fdebd0"))
                                 .cornerRadius(10)
-                                
-                                if finishItems.isEmpty && rewardItems.isEmpty {
-                                    Spacer()
-                                }
                             }
                             
                             
@@ -148,9 +156,6 @@ extension TodoItemListView {
                                         weekItemView(item: item, date: date, selectColor: Color.init(hex: "a9dfbf"))
                                     }
                                     
-                                    if rewardItems.isEmpty {
-                                        Spacer()
-                                    }
                                 }
                                 .padding(.top, (unfinishItems.isEmpty ? 0 : 10))
                                 .background(Color.init(hex: "d4efdf"))
@@ -173,6 +178,22 @@ extension TodoItemListView {
                                 .padding(.top, 10)
                                 .background(Color.init(hex: "d4e6f1"))
                                 .cornerRadius(10)
+                            }
+                            
+                            if totalTime > 0 {
+                                Spacer()
+                                
+                                VStack {
+                                    HStack {
+                                        Text("已投入：\(totalTime.simpleTimeStr)").bold()
+                                        Spacer()
+                                    }
+                                }
+                                .padding(10)
+                                .background(Color.init(hex: "e8daef"))
+                                .cornerRadius(10)
+                            } else {
+                                Spacer()
                             }
                         }
                         
