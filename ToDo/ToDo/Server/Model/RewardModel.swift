@@ -78,6 +78,7 @@ protocol BasicTaskProtocol: Identifiable {
     var rewardType: RewardType { get set }
     var rewardValueType: RewardValueType { get set }
     var rewardValue: Int { get set }
+    var isArchive: Bool { get set }
     func totalTime(with tabTab: TimeTab) -> Int
     func summaryScore(with tabType: TimeTab) -> Int
     func score(with tabType: RewardTabType) -> Int
@@ -98,6 +99,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
     var rewardValue: Int = 0
     var rewardCount: Int = 0
     var isCollect: Bool = false // 新增收藏状态字段
+    var isArchive: Bool = false
     
     var fatherId: String = ""
     var childrenIds: [String] = []
@@ -148,6 +150,8 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
             }
         }
         self.fixTimes = fixedTimeIntervals
+        
+        self.isArchive = try container.decode(Bool.self, forKey: .isArchive)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -172,6 +176,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         
         try container.encode(self.fixTimeType.rawValue, forKey: .fixTimeType)
         try container.encode(self.fixTimes.compactMap { [$0.start, $0.end]}, forKey: .fixTimes)
+        try container.encode(isArchive, forKey: .isArchive)
     }
     
     init(id: String, title: String, mark: String, tag: String, eventType: EventValueType, isFinish: Bool, createTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType, rewardValueType: RewardValueType = .time, rewardValue: Int = 0, rewardCount: Int = 0, intervals: [LQDateInterval] = []) {
@@ -240,6 +245,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
             }
             self.fixTimes = intervals
         }
+        self.isArchive = cloudObj.get(RewardModelKeys.isArchive.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -276,6 +282,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
             }
             try cloudObj.set(RewardModelKeys.fixTimes.rawValue, value: dates.lcArray)
         }
+        try cloudObj.set(RewardModelKeys.isArchive.rawValue, value: isArchive.lcBool)
     }
     
 }
@@ -327,6 +334,7 @@ extension RewardModel {
         
         case fixTimeType
         case fixTimes
+        case isArchive
     }
 }
 

@@ -240,25 +240,8 @@ struct TodoItemListView: View {
         ToDoItemRowView(item: item, date: date, selection: selection, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical, showItemCount: showItemCount).environmentObject(modelData)
         .contextMenu {
             if let item = item as? EventItem {
-                if item.actionType == .task {
+                if item.actionType == .task || item.actionType == .project {
                     if item.isPlay {
-//                        if timerModel.isTiming {
-//                            Button {
-//                                timerModel.pauseTimer()
-//                                handlePauseEvent(item: item)
-//                            } label: {
-//                                Text("pause").foregroundStyle(.red)
-//                            }
-//                        } else {
-//                            Button {
-//                                timerModel.timingItem = item
-//                                timerModel.restartTimer()
-//                                handleRestartEvent(item: item)
-//                            } label: {
-//                                Text("restart").foregroundStyle(.blue)
-//                            }
-//                        }
-                        
                         Button {
                             timerModel.stopTimer()
                             handleStopEvent(item: item)
@@ -280,13 +263,10 @@ struct TodoItemListView: View {
                     }
                 }
                 
-                if selection == .project {
-                    Button {
-                        addProjectSubItem(root: item)
-                    } label: {
-                        Text("新建子任务").foregroundStyle(.cyan)
-                    }
-
+                Button {
+                    addProjectSubItem(root: item)
+                } label: {
+                    Text("新建子任务").foregroundStyle(.cyan)
                 }
                 
                 Button {

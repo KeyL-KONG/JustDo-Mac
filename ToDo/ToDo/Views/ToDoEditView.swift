@@ -67,6 +67,10 @@ struct ToDoEditView: View {
     
     @State var isCollect: Bool = false
     
+    @State var isArchive: Bool = false
+    
+    @State var isEditingMark: Bool = false
+    
     var taskTimeItems: [TaskTimeItem] {
         modelData.taskTimeItems.filter { item in
             guard let selectItem else { return false }
@@ -171,6 +175,10 @@ struct ToDoEditView: View {
                     Toggle(isOn: $isCollect) {
                         Text("设置为固定事项")
                     }
+                    
+                    Toggle(isOn: $isArchive) {
+                        Text("是否归档")
+                    }
             
                     HStack {
                         Toggle(isOn: $setPlanTime) {
@@ -196,6 +204,37 @@ struct ToDoEditView: View {
 //                    }
                     
                 })
+                
+                Section {
+                    VStack {
+                        if isEditingMark {
+                            TextEditor(text: $mark)
+                                .font(.system(size: 14))
+                                .padding(10)
+                                .scrollContentBackground(.hidden)
+                                .background(Color.init(hex: "#e8f6f3"))
+                                .frame(minHeight: 120)
+                                .cornerRadius(8)
+                        } else {
+                            MarkdownWebView(mark)
+                        }
+                    }
+                    .padding()
+                    .background(isEditingMark ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+                    .cornerRadius(10)
+                } header: {
+                    HStack {
+                        Text("备注")
+                        Spacer()
+                        Button("\(isEditingMark ? "完成" : "编辑")") {
+                            self.isEditingMark = !self.isEditingMark
+                            if !self.isEditingMark {
+                                self.saveTask()
+                            }
+                        }
+                    }
+                }
+
                 
                 Section(header:
                     HStack(alignment: .center) {
@@ -321,6 +360,7 @@ struct ToDoEditView: View {
                 }
                 isCollect = selectedItem.isCollect
                 isExpandType = selectedItem.tag.isEmpty
+                isArchive = selectedItem.isArchive
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -358,7 +398,6 @@ struct ToDoEditView: View {
         if setPlanTime {
             selectedItem.planTime = planTime
         } else {
-            //selectedItem.disablePlanTime = true
             selectedItem.planTime = nil
         }
         
@@ -370,6 +409,7 @@ struct ToDoEditView: View {
         selectedItem.isFinish = isFinish
         selectedItem.rewardId = rewardItem?.id ?? ""
         selectedItem.actionType = actionType
+        selectedItem.isArchive = isArchive
         modelData.updateItem(selectedItem)
         updateEvent()
     }

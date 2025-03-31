@@ -57,7 +57,17 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var planTime: Date? = nil
     var setPlanTime: Bool = false
     var isPlay: Bool = false
-    var playTime: Date? = nil
+    
+    private var _playTime: Date = Date.distantPast
+    
+    var playTime: Date? {
+        get {
+            return _playTime != .distantPast ? _playTime : nil
+        }
+        set {
+            _playTime = newValue ?? .distantPast
+        }
+    }
     var intervals: [LQDateInterval] = []
     var rewardType: RewardType = .none
     var rewardValueType: RewardValueType = .num
@@ -66,6 +76,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var fixedReward: Bool = false
     var rewardId: String = ""
     var isCollect: Bool = false // 新增收藏字段
+    var isArchive: Bool = false
     
     var actionType: EventActionType = .task
     var projectId: String = ""
@@ -125,6 +136,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.taskIds = try container.decode([String].self, forKey: .taskIds).uniqueArray
         self.projectId = try container.decode(String.self, forKey: .projectId)
         self.setPlanTime = try container.decode(Bool.self, forKey: .setPlanTime)
+        self.isArchive = try container.decode(Bool.self, forKey: .isArchive)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -153,15 +165,16 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let planTime {
             try container.encode(planTime, forKey: .planTime)
         }
-        if let playTime {
-            try container.encode(playTime, forKey: .playTime)
-        }
+       
+        try container.encode(_playTime, forKey: .playTime)
+        
         try container.encode(actionType.rawValue, forKey: .actionType)
         try container.encode(fatherId, forKey: .fatherId)
         try container.encode(childrenIds.uniqueArray, forKey: .childrenIds)
         try container.encode(taskIds.uniqueArray, forKey: .taskIds)
         try container.encode(projectId, forKey: .projectId)
         try container.encode(setPlanTime, forKey: .setPlanTime)
+        try container.encode(isArchive, forKey: .isArchive)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -247,6 +260,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.projectId = cloudObj.get(EventModelKeys.projectId.rawValue)?.stringValue ?? ""
         self.setPlanTime = cloudObj.get(EventModelKeys.setPlanTime.rawValue)?.boolValue ?? false
         self.isCollect = cloudObj.get(EventModelKeys.isCollect.rawValue)?.boolValue ?? false // 新增云端解析
+        self.isArchive = cloudObj.get(EventModelKeys.isArchive.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -282,9 +296,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.rewardValue.rawValue, value: rewardValue.lcNumber)
         try cloudObj.set(EventModelKeys.fixedReward.rawValue, value: fixedReward.lcBool)
         try cloudObj.set(EventModelKeys.eventType.rawValue, value: eventType.rawValue.lcNumber)
-        if let playTime = self.playTime {
-            try cloudObj.set(EventModelKeys.playTime.rawValue, value: playTime.lcDate)
-        }
+        
+        try cloudObj.set(EventModelKeys.playTime.rawValue, value: _playTime.lcDate)
+        
         try cloudObj.set(EventModelKeys.rewardCount.rawValue, value: rewardCount.lcNumber)
         try cloudObj.set(EventModelKeys.rewardId.rawValue, value: rewardId.lcString)
         try cloudObj.set(EventModelKeys.actionType.rawValue, value: actionType.rawValue.lcString)
@@ -294,6 +308,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.projectId.rawValue, value: projectId.lcString)
         try cloudObj.set(EventModelKeys.setPlanTime.rawValue, value: setPlanTime.lcBool)
         try cloudObj.set(EventModelKeys.isCollect.rawValue, value: isCollect.lcBool)
+        try cloudObj.set(EventModelKeys.isArchive.rawValue, value: isArchive.lcBool)
     }
     
 }
@@ -346,6 +361,7 @@ extension EventModel {
         case childrenIds
         case taskIds
         case projectId
+        case isArchive
     }
     
 }
