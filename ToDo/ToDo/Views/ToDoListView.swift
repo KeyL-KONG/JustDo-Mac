@@ -53,17 +53,17 @@ struct ToDoListView: View, Equatable {
         
         switch section {
         case .today:
-//            itemList = itemList.filter { event in
-//                return event.actionType == .task
-//            }
+            itemList = itemList.filter { event in
+                return !event.isArchive
+            }
             break
         case .calendar:
-//            itemList = itemList.filter({ event in
-//                return event.actionType == .task
-//            })
+            itemList = itemList.filter { event in
+                return !event.isArchive
+            }
             break
         case .project:
-            itemList = itemList.filter({ $0.actionType == .project })
+            itemList = itemList.filter({ $0.actionType == .project && !$0.isArchive })
         case .unplan:
             break
         case .recent:
@@ -71,7 +71,7 @@ struct ToDoListView: View, Equatable {
                 guard event.planTime != nil else {
                     return false
                 }
-                return event.actionType == .task
+                return event.actionType == .task && !event.isArchive
             })
         case .all:
             itemList = itemList.filter { $0.actionType != .tag }
