@@ -13,6 +13,9 @@ extension TodoItemListView {
         items.filter { event in
             return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true) || event.isCollect
         }.sorted { event1, event2 in
+            if event1.isCollect != event2.isCollect {
+                return event1.isCollect
+            }
             if event1.isFinish != event2.isFinish {
                 return event1.isFinish ? false : true
             } else if event1.importance != event2.importance {

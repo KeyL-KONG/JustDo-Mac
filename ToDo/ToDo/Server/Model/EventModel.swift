@@ -54,20 +54,18 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var eventType: EventValueType = .num
     var isFinish: Bool = false
     var finishTime: Date? = nil
-    var planTime: Date? = nil
-    var setPlanTime: Bool = false
-    var isPlay: Bool = false
-    
-    private var _playTime: Date = Date.distantPast
-    
-    var playTime: Date? {
+    private var _planTime: Date? = nil
+    var planTime: Date? {
         get {
-            return _playTime != .distantPast ? _playTime : nil
+            return setPlanTime ? _planTime : nil
         }
         set {
-            _playTime = newValue ?? .distantPast
+            _planTime = newValue
         }
     }
+    var setPlanTime: Bool = false
+    var isPlay: Bool = false
+    var playTime: Date? = nil
     var intervals: [LQDateInterval] = []
     var rewardType: RewardType = .none
     var rewardValueType: RewardValueType = .num
@@ -165,9 +163,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let planTime {
             try container.encode(planTime, forKey: .planTime)
         }
-       
-        try container.encode(_playTime, forKey: .playTime)
-        
+        if let playTime {
+            try container.encode(playTime, forKey: .playTime)
+        }
         try container.encode(actionType.rawValue, forKey: .actionType)
         try container.encode(fatherId, forKey: .fatherId)
         try container.encode(childrenIds.uniqueArray, forKey: .childrenIds)
@@ -296,9 +294,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.rewardValue.rawValue, value: rewardValue.lcNumber)
         try cloudObj.set(EventModelKeys.fixedReward.rawValue, value: fixedReward.lcBool)
         try cloudObj.set(EventModelKeys.eventType.rawValue, value: eventType.rawValue.lcNumber)
-        
-        try cloudObj.set(EventModelKeys.playTime.rawValue, value: _playTime.lcDate)
-        
+        if let playTime = self.playTime {
+            try cloudObj.set(EventModelKeys.playTime.rawValue, value: playTime.lcDate)
+        }
         try cloudObj.set(EventModelKeys.rewardCount.rawValue, value: rewardCount.lcNumber)
         try cloudObj.set(EventModelKeys.rewardId.rawValue, value: rewardId.lcString)
         try cloudObj.set(EventModelKeys.actionType.rawValue, value: actionType.rawValue.lcString)

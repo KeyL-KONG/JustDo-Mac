@@ -149,6 +149,8 @@ extension TodoItemListView {
         }
         item.actionType = .task
         item.tag = root.tag
+        item.planTime = .now
+        item.setPlanTime = true
         modelData.updateItem(item)
     }
     

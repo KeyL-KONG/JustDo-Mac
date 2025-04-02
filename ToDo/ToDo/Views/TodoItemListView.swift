@@ -249,6 +249,13 @@ struct TodoItemListView: View {
                             Text("stop").foregroundStyle(.red)
                         }
                         
+                        Button {
+                            timerModel.stopTimer()
+                            handleCancelEvent(item: item)
+                        } label: {
+                            Text("cancel").foregroundStyle(.red)
+                        }
+                        
                     }
                     else {
                         Button {
@@ -317,6 +324,11 @@ struct TodoItemListView: View {
         taskItem.eventId = item.id
         modelData.updateTimeItem(taskItem)
 
+        item.isPlay = false
+        modelData.updateItem(item)
+    }
+    
+    func handleCancelEvent(item: EventItem) {
         item.isPlay = false
         modelData.updateItem(item)
     }

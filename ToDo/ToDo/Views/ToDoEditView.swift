@@ -314,7 +314,13 @@ struct ToDoEditView: View {
             }
         })
         .onChange(of: isFinish, { oldValue, newValue in
-            finishTime = .now
+            if isFinish {
+                finishTime = .now
+            }
+            saveTask()
+        })
+        .onChange(of: setPlanTime, { oldValue, newValue in
+            print("set plan time")
             saveTask()
         })
         .onChange(of: isCollect, { _, _ in
@@ -395,6 +401,7 @@ struct ToDoEditView: View {
         selectedItem.title = titleText
         selectedItem.tag = tag
         selectedItem.mark = mark
+        selectedItem.setPlanTime = setPlanTime
         if setPlanTime {
             selectedItem.planTime = planTime
         } else {

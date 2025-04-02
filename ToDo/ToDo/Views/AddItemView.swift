@@ -78,13 +78,15 @@ struct TaskSaveView: View {
     @State var timerModel: TimerModel
     @State var taskContent: String = ""
     @State var eventContent: String = ""
+    @State var markContent: String = ""
     @EnvironmentObject var modelData: ModelData
     @Environment(\.dismiss) var dismiss
     @FocusState private var focusedField: FocusedField?
     
     enum FocusedField {
-        case title
-        case event
+        case task
+        case record
+        case mark
     }
     
     var body: some View {
@@ -92,8 +94,8 @@ struct TaskSaveView: View {
             if timerModel.isTiming {
                 Text("任务【\(timerModel.title.prefix(15))】 进行中...")
                 
-                TextField("填写任务描述", text: $taskContent)
-                    .focused($focusedField, equals: .title)
+                TextField("填写记录描述", text: $taskContent)
+                    .focused($focusedField, equals: .record)
                     .onSubmit {
                         addTaskTimeItem()
                     }
@@ -104,10 +106,23 @@ struct TaskSaveView: View {
                             .keyboardShortcut(.return)
                     )
                     .padding()
+                
+                TextField("添加备注信息", text: $markContent)
+                    .focused($focusedField, equals: .mark)
+                    .onSubmit {
+                        updateMark()
+                    }
+                    .background(
+                        Button(action: updateMark) {}
+                            .frame(width: 0, height: 0)
+                            .opacity(0)
+                            .keyboardShortcut(.return)
+                    )
+                    .padding()
             }
             
             TextField("添加任务", text: $eventContent)
-                .focused($focusedField, equals: .event)
+                .focused($focusedField, equals: .task)
                 .onSubmit {
                     addEventItem()
                 }
@@ -125,9 +140,9 @@ struct TaskSaveView: View {
         .padding()
         .onAppear {
             if timerModel.isTiming {
-                self.focusedField = .title
+                self.focusedField = .record
             } else {
-                self.focusedField = .event
+                self.focusedField = .task
             }
         }
     }
@@ -144,6 +159,19 @@ struct TaskSaveView: View {
             modelData.updateItem(item)
         }
         taskContent = ""
+        dismiss()
+    }
+    
+    func updateMark() {
+        if let item = timerModel.timingItem {
+            if item.mark.isEmpty {
+                item.mark = markContent
+            } else {
+                item.mark += "\n\(markContent)"
+            }
+            modelData.updateItem(item)
+        }
+        markContent = ""
         dismiss()
     }
     
