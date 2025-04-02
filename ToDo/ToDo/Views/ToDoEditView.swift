@@ -226,8 +226,19 @@ struct ToDoEditView: View {
                     HStack {
                         Text("备注")
                         Spacer()
+                        
+                        // 新增展开按钮
+                        Button {
+                            showPreviewWindow()
+                        } label: {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .foregroundColor(.blue)
+                        }
+                        .buttonStyle(.plain)
+                        .help("在新窗口预览")
+                        
                         Button("\(isEditingMark ? "完成" : "编辑")") {
-                            self.isEditingMark = !self.isEditingMark
+                            self.isEditingMark.toggle()
                             if !self.isEditingMark {
                                 self.saveTask()
                             }
@@ -420,5 +431,15 @@ struct ToDoEditView: View {
         modelData.updateItem(selectedItem)
         updateEvent()
     }
+
+    // 添加环境变量
+    @Environment(\.openWindow) private var openWindow
+
+    // 修改按钮响应方法
+    private func showPreviewWindow() {
+        guard let selectItem else { return }
+        openWindow(id: "markdown-preview", value: selectItem)
+    }
     
 }
+

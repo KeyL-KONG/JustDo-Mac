@@ -37,6 +37,7 @@
 		09D714682D8FEBAB009DB18E /* DayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714672D8FEBA8009DB18E /* DayView.swift */; };
 		09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714692D9052E4009DB18E /* WeekView.swift */; };
 		09D7146C2D905661009DB18E /* WeekCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7146B2D90565A009DB18E /* WeekCalendarView.swift */; };
+		09D714722D9DA538009DB18E /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714712D9DA531009DB18E /* MarkdownView.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -103,6 +104,7 @@
 		09D714672D8FEBA8009DB18E /* DayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayView.swift; sourceTree = "<group>"; };
 		09D714692D9052E4009DB18E /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		09D7146B2D90565A009DB18E /* WeekCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekCalendarView.swift; sourceTree = "<group>"; };
+		09D714712D9DA531009DB18E /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				09D714712D9DA531009DB18E /* MarkdownView.swift */,
 				09D714642D86F8DD009DB18E /* ReviewNewView.swift */,
 				09D714602D85D318009DB18E /* TimeLineRowView.swift */,
 				093E79112D297AD9006E5120 /* SummaryEditView.swift */,
@@ -525,6 +528,7 @@
 				09F80BFD2C665A3F00650366 /* DataManager.swift in Sources */,
 				09D7146C2D905661009DB18E /* WeekCalendarView.swift in Sources */,
 				093E78FE2D23855D006E5120 /* ModelData+ReadList.swift in Sources */,
+				09D714722D9DA538009DB18E /* MarkdownView.swift in Sources */,
 				093E78FF2D23855D006E5120 /* ModelData+NoteList.swift in Sources */,
 				09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */,
 				09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */,

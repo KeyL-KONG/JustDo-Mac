@@ -62,6 +62,18 @@ struct ToDoApp: App {
 //            }
         }
         
+        // 注册预览窗口
+        WindowGroup("Markdown Preview", id: "markdown-preview", for: EventItem.self) { $item in
+            if let item {
+                MarkdownView(item: item)
+                    .environmentObject(modelData)
+                    .frame(minWidth: 300, minHeight: 200)
+                    .padding()
+            }
+        }
+        .windowStyle(.hiddenTitleBar)
+        
+        
         MenuBarExtra {
             AddItemView()
                 .environmentObject(modelData)
@@ -74,25 +86,6 @@ struct ToDoApp: App {
         MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
             TaskSaveView(timerModel: timerModel)
                 .environmentObject(modelData)
-//            Button("pause") {
-//                if timerModel.isTiming {
-//                    timerModel.pauseTimer()
-//                    handlePauseEvent()
-//                }
-//            }
-            
-//            Button("stop") {
-//                self.handleStopEvent()
-//                timerModel.stopTimer()
-//            }
-//            
-//            Button("restart") {
-//                if timerModel.isTiming {
-//                    return
-//                }
-//                timerModel.restartTimer()
-//                handleRestartEvent()
-//            }
         }
         .menuBarExtraStyle(.window)
         .onChange(of: timerModel.title) { oldValue, newValue in
@@ -137,6 +130,18 @@ struct ToDoApp: App {
     func downWindow() {
         let window = NSApp.windows.first
         window?.level = .normal
+    }
+}
+
+
+// 新增预览视图
+struct PreviewMarkdownView: View {
+    let content: String
+    
+    var body: some View {
+        MarkdownWebView(content)
+            .frame(minWidth: 400, minHeight: 600)
+            .padding()
     }
 }
 
