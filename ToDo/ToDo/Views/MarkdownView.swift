@@ -18,12 +18,19 @@ struct MarkdownView: View {
     var body: some View {
             VStack {
                 if isEditingMark {
-                    TextEditor(text: $mark)
-                        .font(.system(size: 14))
-                        .padding(10)
-                        .scrollContentBackground(.hidden)
-                        .background(Color.init(hex: "#e8f6f3"))
-                        .cornerRadius(8)
+                    HStack {
+                        TextEditor(text: $mark)
+                            .font(.system(size: 14))
+                            .padding(10)
+                            .scrollContentBackground(.hidden)
+                            .background(Color.init(hex: "#e8f6f3"))
+                            .cornerRadius(8)
+                        Spacer()
+                        VStack {
+                            MarkdownWebView(mark)
+                            Spacer()
+                        }
+                    }
                 } else {
                     MarkdownWebView(mark)
                 }
@@ -36,11 +43,14 @@ struct MarkdownView: View {
             mark = item.mark
             isEditingMark = true
         }
+            .onDisappear(perform: {
+                saveItem()
+            })
         .toolbar() {
             HStack {
                 Text(item.title)
                 Spacer()
-                Button("\(isEditingMark ? "完成" : "编辑")") {
+                Button("\(isEditingMark ? "保存" : "编辑")") {
                     self.isEditingMark.toggle()
                     if !self.isEditingMark {
                         saveItem()
@@ -51,6 +61,7 @@ struct MarkdownView: View {
     }
     
     func saveItem() {
+        print("save item")
         item.mark = mark
         modelData.updateItem(item)
     }
