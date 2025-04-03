@@ -69,6 +69,8 @@ struct ToDoEditView: View {
     
     @State var isArchive: Bool = false
     
+    @State var isTempInsert: Bool = false
+    
     @State var isEditingMark: Bool = false
     
     var taskTimeItems: [TaskTimeItem] {
@@ -179,6 +181,10 @@ struct ToDoEditView: View {
                     Toggle(isOn: $isArchive) {
                         Text("是否归档")
                     }
+                    
+                    Toggle(isOn: $isTempInsert) {
+                        Text("是否临时插入事项")
+                    }
             
                     HStack {
                         Toggle(isOn: $setPlanTime) {
@@ -282,39 +288,6 @@ struct ToDoEditView: View {
                         }
                     }
                 }
-//                
-//                //if intervals.count > 0 {
-//                    Section(header:
-//                        HStack(alignment: .center) {
-//                            Text("统计时间")
-//                            Spacer()
-//                            Button {
-//                                let interval = LQDateInterval(start: .now, end: .now)
-//                                self.intervals = [interval] + intervals
-//                                print("add time interval")
-//                            } label: {
-//                                Text("添加时间").font(.system(size: 14))
-//                            }
-//                        }
-//                    , content: {
-//                        ForEach(intervals.indices, id: \.self) { index in
-//                            let interval = intervals[index]
-//                            DateIntervalView(interval: interval, index: index) { change in
-//                                intervals[index] = change
-//                            }
-//                            .contextMenu {
-//                                Button {
-//                                    self.intervals.remove(at: index)
-//                                    self.saveTask()
-//                                } label: {
-//                                    Text("删除").foregroundStyle(.red)
-//                                }
-//                            }
-//                        }
-//                        .id(UUID())
-//                    })
-//                //}
-                
             }
         }
         .onChange(of: modelData.toggleToRefresh, { oldValue, newValue in
@@ -325,10 +298,6 @@ struct ToDoEditView: View {
             }
         })
         .onChange(of: isFinish, { oldValue, newValue in
-//            if isFinish {
-//                finishTime = .now
-//            }
-//            saveTask()
         })
         .onChange(of: setPlanTime, { oldValue, newValue in
             print("set plan time")
@@ -378,6 +347,7 @@ struct ToDoEditView: View {
                 isCollect = selectedItem.isCollect
                 isExpandType = selectedItem.tag.isEmpty
                 isArchive = selectedItem.isArchive
+                isTempInsert = selectedItem.isTempInsert
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -428,6 +398,7 @@ struct ToDoEditView: View {
         selectedItem.rewardId = rewardItem?.id ?? ""
         selectedItem.actionType = actionType
         selectedItem.isArchive = isArchive
+        selectedItem.isTempInsert = isTempInsert
         modelData.updateItem(selectedItem)
         updateEvent()
     }

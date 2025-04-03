@@ -67,6 +67,10 @@ struct ToDoItemRowView: View {
                         tagView(title: tag.title, color: tag.titleColor)
                     }
                     
+                    if let item = self.item as? EventItem, item.isTempInsert {
+                        tagView(title: "临时", color: Color.init(hex: "f5b041"))
+                    }
+                    
                     if let item = self.item as? EventItem, let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
                         Spacer()
                         let days = planTime.daysBetweenDates(date: .now)
@@ -118,6 +122,10 @@ struct ToDoItemRowView: View {
                 
                 if let item = self.item as? EventItem, showImportance {
                     tagView(title: item.importance.description, color: item.importance.titleColor)
+                }
+                
+                if let item = self.item as? EventItem, item.isTempInsert {
+                    tagView(title: "临时", color: Color.init(hex: "e59866"))
                 }
                 
                 if showItemCount {

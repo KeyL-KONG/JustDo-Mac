@@ -75,6 +75,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var rewardId: String = ""
     var isCollect: Bool = false // 新增收藏字段
     var isArchive: Bool = false
+    var isTempInsert: Bool = false
     
     var actionType: EventActionType = .task
     var projectId: String = ""
@@ -135,6 +136,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.projectId = try container.decode(String.self, forKey: .projectId)
         self.setPlanTime = try container.decode(Bool.self, forKey: .setPlanTime)
         self.isArchive = try container.decode(Bool.self, forKey: .isArchive)
+        self.isTempInsert = try container.decode(Bool.self, forKey: .isTempInsert)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -173,6 +175,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(projectId, forKey: .projectId)
         try container.encode(setPlanTime, forKey: .setPlanTime)
         try container.encode(isArchive, forKey: .isArchive)
+        try container.encode(isTempInsert, forKey: .isTempInsert)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -259,6 +262,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.setPlanTime = cloudObj.get(EventModelKeys.setPlanTime.rawValue)?.boolValue ?? false
         self.isCollect = cloudObj.get(EventModelKeys.isCollect.rawValue)?.boolValue ?? false // 新增云端解析
         self.isArchive = cloudObj.get(EventModelKeys.isArchive.rawValue)?.boolValue ?? false
+        self.isTempInsert = cloudObj.get(EventModelKeys.isTempInsert.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -307,6 +311,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.setPlanTime.rawValue, value: setPlanTime.lcBool)
         try cloudObj.set(EventModelKeys.isCollect.rawValue, value: isCollect.lcBool)
         try cloudObj.set(EventModelKeys.isArchive.rawValue, value: isArchive.lcBool)
+        try cloudObj.set(EventModelKeys.isTempInsert.rawValue, value: isTempInsert.lcBool)
     }
     
 }
@@ -360,6 +365,7 @@ extension EventModel {
         case taskIds
         case projectId
         case isArchive
+        case isTempInsert
     }
     
 }
