@@ -27,6 +27,7 @@ struct TodoItemListView: View {
     @State var currentDate: Date = .now {
         didSet {
             toggleToRefresh.toggle()
+            print("current date: \(currentDate)")
         }
     }
     
@@ -214,6 +215,9 @@ struct TodoItemListView: View {
                 Label("Add New Item", systemImage: "plus")
             }
         }
+        .onChange(of: calendarMode, { oldValue, newValue in
+            currentDate = .now
+        })
         .alert(isPresented: $showDeleteAlert) {
             Alert(title: Text("是否删除该事项"), message: Text(Self.deleteItem?.title ?? ""), primaryButton: .destructive(Text("确认"), action: {
                 deleteItem()
@@ -236,8 +240,8 @@ struct TodoItemListView: View {
         }
     }
     
-    func itemRowView(item: any BasicTaskProtocol, date: Date = .now, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false, showItemCount: Bool = false) -> some View {
-        ToDoItemRowView(item: item, date: date, selection: selection, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical, showItemCount: showItemCount).environmentObject(modelData)
+    func itemRowView(item: any BasicTaskProtocol, date: Date = .now, showImportance: Bool = true, showTag: Bool = true, showDeadline: Bool = true, showMark: Bool = false, isVertical: Bool = false, showItemCount: Bool = false, showIsFinish: Bool = false) -> some View {
+        ToDoItemRowView(item: item, date: date, selection: selection, showImportance: showImportance, showTag: showTag, showDeadline: showDeadline, showMark: showMark, isVerticalLayout: isVertical, showItemCount: showItemCount, showIsFinish: showIsFinish).environmentObject(modelData)
         .contextMenu {
             if let item = item as? EventItem {
                 if item.actionType == .task || item.actionType == .project {

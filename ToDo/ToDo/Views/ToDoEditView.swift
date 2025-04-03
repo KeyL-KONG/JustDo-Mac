@@ -325,14 +325,14 @@ struct ToDoEditView: View {
             }
         })
         .onChange(of: isFinish, { oldValue, newValue in
-            if isFinish {
-                finishTime = .now
-            }
-            saveTask()
+//            if isFinish {
+//                finishTime = .now
+//            }
+//            saveTask()
         })
         .onChange(of: setPlanTime, { oldValue, newValue in
             print("set plan time")
-            saveTask()
+            //saveTask()
         })
         .onChange(of: isCollect, { _, _ in
             //saveTask()

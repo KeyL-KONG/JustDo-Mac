@@ -27,8 +27,7 @@ extension TodoItemListView {
                                 if index >= startOfMonthWeekDay {
                                     let date = dateWithIndex(index)
                                     let dayItems = items.filter { event in
-                                        guard let planTime = event.planTime else { return false }
-                                        return planTime.isInSameDay(as: date)
+                                        return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
                                     }
                                     let bgColor = dayItems.isEmpty ? Color.clear : Color.init(hex: "e9f7ef")
                                     VStack {
@@ -46,7 +45,7 @@ extension TodoItemListView {
                                         
                                         ForEach(dayItems) { item in
                                             let itemColor = selectItemID == item.id ? Color.init(hex: "a9dfbf") : .clear
-                                            monthItemView(item: item)
+                                            monthItemView(item: item, date: date)
                                                 .contentShape(Rectangle())
                                                 .cornerRadius(5)
                                                 .background(itemColor)
@@ -75,7 +74,6 @@ extension TodoItemListView {
     
     var startOfMonthWeekDay: Int {
         let weekDay = currentDate.firstDayOfMonth.weekday - 1
-        print("week day: \(weekDay)")
         return weekDay
     }
     
@@ -89,8 +87,8 @@ extension TodoItemListView {
         return Calendar.current.date(byAdding: .day, value: offset, to: startDate)!
     }
     
-    func monthItemView(item: EventItem) -> some View {
-        itemRowView(item: item, showImportance: true, showTag: true,  showDeadline: false, isVertical: true)
+    func monthItemView(item: EventItem, date: Date) -> some View {
+        itemRowView(item: item, date: date, showImportance: true, showTag: true,  showDeadline: false, isVertical: true, showIsFinish: true)
             .frame(maxWidth: 200)
     }
     

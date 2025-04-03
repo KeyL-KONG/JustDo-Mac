@@ -434,14 +434,14 @@ extension Date {
     var isInThePast:   Bool { self < Date() }
     
     var firstDayOfMonth: Date {
-        let currentDate = Date()
+        let currentDate = self
         let calendar = Calendar.current
         let firstDayComponents = calendar.dateComponents([.year, .month], from: currentDate)
         return calendar.date(from: firstDayComponents) ?? self
     }
 
     var lastDayOfMonth: Date {
-        let currentDate = Date()
+        let currentDate = self
         let calendar = Calendar.current
         var lastDayComponents = DateComponents()
         lastDayComponents.month = 1

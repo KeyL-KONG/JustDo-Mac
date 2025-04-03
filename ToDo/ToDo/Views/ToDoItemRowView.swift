@@ -13,7 +13,7 @@ struct ToDoItemRowView: View {
     //@ObservedObject var timerModel: TimerModel
     @State var item: any BasicTaskProtocol
     
-    var date: Date = .now
+    var date: Date
     var selection: ToDoSection
     var showImportance: Bool = true
     var showTag: Bool = true
@@ -21,6 +21,7 @@ struct ToDoItemRowView: View {
     var showMark: Bool = false
     var isVerticalLayout: Bool = false
     var showItemCount: Bool = false
+    var showIsFinish: Bool = false
     
     var tag: ItemTag? {
         modelData.tagList.first { $0.id == item.tag }
@@ -42,24 +43,19 @@ struct ToDoItemRowView: View {
     var body: some View {
         if isVerticalLayout {
             VStack {
-//                if item.type == .task {
-//                    HStack {
-//                        if !item.isFinish {
-//                            Label("", systemImage: "circle")
-//                        }
-//                        Text(item.title).font(.system(size: 12))
-//                        Spacer()
-//                    }
-//                } else {
-//                    HStack {
-//                        Text(item.title).font(.system(size: 12))
-//                        Spacer()
-//                    }
-//                }
-                
-                HStack {
-                    Text(item.title).font(.system(size: 12))
-                    Spacer()
+                if showIsFinish {
+                    HStack {
+                        if !item.isFinish {
+                            Label("", systemImage: "circle")
+                        }
+                        Text(item.title).font(.system(size: 12))
+                        Spacer()
+                    }
+                } else {
+                    HStack {
+                        Text(item.title).font(.system(size: 12))
+                        Spacer()
+                    }
                 }
                 
                 HStack {
