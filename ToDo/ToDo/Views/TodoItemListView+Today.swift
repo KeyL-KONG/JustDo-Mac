@@ -9,13 +9,17 @@ import SwiftUI
 
 extension TodoItemListView {
     
+    var collectItems: [EventItem] {
+        items.filter { event in
+            event.isCollect
+        }
+    }
+    
     var todayItems: [EventItem] {
         items.filter { event in
-            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true) || event.isCollect
+            guard !event.isCollect else { return false }
+            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
         }.sorted { event1, event2 in
-            if event1.isCollect != event2.isCollect {
-                return event1.isCollect
-            }
             if event1.isFinish != event2.isFinish {
                 return event1.isFinish ? false : true
             } else if event1.importance != event2.importance {
@@ -41,7 +45,7 @@ extension TodoItemListView {
             guard let planTime = event.planTime else {
                 return false
             }
-            return !event.isFinish && planTime < .now && !planTime.isInToday && Date.now.daysBetweenDates(date: planTime) <= 14 && !todayItems.contains(event)
+            return !event.isFinish && planTime < .now && !planTime.isInToday && Date.now.daysBetweenDates(date: planTime) <= 14 && !todayItems.contains(event) && event.actionType == .task
         }.sorted { first, second in
             guard let firstPlanTime = first.planTime, let secondPlanTime = second.planTime else { return false }
             let firstDays = Date.now.daysBetweenDates(date: firstPlanTime)
@@ -87,6 +91,23 @@ extension TodoItemListView {
     
     func todayListView() -> some View {
         List(selection: $selectItemID) {
+            
+            Section(header:
+                HStack {
+                    Text("收藏事项")
+                    Spacer()
+                Button(action: { isCollectExpanded.toggle() }) {
+                    Image(systemName: isCollectExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isCollectExpanded {
+                    ForEach(collectItems, id: \.self.id) { item in
+                        itemRowView(item: item, date: selectDate, showDeadline: false)
+                    }
+                }
+            }
+            
             Section(header:
                 HStack {
                     Text("今日事项")

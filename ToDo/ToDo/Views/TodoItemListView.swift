@@ -39,6 +39,7 @@ struct TodoItemListView: View {
     @State var expandedItems: Set<String> = []
 
     // 添加状态变量
+    @State var isCollectExpanded = true
     @State var isTodayExpanded = true
     @State var isDeadlineExpanded = false
     @State var isExpiredExpanded = false

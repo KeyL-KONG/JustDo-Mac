@@ -54,12 +54,6 @@ struct ToDoApp: App {
                 } message: {
                     Text("")
                 }
-            
-//            if #available(macOS 15.0, *) {
-//                WeekCalendarView(.constant(""), selection: .constant(nil), focused: .constant(.init(order: .current, days: [.now])), isDragging: false)
-//            } else {
-//                // Fallback on earlier versions
-//            }
         }
         
         // 注册预览窗口

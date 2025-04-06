@@ -12,6 +12,7 @@ struct ToDoEditView: View {
     
     @EnvironmentObject var modelData: ModelData
     var selectItem: EventItem?
+    var selectionChange: ((String) -> ())
     var updateEvent: (() -> ())
     
     @State var titleText: String = ""
@@ -65,6 +66,8 @@ struct ToDoEditView: View {
     
     @State var isExpandType: Bool = false
     
+    @State var isExpandSubItems: Bool = false
+    
     @State var isCollect: Bool = false
     
     @State var isArchive: Bool = false
@@ -84,6 +87,28 @@ struct ToDoEditView: View {
     
     var taskTotalTime: Int {
         taskTimeItems.compactMap { $0.interval}.reduce(0, +)
+    }
+    
+    var fatherItem: EventItem? {
+        guard let selectItem, let fatherItem = modelData.itemList.first(where: {
+            ($0.id == selectItem.fatherId && selectItem.fatherId.count > 0) || ($0.id == selectItem.projectId && selectItem.projectId.count > 0)
+        }) else { return nil }
+        return fatherItem
+    }
+    
+    var subItems: [EventItem] {
+        guard let selectItem else { return [] }
+        return modelData.itemList.filter { event in
+            event.projectId == selectItem.id || event.fatherId == selectItem.id
+        }.sorted { event1, event2 in
+            if event1.isFinish != event2.isFinish {
+                return !event1.isFinish
+            }
+            if let finishTime1 = event1.finishTime, let finishTime2 = event2.finishTime {
+                return finishTime1.timeIntervalSince1970 > finishTime2.timeIntervalSince1970
+            }
+            return event1.createTime?.timeIntervalSince1970 ?? 0 > event2.createTime?.timeIntervalSince1970 ?? 0
+        }
     }
     
     var body: some View {
@@ -155,6 +180,17 @@ struct ToDoEditView: View {
                         }
                     }
                     
+                    if let fatherItem {
+                        HStack {
+                            Text("父任务：")
+                            Text(fatherItem.title).foregroundStyle(.blue)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectionChange(fatherItem.id)
+                        }
+                    }
+                    
                     if isFinish {
                         HStack {
                             Toggle(isOn: $isFinish) {
@@ -210,6 +246,33 @@ struct ToDoEditView: View {
 //                    }
                     
                 })
+                
+                if subItems.count > 0 {
+                    Section(header: HStack(content: {
+                        Text("子任务(\(subItems.filter { $0.isFinish }.count)/\(subItems.count))")
+                        Spacer()
+                        Button {
+                            isExpandSubItems = !isExpandSubItems
+                        } label: {
+                            let image = isExpandSubItems ? "chevron.down" : "chevron.right"
+                            Image(systemName: image)
+                        }
+                    })) {
+                        if isExpandSubItems {
+                            ForEach(subItems, id: \.self.id) { item in
+                                HStack {
+                                    Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                                    Text(item.title).foregroundStyle(.blue)
+                                    Spacer()
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectionChange(item.id)
+                                }
+                            }
+                        }
+                    }
+                }
                 
                 Section {
                     VStack {

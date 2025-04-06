@@ -17,6 +17,10 @@ extension TodoItemListView {
         currentDate.simpleWeek
     }
     
+    var summaryItems: [SummaryItem] {
+        modelData.summaryItemList
+    }
+    
     func weekView() -> some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal) {
@@ -180,6 +184,29 @@ extension TodoItemListView {
                                 .cornerRadius(10)
                             }
                             
+                            let summaryItems = modelData.summaryItemList.filter { item in
+                                guard let createTime = item.createTime else {
+                                    return false
+                                }
+                                return createTime.isInSameDay(as: date)
+                            }
+                            
+                            if summaryItems.count > 0 {
+                                VStack {
+                                    HStack {
+                                        Text("想法").bold()
+                                        Spacer()
+                                    }.padding(.horizontal, 5).padding(.top, 5)
+                                    ForEach(summaryItems, id: \.self) { item in
+                                        summaryItemView(item: item, selectColor: Color.init(hex: "aed6f1"))
+                                    }
+                                    
+                                }
+                                .padding(.top, ((unfinishItems.isEmpty && finishItems.isEmpty) ? 0 : 10))
+                                .background(Color.init(hex: "ebf5fb"))
+                                .cornerRadius(10)
+                            }
+                            
                             if totalTime > 0 {
                                 Spacer()
                                 
@@ -215,6 +242,35 @@ extension TodoItemListView {
             .onTapGesture {
                 selectItemID = item.id
             }
+    }
+    
+    func summaryItemView(item: SummaryItem, selectColor: Color) -> some View {
+        let itemColor = selectItemID == item.id ? selectColor : .clear
+        return HStack {
+            let text = item.content.count <= 25 ? item.content : "\(item.content.prefix(25)))..."
+            Text(text)
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color.init(hex: "ebdef0"), Color.init(hex: "e8daef")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 4
+                        )
+                )
+
+        }
+        .contentShape(Rectangle())
+        .cornerRadius(5)
+        .background(itemColor)
+        .padding(5)
+        .onTapGesture {
+            selectItemID = item.id
+        }
+        
     }
     
 }
