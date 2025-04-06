@@ -12,8 +12,13 @@ struct SummaryEditView: View {
     @EnvironmentObject var modelData: ModelData
     var summaryItem: SummaryItem
     @State var summaryContent: String = ""
+    @State var selectedTag: String = ""
     
     @State var isEditing: Bool = true
+    
+    var summaryTagListTitle: [String] {
+        modelData.summaryTagList.compactMap { $0.content }
+    }
     
     var body: some View {
         VStack {
@@ -34,6 +39,14 @@ struct SummaryEditView: View {
                             .padding(10)
                             .frame(minHeight: 120)
                     
+                    }
+                }
+                
+                Section(header: Text("设置")) {
+                    VStack {
+                        HStack {
+                            
+                        }
                     }
                 }
             }

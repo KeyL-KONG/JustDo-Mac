@@ -144,7 +144,7 @@ struct ToDoListView: View, Equatable {
                         }
                         
                     }
-                    .frame(minWidth: 1200)
+                    .frame(minWidth: 600)
             }
             
         } detail: {
@@ -175,7 +175,7 @@ struct ToDoListView: View, Equatable {
                         
                     }).environmentObject(modelData)
                         .id(selectItemID)
-                        .frame(minWidth: 400)
+                        .frame(minWidth: 300)
                 } else if let summaryItem = currentSelectItem() as? SummaryItem {
                     SummaryEditView(summaryItem: summaryItem)
                         .environmentObject(modelData).id(selectItemID)
