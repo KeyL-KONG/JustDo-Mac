@@ -387,6 +387,14 @@ enum DisplayMode: Int, Identifiable {
 
 extension Date {
     
+    var year: Int {
+        return Calendar.current.component(.year, from: self)
+    }
+    
+    var day: Int {
+        return Calendar.current.component(.day, from: self)
+    }
+    
     var month: Int {
         return Calendar.current.component(.month, from: self)
     }
@@ -420,7 +428,9 @@ extension Date {
     func isInSameMonth(as date: Date) -> Bool { isEqual(to: date, toGranularity: .month) }
     func isInSameWeek(as date: Date) -> Bool { isEqual(to: date, toGranularity: .weekOfYear) }
 
-    func isInSameDay(as date: Date) -> Bool { Calendar.current.isDate(self, inSameDayAs: date) }
+    func isInSameDay(as date: Date) -> Bool {
+        return self.year == date.year && self.month == date.month && self.day == date.day
+    }
 
     var isInThisYear:  Bool { isInSameYear(as: Date()) }
     var isInThisMonth: Bool { isInSameMonth(as: Date()) }

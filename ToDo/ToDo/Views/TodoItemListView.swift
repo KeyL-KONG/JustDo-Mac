@@ -132,19 +132,33 @@ struct TodoItemListView: View {
         VStack {
             if selection == .unplan {
                 List(selection: $selectItemID) {
-                    Section(header: Text("待规划")) {
-                        ForEach(unplanItemList) { item in
-                            itemRowView(item: item, showDeadline: false)
-                                .id(UUID())
+                    
+                    let tags = modelData.tagList
+                    ForEach(tags, id:\.id) { tag in
+                        let items = modelData.itemList.filter { !$0.isArchive && $0.planTime == nil && $0.tag == tag.id && !$0.isFinish }
+                        if items.count > 0 {
+                            Section(header: Text(tag.title)) {
+                                ForEach(items) { item in
+                                    itemRowView(item: item, showDeadline: false)
+                                        .id(UUID())
+                                }
+                            }
                         }
                     }
                     
-                    Section(header: Text("已过期")) {
-                        ForEach(expiredItemList) { item in
-                            itemRowView(item: item, showDeadline: true)
-                                .id(UUID())
-                        }
-                    }
+//                    Section(header: Text("待规划")) {
+//                        ForEach(unplanItemList) { item in
+//                            itemRowView(item: item, showDeadline: false)
+//                                .id(UUID())
+//                        }
+//                    }
+//                    
+//                    Section(header: Text("已过期")) {
+//                        ForEach(expiredItemList) { item in
+//                            itemRowView(item: item, showDeadline: true)
+//                                .id(UUID())
+//                        }
+//                    }
                 }
             } else if selection == .calendar {
                 if calendarMode == .week {

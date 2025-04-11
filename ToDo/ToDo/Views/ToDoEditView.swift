@@ -74,6 +74,16 @@ struct ToDoEditView: View {
     
     @State var isTempInsert: Bool = false
     
+    @State var needReview: Bool = false
+    
+    @State var finishReview: Bool = false
+    
+    @State var reviewDate: Date = .now
+    
+    @State var reviewText: String = ""
+    
+    @State var isEditingReview: Bool = false
+    
     @State var isEditingMark: Bool = false
     
     var taskTimeItems: [TaskTimeItem] {
@@ -209,7 +219,7 @@ struct ToDoEditView: View {
                     
                 })
                 
-                Section(header: Text("设置时间"), content: {
+                Section(header: Text("设置属性"), content: {
                     Toggle(isOn: $isCollect) {
                         Text("设置为固定事项")
                     }
@@ -220,6 +230,10 @@ struct ToDoEditView: View {
                     
                     Toggle(isOn: $isTempInsert) {
                         Text("是否临时插入事项")
+                    }
+                    
+                    Toggle(isOn: $needReview) {
+                        Text("是否需要复盘")
                     }
             
                     HStack {
@@ -272,6 +286,55 @@ struct ToDoEditView: View {
                             }
                         }
                     }
+                }
+                
+                if needReview {
+                    Section {
+                        VStack {
+                            HStack {
+                                Toggle(isOn: $finishReview) {
+                                    Text("是否完成复盘")
+                                }
+                                Spacer()
+                                if finishReview {
+                                    DatePicker(selection: $reviewDate, displayedComponents: [.date, .hourAndMinute]) {
+                                        
+                                    }
+                                }
+                            }
+                            
+                            HStack {
+                                if isEditingReview {
+                                    TextEditor(text: $reviewText)
+                                        .font(.system(size: 14))
+                                        .padding(10)
+                                        .scrollContentBackground(.hidden)
+                                        .background(Color.init(hex: "#e8f6f3"))
+                                        .frame(minHeight: 120)
+                                        .cornerRadius(8)
+                                } else {
+                                    MarkdownWebView(reviewText)
+                                }
+                            }
+                            .padding()
+                            .background(isEditingReview ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+                            .cornerRadius(10)
+                            
+                        }
+                    } header: {
+                        HStack {
+                            Text("复盘")
+                            Spacer()
+                            
+                            Button("\(isEditingReview ? "完成" : "编辑")") {
+                                self.isEditingReview.toggle()
+                                if !self.isEditingReview {
+                                    self.saveTask()
+                                }
+                            }
+                        }
+                    }
+
                 }
                 
                 Section {
@@ -411,6 +474,10 @@ struct ToDoEditView: View {
                 isExpandType = selectedItem.tag.isEmpty
                 isArchive = selectedItem.isArchive
                 isTempInsert = selectedItem.isTempInsert
+                needReview = selectedItem.needReview
+                finishReview = selectedItem.finishReview
+                reviewDate = selectedItem.reviewDate ?? .now 
+                reviewText = selectedItem.reviewText
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -462,6 +529,10 @@ struct ToDoEditView: View {
         selectedItem.actionType = actionType
         selectedItem.isArchive = isArchive
         selectedItem.isTempInsert = isTempInsert
+        selectedItem.needReview = needReview
+        selectedItem.reviewDate = reviewDate
+        selectedItem.reviewText = reviewText
+        selectedItem.finishReview = finishReview
         modelData.updateItem(selectedItem)
         updateEvent()
     }

@@ -71,6 +71,10 @@ struct ToDoItemRowView: View {
                         tagView(title: "临时", color: Color.init(hex: "f5b041"))
                     }
                     
+                    if let item = self.item as? EventItem, item.needReview, !item.finishReview {
+                        tagView(title: "待复盘", color: Color.init(hex: "e74c3c"))
+                    }
+                    
                     if let item = self.item as? EventItem, let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
                         Spacer()
                         let days = planTime.daysBetweenDates(date: .now)

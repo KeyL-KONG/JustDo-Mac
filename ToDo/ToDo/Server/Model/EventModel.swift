@@ -76,6 +76,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var isCollect: Bool = false // 新增收藏字段
     var isArchive: Bool = false
     var isTempInsert: Bool = false
+    var needReview: Bool = false
+    var finishReview: Bool = false
+    var reviewText: String = ""
+    var reviewDate: Date?
     
     var actionType: EventActionType = .task
     var projectId: String = ""
@@ -137,6 +141,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.setPlanTime = try container.decode(Bool.self, forKey: .setPlanTime)
         self.isArchive = try container.decode(Bool.self, forKey: .isArchive)
         self.isTempInsert = try container.decode(Bool.self, forKey: .isTempInsert)
+        self.needReview = try container.decode(Bool.self, forKey: .needReview)
+        self.reviewText = try container.decode(String.self, forKey: .reviewText)
+        self.finishReview = try container.decode(Bool.self, forKey: .finishReview)
+        self.reviewDate = try container.decode(Date.self, forKey: .reviewDate)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -176,6 +184,12 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(setPlanTime, forKey: .setPlanTime)
         try container.encode(isArchive, forKey: .isArchive)
         try container.encode(isTempInsert, forKey: .isTempInsert)
+        try container.encode(needReview, forKey: .needReview)
+        try container.encode(reviewText, forKey: .reviewText)
+        try container.encode(finishReview, forKey: .finishReview)
+        if let reviewDate {
+            try container.encode(reviewDate, forKey: .reviewDate)
+        }
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -263,6 +277,12 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.isCollect = cloudObj.get(EventModelKeys.isCollect.rawValue)?.boolValue ?? false // 新增云端解析
         self.isArchive = cloudObj.get(EventModelKeys.isArchive.rawValue)?.boolValue ?? false
         self.isTempInsert = cloudObj.get(EventModelKeys.isTempInsert.rawValue)?.boolValue ?? false
+        self.needReview = cloudObj.get(EventModelKeys.needReview.rawValue)?.boolValue ?? false
+        self.reviewText = cloudObj.get(EventModelKeys.reviewText.rawValue)?.stringValue ?? ""
+        self.finishReview = cloudObj.get(EventModelKeys.finishReview.rawValue)?.boolValue ?? false
+        if let reviewDate = cloudObj.get(EventModelKeys.reviewDate.rawValue)?.dateValue {
+            self.reviewDate = reviewDate
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -312,6 +332,12 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.isCollect.rawValue, value: isCollect.lcBool)
         try cloudObj.set(EventModelKeys.isArchive.rawValue, value: isArchive.lcBool)
         try cloudObj.set(EventModelKeys.isTempInsert.rawValue, value: isTempInsert.lcBool)
+        try cloudObj.set(EventModelKeys.needReview.rawValue, value: needReview.lcBool)
+        try cloudObj.set(EventModelKeys.reviewText.rawValue, value: reviewText.lcString)
+        try cloudObj.set(EventModelKeys.finishReview.rawValue, value: finishReview.lcBool)
+        if let reviewDate {
+            try cloudObj.set(EventModelKeys.reviewDate.rawValue, value: reviewDate.lcDate)
+        }
     }
     
 }
@@ -366,13 +392,20 @@ extension EventModel {
         case projectId
         case isArchive
         case isTempInsert
+        case needReview
+        case reviewText
+        case finishReview
+        case reviewDate
     }
     
 }
 
 extension EventModel {
     
-    func itemTotalTime(with items: [EventItem], taskItems: [TaskTimeItem], taskId: String, date: Date? = nil) -> Int {
+    func itemTotalTime(with items: [EventItem], taskItems: [TaskTimeItem], taskId: String, date: Date? = nil, ids: [String] = []) -> Int {
+        var ids = ids
+        if ids.contains(self.id) { return 0}
+        ids.append(self.id)
         var totalTime = intervals.filter({ interval in
             if let date = date {
                 return date.isInSameDay(as: interval.end)
@@ -392,7 +425,7 @@ extension EventModel {
                 if actionType == .project {
                     totalTime += item.intervals.compactMap { $0.interval }.reduce(0, +)
                 } else {
-                    totalTime += item.itemTotalTime(with: items, taskItems: taskItems, taskId: item.id, date: date)
+                    totalTime += item.itemTotalTime(with: items, taskItems: taskItems, taskId: item.id, date: date, ids: ids)
                 }
             }
         }
