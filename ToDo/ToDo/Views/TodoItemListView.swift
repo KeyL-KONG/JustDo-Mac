@@ -11,7 +11,7 @@ import LeanCloud
 struct TodoItemListView: View {
     let selection: ToDoSection
     let title: String
-    var items: [EventItem]
+    var itemList: [EventItem]
     @Binding var selectItemID: String
     @Binding var selectionMode: TodoMode
     var addItemEvent: (EventItem) -> ()
@@ -45,6 +45,23 @@ struct TodoItemListView: View {
     @State var isExpiredExpanded = false
     @State var isUnplanExpanded = false
     @State var isSummaryExpanded = false
+    
+    // 过滤条件
+    @State var actionType: EventActionType = .all
+    @State var actionList: [EventActionType] = [.task, .project, .all]
+    @State var selectedTag: String = "所有标签"
+    
+    var items: [EventItem] {
+        return itemList.filter { event in
+            if actionType != .all, event.actionType != actionType {
+                return false
+            }
+            if selectedTag != "所有标签", let tag = modelData.tagList.first(where: { $0.id == event.tag }), selectedTag != tag.title {
+                return false
+            }
+            return true
+        }
+    }
     
     // 日期
     @State var currentWeekIndex: Int = 1
@@ -119,15 +136,6 @@ struct TodoItemListView: View {
         }
     }
     
-    var itemList: [EventItem] {
-        switch selection {
-        case .recent:
-            return recentItems
-        default:
-            return items
-        }
-    }
-    
     var body: some View {
         VStack {
             if selection == .unplan {
@@ -135,7 +143,7 @@ struct TodoItemListView: View {
                     
                     let tags = modelData.tagList
                     ForEach(tags, id:\.id) { tag in
-                        let items = modelData.itemList.filter { !$0.isArchive && $0.planTime == nil && $0.tag == tag.id && !$0.isFinish }
+                        let items = items.filter { !$0.isArchive && $0.planTime == nil && $0.tag == tag.id && !$0.isFinish }
                         if items.count > 0 {
                             Section(header: Text(tag.title)) {
                                 ForEach(items) { item in
@@ -160,7 +168,8 @@ struct TodoItemListView: View {
 //                        }
 //                    }
                 }
-            } else if selection == .calendar {
+            }
+            else if selection == .calendar {
                 if calendarMode == .week {
                     weekView2()
                 } else {
@@ -173,7 +182,7 @@ struct TodoItemListView: View {
                 todayView()
             }
             else {
-                List(itemList, id: \.self.id, selection: $selectItemID) { item in
+                List(items, id: \.self.id, selection: $selectItemID) { item in
                     if selection == .recent {
                         itemRowView(item: item, showDeadline: true)
                     }
@@ -210,6 +219,27 @@ struct TodoItemListView: View {
                     }
                 }
 
+            }
+            
+            if selection == .unplan || selection == .all {
+                Picker("选择类型", selection: $actionType) {
+                    ForEach(actionList, id: \.self) { type in
+                        Text(type.title).tag(type)
+                    }
+                }
+                
+                Picker("选择标签", selection: $selectedTag) {
+                    let titles = ["所有标签"] + modelData.tagList.sorted(by: { first, second in
+                        let eventList = modelData.itemList
+                        return eventList.filter { $0.tag == first.id }.count > eventList.filter { $0.tag == second.id}.count
+                    }).map({$0.title})
+                    ForEach(titles, id: \.self) { title in
+//                        if let tag = modelData.tagList.first(where: { $0.title == title}) {
+//                            Text(tag.title).tag(tag)
+//                        }
+                        Text(title).tag(title)
+                    }
+                }
             }
             
             Picker("模式切换", selection: $selectionMode) {

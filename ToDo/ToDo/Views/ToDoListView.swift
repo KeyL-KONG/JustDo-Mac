@@ -119,7 +119,7 @@ struct ToDoListView: View, Equatable {
                     .environmentObject(modelData)
                     .frame(minWidth: 400)
             } else {
-                TodoItemListView(selection: selection, title: selection.displayName, items: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
+                TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                     selectItemID = item.id
                 }, timerModel: timerModel).environmentObject(modelData)
                     //.id(UUID().uuidString)
