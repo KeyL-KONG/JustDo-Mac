@@ -39,9 +39,11 @@ class ModelData: ObservableObject {
     @Published var summaryTagList: [SummaryTag] = []
     @Published var taskTimeItems: [TaskTimeItem] = []
     
+    @Published var principleItems: [PrincipleModel] = []
+    
     @Published var toggleToRefresh: Bool = false
     
-    private let cache = CacheManager()
+    let cache = CacheManager()
     
     var tryLoadReadTagTimes = 0
     
@@ -161,6 +163,7 @@ class ModelData: ObservableObject {
     func loadFromServer() {
         loadTag {
             self.loadMainData {
+                self.loadPrincipleItems()
                 self.loadSummaryList {
                     self.loadReadList {
                         self.loadNoteList {

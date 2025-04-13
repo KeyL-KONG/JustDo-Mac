@@ -53,6 +53,9 @@ struct TodoItemListView: View {
     
     var items: [EventItem] {
         return itemList.filter { event in
+            guard selection == .unplan || selection == .all else {
+                return true
+            }
             if actionType != .all, event.actionType != actionType {
                 return false
             }
@@ -180,6 +183,8 @@ struct TodoItemListView: View {
                 projectView()
             } else if selection == .today {
                 todayView()
+            } else if selection == .principle {
+                principleView()
             }
             else {
                 List(items, id: \.self.id, selection: $selectItemID) { item in
@@ -255,7 +260,11 @@ struct TodoItemListView: View {
             }
             
             Button {
-                self.addNewItem()
+                if selection == .principle {
+                    self.addNewPrincipleItem()
+                } else {
+                    self.addNewItem()
+                }
             } label: {
                 Label("Add New Item", systemImage: "plus")
             }

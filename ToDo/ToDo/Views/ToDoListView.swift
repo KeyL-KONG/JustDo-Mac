@@ -22,7 +22,11 @@ struct ToDoListView: View, Equatable {
             print("select item change: \((selectItem as? EventItem)?.title)")
         }
     }
-    @State private var selectItemID: String = ""
+    @State private var selectItemID: String = "" {
+        didSet {
+            print("select item id: \(selectItemID)")
+        }
+    }
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
@@ -106,9 +110,12 @@ struct ToDoListView: View, Equatable {
         NavigationSplitView {
             SidebarView(selection: $selection, todayItems: items(with: .today)).environmentObject(modelData)
                 .onChange(of: selection) { oldValue, newValue in
-                    if let selectItemID = itemList.first?.id, oldValue != newValue {
-                        self.selectItemID = selectItemID
-                        print("select section: \(selection.displayName), item: \(String(describing: itemList.first?.title))")
+                    if oldValue != newValue {
+                        if selection == .principle, let selectId = modelData.principleItems.first?.id {
+                            self.selectItemID = selectId
+                        } else if let selectId = itemList.first?.id {
+                            self.selectItemID = selectId
+                        }
                     }
                 }
         } content: {
@@ -133,6 +140,10 @@ struct ToDoListView: View, Equatable {
                             } else if let item = modelData.summaryItemList.first(where: { $0.id == newValue }) {
                                 self.selectItem = item
                                 toggleRefresh = !toggleRefresh
+                            } else if let item = modelData.principleItems.first(where: {  $0.id == newValue
+                            }) {
+                                self.selectItem = item
+                                toggleRefresh.toggle()
                             }
                         }
                         if Thread.isMainThread {
@@ -148,20 +159,26 @@ struct ToDoListView: View, Equatable {
             }
             
         } detail: {
-            if selection == .review || selection == .summary {
-                if let selectedTask, let eventItem = modelData.itemList.first(where: { $0.id == selectedTask.id
+            if let selectedTask, selection == .review || selection == .summary || selection == .principle {
+                if let eventItem = modelData.itemList.first(where: { $0.id == selectedTask.id
                 }) {
                     ToDoEditView(selectItem: eventItem, selectionChange: { selectId in
                         self.selectItemID = selectId
                     }, updateEvent: {
                         toggleRefresh.toggle()
                     }).environmentObject(modelData).id(eventItem.id)
-                } else if let selectedTask, let rewardItem = modelData.rewardList.first(where: { $0.id == selectedTask.id }) {
+                } else if let rewardItem = modelData.rewardList.first(where: { $0.id == selectedTask.id }) {
                     EditRewardView(selectedItem: rewardItem).environmentObject(modelData).id(rewardItem.id)
                 }
-                else if let selectedTask, let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectedTask.id
+                else if let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectedTask.id
                 }) {
                     SummaryEditView(summaryItem: summaryItem).id(summaryItem.id).environmentObject(modelData)
+                } else if let principleItem = selectedTask as? PrincipleModel {
+                    ToDoEditPrincipleView(selectItem: principleItem) { selectId in
+                        selectItemID = selectId
+                    }
+                    .id(principleItem.id)
+                    .environmentObject(modelData)
                 }
                 else {
                     EmptyView()
@@ -179,7 +196,14 @@ struct ToDoListView: View, Equatable {
                 } else if let summaryItem = currentSelectItem() as? SummaryItem {
                     SummaryEditView(summaryItem: summaryItem)
                         .environmentObject(modelData).id(selectItemID)
-                } else {
+                } else if let principleItem = currentSelectItem() as? PrincipleModel {
+                    ToDoEditPrincipleView(selectItem: principleItem) { selectId in
+                        selectItemID = selectId
+                    }
+                    .environmentObject(modelData)
+                    .id(selectItemID)
+                }
+                else {
                     Text("empty")
                 }
                 
@@ -196,10 +220,13 @@ struct ToDoListView: View, Equatable {
             if selectItem.id == selectItemID {
                 return selectItem
             } else {
-                if let eventItem = selectItem as? EventItem {
+                if selectItem is EventItem {
                     return modelData.itemList.first { $0.id == selectItemID }
-                } else if let summaryItem = selectItem as? SummaryItem {
+                } else if selectItem is SummaryItem {
                     return modelData.summaryItemList.first { $0.id == selectItemID }
+                } else if selectItem is PrincipleModel {
+                    return modelData.principleItems.first { $0.id == selectItemID
+                    }
                 }
             }
         }

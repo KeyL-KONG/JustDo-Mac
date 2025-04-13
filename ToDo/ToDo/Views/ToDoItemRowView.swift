@@ -156,6 +156,8 @@ struct ToDoItemRowView: View {
                 } else if totalTime > 0 {
                     Spacer()
                     Text(totalTime.simpleTimeStr).foregroundStyle(Color.init(hex: "b3b6b7"))
+                } else {
+                    Spacer()
                 }
                 
             }

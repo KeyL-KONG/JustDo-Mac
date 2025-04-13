@@ -38,6 +38,10 @@
 		09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714692D9052E4009DB18E /* WeekView.swift */; };
 		09D7146C2D905661009DB18E /* WeekCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7146B2D90565A009DB18E /* WeekCalendarView.swift */; };
 		09D714722D9DA538009DB18E /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714712D9DA531009DB18E /* MarkdownView.swift */; };
+		09D714752DAB5AC1009DB18E /* PrincipleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714742DAB5ABB009DB18E /* PrincipleModel.swift */; };
+		09D714772DAB5C50009DB18E /* ModelData+Principle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714762DAB5C4B009DB18E /* ModelData+Principle.swift */; };
+		09D714792DAB60DA009DB18E /* ToDoItemListView+Principle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714782DAB60CF009DB18E /* ToDoItemListView+Principle.swift */; };
+		09D7147B2DAB651D009DB18E /* ToDoEditPrincipleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7147A2DAB6517009DB18E /* ToDoEditPrincipleView.swift */; };
 		09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDA2C66540F00650366 /* ToDoApp.swift */; };
 		09F80BDD2C66540F00650366 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F80BDC2C66540F00650366 /* ContentView.swift */; };
 		09F80BDF2C66541000650366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F80BDE2C66541000650366 /* Assets.xcassets */; };
@@ -105,6 +109,10 @@
 		09D714692D9052E4009DB18E /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		09D7146B2D90565A009DB18E /* WeekCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekCalendarView.swift; sourceTree = "<group>"; };
 		09D714712D9DA531009DB18E /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
+		09D714742DAB5ABB009DB18E /* PrincipleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrincipleModel.swift; sourceTree = "<group>"; };
+		09D714762DAB5C4B009DB18E /* ModelData+Principle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+Principle.swift"; sourceTree = "<group>"; };
+		09D714782DAB60CF009DB18E /* ToDoItemListView+Principle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToDoItemListView+Principle.swift"; sourceTree = "<group>"; };
+		09D7147A2DAB6517009DB18E /* ToDoEditPrincipleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoEditPrincipleView.swift; sourceTree = "<group>"; };
 		09F80BD72C66540F00650366 /* ToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F80BDA2C66540F00650366 /* ToDoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoApp.swift; sourceTree = "<group>"; };
 		09F80BDC2C66540F00650366 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -231,6 +239,14 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
+		09D714732DAB5AB0009DB18E /* Principle */ = {
+			isa = PBXGroup;
+			children = (
+				09D714742DAB5ABB009DB18E /* PrincipleModel.swift */,
+			);
+			path = Principle;
+			sourceTree = "<group>";
+		};
 		09F80BCE2C66540F00650366 = {
 			isa = PBXGroup;
 			children = (
@@ -278,6 +294,7 @@
 		09F80BE92C665A3100650366 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				09D714762DAB5C4B009DB18E /* ModelData+Principle.swift */,
 				093E79052D2385B4006E5120 /* ModelData+Summary.swift */,
 				093E78FC2D23855D006E5120 /* ModelData+ReadList.swift */,
 				093E78FD2D23855D006E5120 /* ModelData+NoteList.swift */,
@@ -312,6 +329,7 @@
 		09F80BF42C665A3F00650366 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				09D714732DAB5AB0009DB18E /* Principle */,
 				09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */,
 				093E79002D23858E006E5120 /* Summary */,
 				093E78F92D238533006E5120 /* Read */,
@@ -344,6 +362,8 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				09D7147A2DAB6517009DB18E /* ToDoEditPrincipleView.swift */,
+				09D714782DAB60CF009DB18E /* ToDoItemListView+Principle.swift */,
 				09D714712D9DA531009DB18E /* MarkdownView.swift */,
 				09D714642D86F8DD009DB18E /* ReviewNewView.swift */,
 				09D714602D85D318009DB18E /* TimeLineRowView.swift */,
@@ -517,10 +537,12 @@
 				093E78FA2D238533006E5120 /* ReadTag.swift in Sources */,
 				093E78FB2D238533006E5120 /* ReadModel.swift in Sources */,
 				090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */,
+				09D714772DAB5C50009DB18E /* ModelData+Principle.swift in Sources */,
 				09F80C062C665A3F00650366 /* RewardModel.swift in Sources */,
 				093E79082D23A010006E5120 /* ReviewView.swift in Sources */,
 				09F80C0E2C665A5B00650366 /* Int+Extensions.swift in Sources */,
 				09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */,
+				09D714792DAB60DA009DB18E /* ToDoItemListView+Principle.swift in Sources */,
 				09F80BDD2C66540F00650366 /* ContentView.swift in Sources */,
 				09D714682D8FEBAB009DB18E /* DayView.swift in Sources */,
 				09F80C052C665A3F00650366 /* BaseModel.swift in Sources */,
@@ -530,6 +552,7 @@
 				093E78FE2D23855D006E5120 /* ModelData+ReadList.swift in Sources */,
 				09D714722D9DA538009DB18E /* MarkdownView.swift in Sources */,
 				093E78FF2D23855D006E5120 /* ModelData+NoteList.swift in Sources */,
+				09D7147B2DAB651D009DB18E /* ToDoEditPrincipleView.swift in Sources */,
 				09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */,
 				09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */,
 				097A04102C6C588300521483 /* Array+Extensions.swift in Sources */,
@@ -564,6 +587,7 @@
 				09F80C002C665A3F00650366 /* CloudManager.swift in Sources */,
 				093E79032D2385AD006E5120 /* SummaryItem.swift in Sources */,
 				093E79042D2385AD006E5120 /* SummaryTag.swift in Sources */,
+				09D714752DAB5AC1009DB18E /* PrincipleModel.swift in Sources */,
 				093E79122D297ADD006E5120 /* SummaryEditView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
