@@ -1,0 +1,98 @@
+import SwiftUI
+
+struct TimeLineRowView: View {
+    @EnvironmentObject var modelData: ModelData
+    
+    @State var item: TaskTimeItem
+    @Binding var isEditing: Bool
+    @State var onlyStarTime: Bool = false
+    
+    private var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }
+    
+    var body: some View {
+        VStack {
+            HStack(alignment: .center) {
+                if isEditing {
+                    if onlyStarTime {
+                        DatePicker("", selection: $item.startTime, displayedComponents: [.date, .hourAndMinute])
+                            .datePickerStyle(.compact)
+                    } else {
+                        HStack {
+                            Text("start:")
+                            DatePicker("", selection: $item.startTime, displayedComponents: [.date, .hourAndMinute])
+                                .datePickerStyle(.compact)
+                        }
+                        
+                        HStack {
+                            Text("end:")
+                            DatePicker("", selection: $item.endTime, displayedComponents: [.date, .hourAndMinute])
+                                .datePickerStyle(.compact)
+                        }
+                    }
+                    
+                    if item.state != .none {
+                        if item.state == .good {
+                            Text("✅")
+                        } else {
+                            Text("❌").font(.system(size: 11))
+                        }
+                        Spacer()
+                    }
+                    
+                    Button("完成") {
+                        isEditing = false
+                        modelData.updateTimeItem(item)
+                    }.foregroundStyle(.blue)
+                } else {
+                    Text(item.startTime.simpleDateStr)
+                    if !onlyStarTime {
+                        Text("-")
+                        Text(item.endTime.simpleDateStr)
+                        if item.interval > 0 {
+                            Text("(\(item.interval.simpleTimeStr))")
+                        }
+                    }
+                    
+                    if item.state != .none {
+                        if item.state == .good {
+                            Text("✅")
+                        } else {
+                            Text("❌").font(.system(size: 11))
+                        }
+                    }
+                    
+                    Spacer()
+                    Button("编辑") {
+                        isEditing = true
+                    }.foregroundStyle(.blue)
+                }
+            }
+            
+            
+            if isEditing {
+                TextEditor(text: $item.content)
+                    .font(.system(size: 14))
+                    .padding(10)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.init(hex: "#e8f6f3"))
+                    .frame(minHeight: 120)
+                    .cornerRadius(8)
+            } else {
+                MarkdownWebView(item.content)
+            }
+            
+        }
+        .padding()
+        .background(isEditing ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+        .cornerRadius(10)
+    }
+    
+}
+
+#Preview {
+    TimeLineRowView(item: TaskTimeItem(startTime: .now, endTime: .now, content: "测试内容"), isEditing: .constant(true))
+}
