@@ -38,6 +38,8 @@ struct TodoItemListView: View {
     @ObservedObject var timerModel: TimerModel
 
     @State var expandedItems: Set<String> = []
+    
+    @State var principleDisplayMode: PrincipleDisplayMode = .week
 
     // 添加状态变量
     @State var isCollectExpanded = true
@@ -211,7 +213,7 @@ struct TodoItemListView: View {
         }
         .toolbar {
             
-            if selection == .calendar {
+            if selection == .calendar || selection == .principle {
                 Button {
                     currentDate = calendarMode == .week ?  currentDate.previousWeekDate : currentDate.previousMonth
                 } label: {
@@ -229,6 +231,9 @@ struct TodoItemListView: View {
                 } label: {
                     Label("rigth", systemImage: "arrowshape.right.fill")
                 }
+            }
+            
+            if selection == .calendar {
                 
                 Picker("周期切换", selection: $calendarMode) {
                     ForEach(CalendarMode.allCases, id: \.self) { mode in
@@ -242,6 +247,14 @@ struct TodoItemListView: View {
                     }
                 }
 
+            }
+            
+            if selection == .principle {
+                Picker("模式切换", selection: $principleDisplayMode) {
+                    ForEach(PrincipleDisplayMode.allCases, id: \.self) { mode in
+                        Text(mode.title)
+                    }
+                }
             }
             
             if selection == .unplan || selection == .all {

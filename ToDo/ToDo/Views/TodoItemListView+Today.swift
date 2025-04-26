@@ -201,16 +201,22 @@ extension TodoItemListView {
                         principleItemView(item: item)
                             .contextMenu {
                                 Button {
-                                    updateTaskItem(item: item, state: .good)
+                                    updateTaskItem(item: item, state: .good, date: selectDate)
                                 } label: {
                                     Text("完成").foregroundStyle(.green)
                                     
                                 }
                                 
                                 Button {
-                                    updateTaskItem(item: item, state: .bad)
+                                    updateTaskItem(item: item, state: .bad, date: selectDate)
                                 } label: {
                                     Text("未完成").foregroundStyle(.red)
+                                }
+                                
+                                Button {
+                                    updateTaskItem(item: item, state: .none, date: selectDate)
+                                } label: {
+                                    Text("重置").foregroundStyle(.gray)
                                 }
                             }
                     }
@@ -242,11 +248,13 @@ extension TodoItemListView {
                 tagView(title: tag.title, color: tag.titleColor)
             }
             Spacer()
-            if let taskItem = principleTaskItem(item: item) {
+            if let taskItem = principleTaskItem(item: item, date: selectDate) {
                 if taskItem.state == .good {
                     Text("✅").font(.system(size: 12))
-                } else {
+                } else if taskItem.state == .bad {
                     Text("❌").font(.system(size: 11))
+                } else {
+                    Image(systemName: "square").font(.system(size: 14)).bold()
                 }
             } else {
                 Image(systemName: "square").font(.system(size: 14)).bold()
@@ -264,15 +272,17 @@ extension TodoItemListView {
     }
     
     
-    func updateTaskItem(item: PrincipleModel, state: TaskItemResultState) {
-        let taskItem = principleTaskItem(item: item) ?? TaskTimeItem()
+    func updateTaskItem(item: PrincipleModel, state: TaskItemResultState, date: Date) {
+        let taskItem = principleTaskItem(item: item, date: date) ?? TaskTimeItem()
+        taskItem.startTime = date
+        taskItem.endTime = date
         taskItem.state = state
         taskItem.eventId = item.id
         modelData.updateTimeItem(taskItem)
     }
     
-    func principleTaskItem(item: PrincipleModel) -> TaskTimeItem? {
-        return modelData.taskTimeItems.first { $0.eventId == item.id && $0.endTime.isInSameDay(as: selectDate)
+    func principleTaskItem(item: PrincipleModel, date: Date) -> TaskTimeItem? {
+        return modelData.taskTimeItems.first { $0.eventId == item.id && $0.endTime.isInSameDay(as: date)
         }
     }
     

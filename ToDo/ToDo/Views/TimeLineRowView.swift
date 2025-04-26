@@ -37,7 +37,7 @@ struct TimeLineRowView: View {
                     if item.state != .none {
                         if item.state == .good {
                             Text("✅")
-                        } else {
+                        } else if item.state == .bad {
                             Text("❌").font(.system(size: 11))
                         }
                         Spacer()
@@ -60,7 +60,7 @@ struct TimeLineRowView: View {
                     if item.state != .none {
                         if item.state == .good {
                             Text("✅")
-                        } else {
+                        } else if item.state == .bad {
                             Text("❌").font(.system(size: 11))
                         }
                     }

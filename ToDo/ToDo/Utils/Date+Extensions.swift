@@ -9,6 +9,11 @@ import SwiftUI
 
 extension Date {
     
+    struct WeekDay: Identifiable {
+        var id: UUID = .init()
+        var date: Date
+    }
+    
     var percentOfDay: Double {
         let calendar = Calendar.current
         let now = self
@@ -341,11 +346,6 @@ extension Date {
         }
         
         return 0
-    }
-    
-    struct WeekDay: Identifiable {
-        var id: UUID = .init()
-        var date: Date
     }
     
     var startTimeOfDay: Date {

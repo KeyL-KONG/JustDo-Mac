@@ -283,7 +283,7 @@ extension TodoItemListView {
 extension TodoItemListView {
     
     func weekTimelineView(date: Date) -> some View {
-        let timelineItems = modelData.taskTimeItems.filter { $0.endTime.isInSameDay(as: date) }.sorted {  $0.startTime.timeIntervalSince1970 < $1.startTime.timeIntervalSince1970
+        let timelineItems = modelData.taskTimeItems.filter { $0.endTime.isInSameDay(as: date) && $0.interval > 60 }.sorted {  $0.startTime.timeIntervalSince1970 < $1.startTime.timeIntervalSince1970
         }
         let totalTime = timelineItems.map { $0.interval }.reduce(0, +)
         return VStack {
