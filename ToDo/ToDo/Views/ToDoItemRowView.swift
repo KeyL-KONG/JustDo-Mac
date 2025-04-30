@@ -115,7 +115,15 @@ struct ToDoItemRowView: View {
                 if item.isCollect {
                     Label("", systemImage: "star.fill")
                 } else {
-                    Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                    if selection == .today {
+                        if (item.planTime) != nil {
+                            Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                        } else {
+                            Label("", systemImage: "checkmark.circle.fill")
+                        }
+                    } else {
+                        Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                    }
                 }
                 
                 Text(item.title)

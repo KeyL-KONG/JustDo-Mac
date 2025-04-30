@@ -21,6 +21,9 @@ struct TodoItemListView: View {
     
     @State private var inspectIsShown: Bool = false
     //@Binding var selectItem: EventItem?
+    @State private var showStopAlert: Bool = false
+    private static var stopItem: EventItem? = nil
+    @State private var eventContent: String = ""
     @State private var showDeleteAlert: Bool = false
     private static var deleteItem: EventItem? = nil
     @State var toggleToRefresh: Bool = false
@@ -308,6 +311,20 @@ struct TodoItemListView: View {
                 deleteItem()
             }), secondaryButton: .cancel(Text("取消")))
         }
+        .alert("编辑事件内容", isPresented: $showStopAlert) {
+            TextField("请输入内容...", text: $eventContent)
+            Button("取消", role: .cancel) {
+                
+            }
+            Button("确定") {
+                if let stopItem = Self.stopItem {
+                    handleStopEvent(item: stopItem)
+                    self.eventContent = ""
+                }
+            }
+        } message: {
+            Text("")
+        }
         .onAppear {
             print("todo itemlist appear")
             if selection == .today {
@@ -333,8 +350,10 @@ struct TodoItemListView: View {
                 if item.actionType == .task || item.actionType == .project {
                     if item.isPlay {
                         Button {
-                            timerModel.stopTimer()
-                            handleStopEvent(item: item)
+                            Self.stopItem = item
+                            showStopAlert.toggle()
+//                            timerModel.stopTimer()
+//                            handleStopEvent(item: item)
                         } label: {
                             Text("stop").foregroundStyle(.red)
                         }
@@ -410,7 +429,7 @@ struct TodoItemListView: View {
         guard let playTime = item.playTime else {
             return
         }
-        let taskItem = TaskTimeItem(startTime: playTime, endTime: .now, content: "")
+        let taskItem = TaskTimeItem(startTime: playTime, endTime: .now, content: eventContent)
         taskItem.eventId = item.id
         modelData.updateTimeItem(taskItem)
 

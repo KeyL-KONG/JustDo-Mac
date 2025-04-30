@@ -63,6 +63,7 @@ enum TaskType {
 }
 
 protocol BasicTaskProtocol: Identifiable {
+    var planTime: Date? { get set }
     var updateAt:Date? { get set }
     var type: TaskType { get }
     var id: String { get set }
@@ -100,6 +101,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
     var rewardCount: Int = 0
     var isCollect: Bool = false // 新增收藏状态字段
     var isArchive: Bool = false
+    var planTime: Date? = nil
     
     var fatherId: String = ""
     var childrenIds: [String] = []
