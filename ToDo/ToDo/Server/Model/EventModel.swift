@@ -90,6 +90,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var childrenIds: [String] = []
     var taskIds: [String] = []
     
+    var isFixedEvent: Bool = false
+    var fixedStartTime: Date? = nil
+    var fixedEndTime: Date? = nil
+    
     // 废弃字段
     var finishState: FinishState = .normal
     var finishRating: Int = 3
@@ -147,7 +151,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.needReview = try container.decode(Bool.self, forKey: .needReview)
         self.reviewText = try container.decode(String.self, forKey: .reviewText)
         self.finishReview = try container.decode(Bool.self, forKey: .finishReview)
-        self.reviewDate = try container.decode(Date.self, forKey: .reviewDate)
+        self.reviewDate = try container.decodeIfPresent(Date.self, forKey: .reviewDate)
+        self.isFixedEvent = try container.decode(Bool.self, forKey: .isFixedEvent)
+        self.fixedStartTime = try container.decodeIfPresent(Date.self, forKey: .fixedStartTime)
+        self.fixedEndTime = try container.decodeIfPresent(Date.self, forKey: .fixedEndTime)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -192,6 +199,13 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(finishReview, forKey: .finishReview)
         if let reviewDate {
             try container.encode(reviewDate, forKey: .reviewDate)
+        }
+        try container.encode(isFixedEvent, forKey: .isFixedEvent)
+        if let fixedStartTime {
+            try container.encode(fixedStartTime, forKey: .fixedStartTime)
+        }
+        if let fixedEndTime {
+            try container.encode(fixedEndTime, forKey: .fixedEndTime)
         }
     }
     
@@ -286,6 +300,13 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let reviewDate = cloudObj.get(EventModelKeys.reviewDate.rawValue)?.dateValue {
             self.reviewDate = reviewDate
         }
+        self.isFixedEvent = cloudObj.get(EventModelKeys.isFixedEvent.rawValue)?.boolValue ?? false
+        if let fixedStartTime = cloudObj.get(EventModelKeys.fixedStartTime.rawValue)?.dateValue {
+            self.fixedStartTime = fixedStartTime
+        }
+        if let fixedEndTime = cloudObj.get(EventModelKeys.fixedEndTime.rawValue)?.dateValue {
+            self.fixedEndTime = fixedEndTime
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -341,14 +362,24 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let reviewDate {
             try cloudObj.set(EventModelKeys.reviewDate.rawValue, value: reviewDate.lcDate)
         }
+        try cloudObj.set(EventModelKeys.isFixedEvent.rawValue, value: isFixedEvent.lcBool)
+        if let fixedStartTime {
+            try cloudObj.set(EventModelKeys.fixedStartTime.rawValue, value: fixedStartTime.lcDate)
+        }
+        if let fixedEndTime {
+            try cloudObj.set(EventModelKeys.fixedEndTime.rawValue, value: fixedEndTime.lcDate)
+        }
     }
     
 }
 
 extension EventModel: BasicTaskProtocol {
-
     func totalTime(with tabTab: TimeTab) -> Int {
         return 0
+    }
+    
+    var rewardTimeList: [RewardTimeItem] {
+        []
     }
     
     
@@ -399,6 +430,9 @@ extension EventModel {
         case reviewText
         case finishReview
         case reviewDate
+        case isFixedEvent
+        case fixedStartTime
+        case fixedEndTime
     }
     
 }

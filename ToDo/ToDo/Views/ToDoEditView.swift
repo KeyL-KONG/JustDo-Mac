@@ -60,6 +60,10 @@ struct ToDoEditView: View {
     @State var setFinishTime: Bool = false
     @State var finishTime: Date = .now
     
+    @State var setFixedEvent: Bool = false
+    @State var fixedStartTime: Date = .now
+    @State var fixedEndTime: Date = .now
+    
     @State var intervals: [LQDateInterval] = []
     
     @State var isEdit: Bool = true
@@ -221,7 +225,7 @@ struct ToDoEditView: View {
                 
                 Section(header: Text("设置属性"), content: {
                     Toggle(isOn: $isCollect) {
-                        Text("设置为固定事项")
+                        Text("设置为收藏事项")
                     }
                     
                     Toggle(isOn: $isArchive) {
@@ -243,6 +247,22 @@ struct ToDoEditView: View {
                         
                         DatePicker(selection: $planTime, displayedComponents: .date) {
                             Text("\(actionType == .task ? "设置为计划时间" : "设置为开始时间")")
+                        }
+                    }
+                    
+                    if actionType == .project {
+                        HStack {
+                            Toggle(isOn: $setFixedEvent) {
+                                Text("设置为固定事项")
+                            }
+                            
+                            if setFixedEvent {
+                                Spacer()
+                                
+                                DatePicker("start:", selection: $fixedStartTime, displayedComponents: [.hourAndMinute])
+                                Spacer()
+                                DatePicker("end:", selection: $fixedEndTime, displayedComponents: [.hourAndMinute])
+                            }
                         }
                     }
                     
@@ -478,6 +498,9 @@ struct ToDoEditView: View {
                 finishReview = selectedItem.finishReview
                 reviewDate = selectedItem.reviewDate ?? .now 
                 reviewText = selectedItem.reviewText
+                setFixedEvent = selectedItem.isFixedEvent
+                fixedStartTime = selectedItem.fixedStartTime ?? .now
+                fixedEndTime = selectedItem.fixedEndTime ?? .now
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -533,6 +556,9 @@ struct ToDoEditView: View {
         selectedItem.reviewDate = reviewDate
         selectedItem.reviewText = reviewText
         selectedItem.finishReview = finishReview
+        selectedItem.isFixedEvent = setFixedEvent
+        selectedItem.fixedStartTime = fixedStartTime
+        selectedItem.fixedEndTime = fixedEndTime
         modelData.updateItem(selectedItem)
         updateEvent()
     }

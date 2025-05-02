@@ -51,6 +51,8 @@ class ModelData: ObservableObject {
     
     var tryLoadSummaryTimes = 0
     
+    var isLoadingServer = false
+    
     public func notifyEventItemsUpdate() {
         self.itemList = self.itemList
     }
@@ -92,6 +94,8 @@ class ModelData: ObservableObject {
         DataManager.shared.save(with: TaskTimeItem.modelClassName(), models: items) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .timeItem)
             }
             completion?(error)
         }
@@ -103,6 +107,8 @@ class ModelData: ObservableObject {
         DataManager.shared.delete(models: [item]) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .timeItem)
             }
         }
     }
@@ -116,14 +122,20 @@ class ModelData: ObservableObject {
     }
     
     public func updateItem(_ item: EventItem, completion: (() -> ())? = nil) {
-        if let index = itemList.firstIndex(where: { $0.id == item.id || $0.generateId == item.generateId}) {
+        if let index = itemList.firstIndex(where: { $0.id == item.id }) {
             itemList[index] = item
         } else {
             itemList.append(item)
         }
         saveToServer(items: [item]) { error in
-            self.itemList = self.itemList
-            completion?()
+            if let error {
+                print(error)
+            } else {
+                self.itemList = self.itemList
+                completion?()
+                self.asyncUpdateCache(type: .event)
+            }
+            
         }
     }
     
@@ -133,6 +145,8 @@ class ModelData: ObservableObject {
         DataManager.shared.delete(models: [item]) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .event)
             }
         }
     }
@@ -161,18 +175,20 @@ class ModelData: ObservableObject {
     }
     
     func loadFromServer() {
-        loadTag {
-            self.loadMainData {
-                self.loadPrincipleItems()
-                self.loadSummaryList {
-                    self.loadReadList {
-                        self.loadNoteList {
-                            
-                        }
-                    }
-                }
-            }
-        }
+        asyncLoadCacheData()
+        asyncLoadServer()
+//        loadTag {
+//            self.loadMainData {
+//                self.loadPrincipleItems()
+//                self.loadSummaryList {
+//                    self.loadReadList {
+//                        self.loadNoteList {
+//                            
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
     
     func loadMainData(completion: (() -> ())? = nil) {
@@ -302,6 +318,8 @@ extension ModelData {
         DataManager.shared.delete(models: [tag]) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .tag)
             }
         }
     }
@@ -310,6 +328,8 @@ extension ModelData {
         DataManager.shared.save(with: ItemTag.modelClassName(), models: tagList) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .tag)
             }
         }
     }

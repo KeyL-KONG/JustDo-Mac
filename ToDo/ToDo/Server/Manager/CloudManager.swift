@@ -45,10 +45,11 @@ class CloudManager {
         let className = type.className()
         let query = LCQuery(className: className)
         //query.whereKey("user", .equalTo(user))
-        query.limit = 100
+        query.limit = 200
         query.count { result in
             switch result {
             case .success(let count):
+                print("cloud query type: \(type.className()), count: \(count)")
                 self.pageQuery(type: type, user:nil, count: count, completion: completion)
                 break
             case .failure(let error):
@@ -63,9 +64,10 @@ class CloudManager {
         var resultError:Error? = nil
         var results:[LCObject] = []
         let group = DispatchGroup.init()
+        var delayTime = 0.0
         for page in 0 ..< pages {
+            delayTime += Double(page) * 0.01
             group.enter()
-            let delayTime = Double(page) * 0.01
             DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
                 let className = type.className()
                 let query = LCQuery(className: className)
@@ -76,8 +78,10 @@ class CloudManager {
                     switch result {
                     case .success(objects: let objs):
                         results.append(contentsOf: objs)
+                        print("cloud page query type: \(type.className()), count: \(results.count)")
                         break
                     case .failure(error: let error):
+                        print("cloud page query type: \(type.className()), error: \(error)")
                         resultError = error
                         break
                     }
@@ -89,7 +93,6 @@ class CloudManager {
         group.notify(queue: .main) {
             completion(self.convertToModels(type: type, from: results), resultError)
         }
-        
     }
     
     func save<T: CloudProtocol>(models:[T], completion:@escaping((Error?)->Void)) {

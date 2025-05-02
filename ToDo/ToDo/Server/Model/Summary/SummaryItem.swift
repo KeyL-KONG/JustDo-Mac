@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class SummaryItem: BaseModel, Identifiable {
+class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     var generateId: String = ""
     var summaryId: String = ""
     var content: String = ""
@@ -33,6 +33,23 @@ class SummaryItem: BaseModel, Identifiable {
         return "SummaryItem"
     }
     
+    required init(from decoder: any Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: SummaryItemKeys.self)
+        self.generateId = try container.decodeIfPresent(String.self, forKey: .generateId) ?? ""
+        self.content = try container.decodeIfPresent(String.self, forKey: .content) ?? ""
+        self.improve = try container.decodeIfPresent(String.self, forKey: .improve) ?? ""
+        self.tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: SummaryItemKeys.self)
+        try container.encode(self.generateId, forKey: .generateId)
+        try container.encode(self.content, forKey: .content)
+        try container.encode(self.improve, forKey: .improve)
+        try container.encode(self.tags, forKey: .tags)
+    }
+    
     override func fillModel(with cloudObj: LCObject) {
         super.fillModel(with: cloudObj)
         self.generateId = cloudObj.get(SummaryItemKeys.generateId.rawValue)?.stringValue ?? ""
@@ -51,7 +68,7 @@ class SummaryItem: BaseModel, Identifiable {
         try cloudObj.set(SummaryItemKeys.tags.rawValue, value: tags.lcArray)
     }
     
-    enum SummaryItemKeys: String {
+    enum SummaryItemKeys: String, CodingKey {
         case generateId
         case summaryId
         case content

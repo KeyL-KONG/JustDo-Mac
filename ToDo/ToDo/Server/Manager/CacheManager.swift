@@ -7,50 +7,60 @@
 
 import Foundation
 
-struct CacheManager {
+enum CacheDataType {
+    case tag
+    case reward
+    case event
+    case wish
+    case timeItem
+    case principle
+    case summaryTag
+    case summaryItem
     
-    enum CacheDataType {
-        case tag
-        case reward
-        case event
-        case wish
-        case timeItem
-        case principle
-        
-        var cacheKey: String {
-            switch self {
-            case .tag:
-                return "com.cache.taglist"
-            case .reward:
-                return "com.cache.reward"
-            case .event:
-                return "com.cache.event"
-            case .wish:
-                return "com.cache.wish"
-            case .timeItem:
-                return "com.cache.timitem"
-            case .principle:
-                return "com.cache.principle"
-            }
-        }
-        
-        var decodeType: Decodable.Type {
-            switch self {
-            case .tag:
-                return ItemTag.self
-            case .reward:
-                return RewardModel.self
-            case .event:
-                return EventModel.self
-            case .wish:
-                return WishModel.self
-            case .timeItem:
-                return TaskTimeItem.self
-            case .principle:
-                return PrincipleModel.self
-            }
+    var cacheKey: String {
+        switch self {
+        case .tag:
+            return "com.cache.taglist"
+        case .reward:
+            return "com.cache.reward"
+        case .event:
+            return "com.cache.event"
+        case .wish:
+            return "com.cache.wish"
+        case .timeItem:
+            return "com.cache.timitem"
+        case .principle:
+            return "com.cache.principle"
+        case .summaryTag:
+            return "com.cache.summary.tag"
+        case .summaryItem:
+            return "com.cache.summary.item"
         }
     }
+    
+    var decodeType: Decodable.Type {
+        switch self {
+        case .tag:
+            return ItemTag.self
+        case .reward:
+            return RewardModel.self
+        case .event:
+            return EventModel.self
+        case .wish:
+            return WishModel.self
+        case .timeItem:
+            return TaskTimeItem.self
+        case .principle:
+            return PrincipleModel.self
+        case .summaryTag:
+            return SummaryTag.self
+        case .summaryItem:
+            return SummaryItem.self
+        }
+    }
+}
+
+struct CacheManager {
     
     func asyncLoadCache<T: BaseModel>(type: CacheDataType, completion: @escaping ([T]) -> ()) {
         DispatchQueue.global().async {

@@ -166,6 +166,8 @@ extension ModelData {
         DataManager.shared.delete(models: [item]) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .summaryItem)
             }
         }
     }
@@ -174,6 +176,8 @@ extension ModelData {
         DataManager.shared.save(with: SummaryItem.modelClassName(), models: items) { error in
             if let error = error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .summaryItem)
             }
         }
     }
@@ -202,6 +206,8 @@ extension ModelData {
         DataManager.shared.save(with: tag.modelClassName(), models: [tag]) { error in
             if let error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .summaryTag)
             }
         }
     }
@@ -214,6 +220,8 @@ extension ModelData {
         DataManager.shared.delete(models: [tag]) { error in
             if let error {
                 print(error)
+            } else {
+                self.asyncUpdateCache(type: .summaryTag)
             }
         }
     }

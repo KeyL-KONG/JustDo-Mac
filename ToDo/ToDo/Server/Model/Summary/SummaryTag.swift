@@ -8,7 +8,7 @@
 import SwiftUI
 import LeanCloud
 
-class SummaryTag: BaseModel, Identifiable {
+class SummaryTag: BaseModel, Identifiable, Encodable, Decodable {
     var generateId: String = ""
     var content: String = ""
     var hexColor: String = ""
@@ -25,6 +25,21 @@ class SummaryTag: BaseModel, Identifiable {
         return "SummaryTag"
     }
     
+    required init(from decoder: any Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: SummaryTagKeys.self)
+        self.generateId = try container.decodeIfPresent(String.self, forKey: .generateId) ?? ""
+        self.content = try container.decodeIfPresent(String.self, forKey: .content) ?? ""
+        self.hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor) ?? ""
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: SummaryTagKeys.self)
+        try container.encode(self.generateId, forKey: .generateId)
+        try container.encode(self.content, forKey: .content)
+        try container.encode(self.hexColor, forKey: .hexColor)
+    }
+    
     override func fillModel(with cloudObj: LCObject) {
         super.fillModel(with: cloudObj)
         self.generateId = cloudObj.get(SummaryTagKeys.generateId.rawValue)?.stringValue ?? ""
@@ -39,7 +54,7 @@ class SummaryTag: BaseModel, Identifiable {
         try cloudObj.set(SummaryTagKeys.hexColor.rawValue, value: hexColor)
     }
     
-    enum SummaryTagKeys: String {
+    enum SummaryTagKeys: String, CodingKey {
         case generateId
         case content
         case hexColor
