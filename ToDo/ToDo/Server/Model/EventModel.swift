@@ -94,6 +94,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     var fixedStartTime: Date? = nil
     var fixedEndTime: Date? = nil
     
+    var quickEvent: Bool = false
+    
     // 废弃字段
     var finishState: FinishState = .normal
     var finishRating: Int = 3
@@ -155,6 +157,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.isFixedEvent = try container.decode(Bool.self, forKey: .isFixedEvent)
         self.fixedStartTime = try container.decodeIfPresent(Date.self, forKey: .fixedStartTime)
         self.fixedEndTime = try container.decodeIfPresent(Date.self, forKey: .fixedEndTime)
+        self.quickEvent = try container.decodeIfPresent(Bool.self, forKey: .quickEvent) ?? false
     }
     
     func encode(to encoder: Encoder) throws {
@@ -207,6 +210,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let fixedEndTime {
             try container.encode(fixedEndTime, forKey: .fixedEndTime)
         }
+        try container.encode(quickEvent, forKey: .quickEvent)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -307,6 +311,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let fixedEndTime = cloudObj.get(EventModelKeys.fixedEndTime.rawValue)?.dateValue {
             self.fixedEndTime = fixedEndTime
         }
+        quickEvent = cloudObj.get(EventModelKeys.quickEvent.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -369,6 +374,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         if let fixedEndTime {
             try cloudObj.set(EventModelKeys.fixedEndTime.rawValue, value: fixedEndTime.lcDate)
         }
+        try cloudObj.set(EventModelKeys.quickEvent.rawValue, value: quickEvent.lcBool)
     }
     
 }
@@ -433,6 +439,7 @@ extension EventModel {
         case isFixedEvent
         case fixedStartTime
         case fixedEndTime
+        case quickEvent
     }
     
 }

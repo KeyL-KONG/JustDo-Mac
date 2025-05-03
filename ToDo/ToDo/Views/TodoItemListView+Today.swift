@@ -15,27 +15,19 @@ extension TodoItemListView {
         }
     }
     
-    var todayItems: [EventItem] {
-        items.filter { event in
-            guard !event.isCollect else { return false }
-            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
-        }.sorted { event1, event2 in
-            if event1.isFinish != event2.isFinish {
-                return event1.isFinish ? false : true
-            } else if event1.importance != event2.importance {
-                return event1.importance.value > event2.importance.value
-            } else {
-                return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
-            }
-        }
-    }
-    
     var unplanItems: [EventItem] {
         items.filter { event in
             guard let createTime = event.createTime else {
                 return false
             }
             return event.planTime == nil && createTime.isInSameDay(as: selectDate) && !event.isCollect
+        }
+    }
+    
+    var quickItems: [EventItem] {
+        items.filter { event in
+            event.quickEvent && !todayItems.contains(where: { $0.id == event.id
+            })
         }
     }
     
@@ -72,6 +64,9 @@ extension TodoItemListView {
     
     func todayView() -> some View {
         VStack {
+            if toggleToRefreshTodayView {
+                Text("")
+            }
             DayHeaderView()
             todayListView()
         }
@@ -103,6 +98,22 @@ extension TodoItemListView {
             ) {
                 if isCollectExpanded {
                     ForEach(collectItems, id: \.self.id) { item in
+                        itemRowView(item: item, date: selectDate, showDeadline: false)
+                    }
+                }
+            }
+            
+            Section(header:
+                HStack {
+                    Text("快捷事项")
+                    Spacer()
+                Button(action: { isQuickExpanded.toggle() }) {
+                    Image(systemName: isQuickExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isQuickExpanded {
+                    ForEach(quickItems, id: \.self.id) { item in
                         itemRowView(item: item, date: selectDate, showDeadline: false)
                     }
                 }
@@ -377,6 +388,30 @@ extension TodoItemListView {
                 }
             }
         })
+    }
+    
+}
+
+extension TodoItemListView {
+    
+    func updateTodayItems() {
+        self.todayItems = fetchTodayItems()
+    }
+    
+    func fetchTodayItems() -> [EventItem] {
+        print("today items")
+        return items.filter { event in
+            guard !event.isCollect else { return false }
+            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
+        }.sorted { event1, event2 in
+            if event1.isFinish != event2.isFinish {
+                return event1.isFinish ? false : true
+            } else if event1.importance != event2.importance {
+                return event1.importance.value > event2.importance.value
+            } else {
+                return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
+            }
+        }
     }
     
 }

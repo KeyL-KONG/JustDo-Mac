@@ -74,6 +74,8 @@ struct ToDoEditView: View {
     
     @State var isCollect: Bool = false
     
+    @State var isQuick: Bool = false
+    
     @State var isArchive: Bool = false
     
     @State var isTempInsert: Bool = false
@@ -224,6 +226,10 @@ struct ToDoEditView: View {
                 })
                 
                 Section(header: Text("设置属性"), content: {
+                    Toggle(isOn: $isQuick) {
+                        Text("设置为快捷事项")
+                    }
+                    
                     Toggle(isOn: $isCollect) {
                         Text("设置为收藏事项")
                     }
@@ -405,7 +411,7 @@ struct ToDoEditView: View {
                         Text("\(taskTotalTime.simpleTimeStr)")
                         Spacer()
                         Button {
-                            let item = TaskTimeItem(startTime: .now, endTime: .now, content: "新记录")
+                            let item = TaskTimeItem(startTime: .now, endTime: .now, content: "")
                             item.eventId = selectItem?.id ?? ""
                             modelData.updateTimeItem(item)
                         } label: {
@@ -491,6 +497,7 @@ struct ToDoEditView: View {
                     self.isEdit = false
                 }
                 isCollect = selectedItem.isCollect
+                isQuick = selectedItem.quickEvent
                 isExpandType = selectedItem.tag.isEmpty
                 isArchive = selectedItem.isArchive
                 isTempInsert = selectedItem.isTempInsert
@@ -559,6 +566,7 @@ struct ToDoEditView: View {
         selectedItem.isFixedEvent = setFixedEvent
         selectedItem.fixedStartTime = fixedStartTime
         selectedItem.fixedEndTime = fixedEndTime
+        selectedItem.quickEvent = isQuick
         modelData.updateItem(selectedItem)
         updateEvent()
     }

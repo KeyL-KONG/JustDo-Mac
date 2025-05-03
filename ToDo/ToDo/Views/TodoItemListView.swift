@@ -46,17 +46,21 @@ struct TodoItemListView: View {
 
     // 添加状态变量
     @State var isCollectExpanded = true
+    @State var isQuickExpanded = true
     @State var isTodayExpanded = true
-    @State var isDeadlineExpanded = false
-    @State var isExpiredExpanded = false
-    @State var isUnplanExpanded = false
-    @State var isSummaryExpanded = false
-    @State var isPrincipleExpanded = false
+    @State var isDeadlineExpanded = true
+    @State var isExpiredExpanded = true
+    @State var isUnplanExpanded = true
+    @State var isSummaryExpanded = true
+    @State var isPrincipleExpanded = true
     
     // 过滤条件
     @State var actionType: EventActionType = .all
     @State var actionList: [EventActionType] = [.task, .project, .all]
     @State var selectedTag: String = "所有标签"
+    
+    @State var todayItems: [EventItem] = []
+    @State var toggleToRefreshTodayView: Bool = false
     
     var items: [EventItem] {
         return itemList.filter { event in
@@ -173,20 +177,6 @@ struct TodoItemListView: View {
                             }
                         }
                     }
-                    
-//                    Section(header: Text("待规划")) {
-//                        ForEach(unplanItemList) { item in
-//                            itemRowView(item: item, showDeadline: false)
-//                                .id(UUID())
-//                        }
-//                    }
-//                    
-//                    Section(header: Text("已过期")) {
-//                        ForEach(expiredItemList) { item in
-//                            itemRowView(item: item, showDeadline: true)
-//                                .id(UUID())
-//                        }
-//                    }
                 }
             }
             else if selection == .calendar {
@@ -306,6 +296,26 @@ struct TodoItemListView: View {
         .onChange(of: calendarMode, { oldValue, newValue in
             currentDate = .now
         })
+        .onChange(of: selection, { oldValue, newValue in
+            if newValue == .today {
+                updateTodayItems()
+            }
+        })
+        .onChange(of: selectionMode, { oldValue, newValue in
+            if selection == .today {
+                updateTodayItems()
+            }
+        })
+        .onChange(of: selectDate, { oldValue, newValue in
+            if selection == .today {
+                updateTodayItems()
+            }
+        })
+        .onChange(of: modelData.itemList, { oldValue, newValue in
+            if selection == .today {
+                updateTodayItems()
+            }
+        })
         .alert(isPresented: $showDeleteAlert) {
             Alert(title: Text("是否删除该事项"), message: Text(Self.deleteItem?.title ?? ""), primaryButton: .destructive(Text("确认"), action: {
                 deleteItem()
@@ -328,7 +338,7 @@ struct TodoItemListView: View {
         .onAppear {
             print("todo itemlist appear")
             if selection == .today {
-                print("today items: \(items.count)")
+                updateTodayItems()
                 isPrincipleExpanded = selectionMode != .work
             } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")
