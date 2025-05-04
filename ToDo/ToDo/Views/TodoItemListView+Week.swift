@@ -21,70 +21,6 @@ extension TodoItemListView {
         modelData.summaryItemList
     }
     
-    func weekView() -> some View {
-        ScrollViewReader { proxy in
-            ScrollView(.horizontal) {
-                HStack(spacing: 10) {
-                    ForEach(weekDates, id: \.self) { date in
-                        VStack(alignment: .leading) {
-                            HStack(alignment: .center) {
-                                Spacer()
-                                Text(date.simpleDayAndWeekStr).bold()
-                                    .background {
-                                        if date.isToday {
-                                            Circle()
-                                                .fill(.cyan)
-                                                .frame(width: 5, height: 5)
-                                                .vSpacing(.bottom)
-                                                .offset(y: 12)
-                                        }
-                                    }
-                                Spacer()
-                            }.padding()
-                            
-                            List(selection: $selectItemID) {
-                                let unfinishItemList = itemList.filter { event in
-                                    guard let planTime = event.planTime else { return false }
-                                    return planTime.isInSameDay(as: date) && !event.isFinish
-                                }
-                                if unfinishItemList.count > 0 {
-                                    Section(header:Text("待办事项")) {
-                                        ForEach(unfinishItemList) { item in
-                                            itemRowView(item: item, showDeadline: false, showMark: true, isVertical: true)
-                                        }
-                                    }
-                                }
-                                
-                                let finishItemList = itemList.filter { event in
-                                    guard let planTime = event.planTime else { return false }
-                                    return planTime.isInSameDay(as: date) && event.isFinish
-                                }
-                                if finishItemList.count > 0 {
-                                    Section(header:Text("已完成")) {
-                                        ForEach(finishItemList) { item in
-                                            itemRowView(item: item, showDeadline: false, showMark: true, isVertical: true)
-                                        }
-                                    }
-                                }
-                                
-                                if unfinishItemList.isEmpty, finishItemList.isEmpty {
-                                    Text("暂无事项")
-                                }
-                            }
-                        }
-                        .id(date)
-                        .frame(minWidth: 200)
-                    }
-                }.frame(minWidth: 800)
-            }.onAppear {
-                if let currentDate = weekDates.first(where: { $0.isInToday
-                }) {
-                    proxy.scrollTo(currentDate)
-                }
-            }
-        }
-    }
-    
     func weekView2() -> some View {
         ScrollView {
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
@@ -126,26 +62,10 @@ extension TodoItemListView {
     }
     
     func weekListView(date: Date) -> some View {
-        let dayItems = items.filter { event in
-            return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
-        }
         return VStack(alignment: .leading) {
-            let unfinishItems = dayItems.filter { item in
-                guard let planTime = item.planTime else { return false }
-                return planTime.isInSameDay(as: date) && !item.isFinish
-            }
-            let finishItems = dayItems.filter { !unfinishItems.contains($0) }
-            
-            let rewardItems = modelData.rewardList.filter { reward in
-                return reward.intervals.contains { $0.start.isInSameDay(as: date)
-                }
-            }
-            
-            let totalTime = dayItems.compactMap { event in
-                event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date)
-            }.compactMap { items in
-                items.compactMap { $0.interval }.reduce(0, +)
-            }.reduce(0, +)
+            let unfinishItems = unFinishWeekItems[date] ?? []
+            let finishItems = finishWeekItems[date] ?? []
+            let totalTime = weekTotalTime[date] ?? 0
             
             if unfinishItems.count > 0 {
                 VStack {
@@ -179,22 +99,6 @@ extension TodoItemListView {
                 
             }
             
-            
-            if rewardItems.count > 0 {
-                VStack {
-                    HStack {
-                        Text("积分事项").bold()
-                        Spacer()
-                    }.padding(.horizontal, 5).padding(.top, 5)
-                    ForEach(rewardItems, id: \.self) { item in
-                        weekItemView(item: item, date: date, selectColor: .clear)
-                    }
-                    Spacer()
-                }
-                .padding(.top, 10)
-                .background(Color.init(hex: "d4e6f1"))
-                .cornerRadius(10)
-            }
             
             let summaryItems = modelData.summaryItemList.filter { item in
                 guard let createTime = item.createTime else {
@@ -345,6 +249,34 @@ extension TodoItemListView {
         .contentShape(Rectangle())
         .onTapGesture {
             selectItemID = item.eventId
+        }
+    }
+    
+}
+
+extension TodoItemListView {
+    
+    func updateWeekItems() {
+        weekDates.forEach { date in
+            let dayItems = items.filter { event in
+                return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
+            }
+            
+            let unfinishItemList = dayItems.filter { item in
+                guard let planTime = item.planTime else { return false }
+                return planTime.isInSameDay(as: date) && !item.isFinish
+            }
+            unFinishWeekItems[date] = unfinishItemList
+            
+            let finishItemList = dayItems.filter { !unfinishItemList.contains($0) }
+            finishWeekItems[date] = finishItemList
+            
+            let totalTime = dayItems.compactMap { event in
+                event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date)
+            }.compactMap { items in
+                items.compactMap { $0.interval }.reduce(0, +)
+            }.reduce(0, +)
+            weekTotalTime[date] = totalTime
         }
     }
     

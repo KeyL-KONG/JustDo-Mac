@@ -62,6 +62,10 @@ struct TodoItemListView: View {
     @State var todayItems: [EventItem] = []
     @State var toggleToRefreshTodayView: Bool = false
     
+    @State var unFinishWeekItems: [Date: [EventItem]] = [:]
+    @State var finishWeekItems: [Date: [EventItem]] = [:]
+    @State var weekTotalTime: [Date: Int] = [:]
+    
     var items: [EventItem] {
         return itemList.filter { event in
             guard selection == .unplan || selection == .all else {
@@ -295,25 +299,46 @@ struct TodoItemListView: View {
         }
         .onChange(of: calendarMode, { oldValue, newValue in
             currentDate = .now
+            updateWeekItems()
         })
         .onChange(of: selection, { oldValue, newValue in
             if newValue == .today {
                 updateTodayItems()
+            } else if newValue == .calendar {
+                updateWeekItems()
             }
         })
         .onChange(of: selectionMode, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
+            } else if selection == .calendar {
+                updateWeekItems()
             }
         })
         .onChange(of: selectDate, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
+            } else if selection == .calendar {
+                updateWeekItems()
             }
         })
+        .onChange(of: currentDate, { oldValue, newValue in
+            if selection == .today {
+                updateTodayItems()
+            } else if selection == .calendar {
+                updateWeekItems()
+            }
+        })
+//        .onChange(of: weekDates, { oldValue, newValue in
+//            if selection == .calendar {
+//                updateWeekItems()
+//            }
+//        })
         .onChange(of: modelData.itemList, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
+            } else if selection == .calendar {
+                updateWeekItems()
             }
         })
         .alert(isPresented: $showDeleteAlert) {
@@ -343,6 +368,7 @@ struct TodoItemListView: View {
             } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")
                 scrolledID = currentDate
+                updateWeekItems()
             }
         }
     }
