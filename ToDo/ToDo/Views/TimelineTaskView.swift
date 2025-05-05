@@ -16,6 +16,7 @@ struct TimelineItem: Identifiable {
 
 struct TimelineTaskView: View {
     
+    @Binding var selectItemID: String
     @State var currentDate: Date
     @State var showTask: Bool = true
     
@@ -26,6 +27,12 @@ struct TimelineTaskView: View {
     @Namespace private var animation
     
     @State var timelineItems: [TimelineItem] = []
+    
+    @State var showEditTimeItemAlert: Bool = false
+    
+    @State var selectedTag: String = ""
+    @State var itemType: EventActionType = .project
+    var itemTypeList: [EventActionType] = [.task, .project]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -41,15 +48,31 @@ struct TimelineTaskView: View {
             
         }
         .vSpacing(.top)
-//        .onChange(of: currentDate, { oldValue, newValue in
-//            updateTimelineItems()
+//        .customAlert("添加时间记录", isPresented: $showEditTimeItemAlert, actionText: "", action: {
+//            
+//        }, message: {
+//            EditTimeIntervalView(showSheetView: $showEditTimeItemAlert, startTime: .now, endTime: .now, selectedTag: "")
 //        })
-//        .onChange(of: modelData.taskTimeItems, { oldValue, newValue in
-//            updateTimelineItems()
-//        })
-//        .onAppear(perform: {
-//            updateTimelineItems()
-//        })
+        .alert("添加时间记录", isPresented: $showEditTimeItemAlert) {
+            
+                Picker("选择标签", selection: $selectedTag) {
+                    ForEach(modelData.tagList.map({$0.title}), id: \.self) { title in
+                        if let tag = modelData.tagList.first(where: { $0.title == title }) {
+                            Text(tag.title).tag(tag)
+                        }
+                    }
+                }
+                
+                Picker("选择类型", selection: $itemType) {
+                    ForEach(itemTypeList, id: \.self) { type in
+                        Text(type.title).tag(type)
+                    }
+                }
+            
+        } message: {
+            Text("")
+        }
+
     }
     
     func interverlTime() -> LQDateInterval {
@@ -62,10 +85,6 @@ struct TimelineTaskView: View {
             endTime = firstItem.interval.start
         }
         return LQDateInterval(start: startTime, end: endTime)
-    }
-    
-    func updateTimelineItems() {
-        //self.timelineItems = timelineItems(with: currentDate)
     }
     
 
@@ -81,6 +100,7 @@ struct TimelineTaskView: View {
                         .onTapGesture {
                             Self.selectedTimeInterval = hour
                             TimelineTaskView.selectedTimeItem = nil
+                            self.showEditTimeItemAlert.toggle()
                     }
                 }
             }
@@ -204,7 +224,7 @@ struct TimelineTaskView: View {
         .padding(.leading, 10)
         .contentShape(Rectangle())
         .onTapGesture {
-            TimelineTaskView.selectedTimeItem = item
+            selectItemID = task.id
         }
     }
     

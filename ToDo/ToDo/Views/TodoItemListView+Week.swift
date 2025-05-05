@@ -52,7 +52,7 @@ extension TodoItemListView {
                 
                 GridRow {
                     if eventDisplayMode == .timeline {
-                        TimelineTaskView(currentDate: .now, showTask: false).id(UUID())
+                        TimelineTaskView(selectItemID: $selectItemID, currentDate: .now, showTask: false).id(UUID())
                     }
                     ForEach(0..<7) { index in
                         let date = weekDates[index]
@@ -61,7 +61,7 @@ extension TodoItemListView {
                             weekListView(date: date)
                         } else {
                             let timelineItems: [TimelineItem] = weekTimelineItems[date] ?? []
-                            TimelineTaskView(currentDate: date, timelineItems: timelineItems)
+                            TimelineTaskView(selectItemID: $selectItemID, currentDate: date, timelineItems: timelineItems)
                                 .id(UUID()).environmentObject(modelData)
                         }
                     }
