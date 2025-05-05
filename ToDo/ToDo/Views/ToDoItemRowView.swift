@@ -116,9 +116,14 @@ struct ToDoItemRowView: View {
                     Label("", systemImage: "star.fill")
                 } else {
                     if item.planTime != nil && item.setPlanTime {
-                        Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
+                        Label("", systemImage: (item.isFinish ? "checkmark.square.fill" : "square"))
                     } else {
-                        Label("", systemImage: "star.square").tint(.accentColor)
+                        if item.actionType == .task {
+                            Label("", systemImage: "circle").tint(.accentColor)
+                        } else {
+                            Label("", systemImage: "star.square").tint(.accentColor)
+                        }
+                        
                     }
                 }
                 

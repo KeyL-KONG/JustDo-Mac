@@ -31,6 +31,7 @@
 		097A04102C6C588300521483 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A040F2C6C588300521483 /* Array+Extensions.swift */; };
 		097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A04112C71ED9600521483 /* TodoItemListView+Today.swift */; };
 		097AE2C12DC481210096059B /* ModelData+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2C02DC481210096059B /* ModelData+Cache.swift */; };
+		097AE2C62DC8E18F0096059B /* TimelineTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2C52DC8E18F0096059B /* TimelineTaskView.swift */; };
 		09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */; };
 		09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714602D85D318009DB18E /* TimeLineRowView.swift */; };
 		09D714632D865F34009DB18E /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714622D865F2F009DB18E /* StateManager.swift */; };
@@ -103,6 +104,7 @@
 		097A040F2C6C588300521483 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		097A04112C71ED9600521483 /* TodoItemListView+Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Today.swift"; sourceTree = "<group>"; };
 		097AE2C02DC481210096059B /* ModelData+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+Cache.swift"; sourceTree = "<group>"; };
+		097AE2C52DC8E18F0096059B /* TimelineTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTaskView.swift; sourceTree = "<group>"; };
 		09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTimeItem.swift; sourceTree = "<group>"; };
 		09D714602D85D318009DB18E /* TimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineRowView.swift; sourceTree = "<group>"; };
 		09D714622D865F2F009DB18E /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
@@ -365,6 +367,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				097AE2C52DC8E18F0096059B /* TimelineTaskView.swift */,
 				09D7147A2DAB6517009DB18E /* ToDoEditPrincipleView.swift */,
 				09D714782DAB60CF009DB18E /* ToDoItemListView+Principle.swift */,
 				09D714712D9DA531009DB18E /* MarkdownView.swift */,
@@ -550,6 +553,7 @@
 				09F80BDD2C66540F00650366 /* ContentView.swift in Sources */,
 				09D714682D8FEBAB009DB18E /* DayView.swift in Sources */,
 				09F80C052C665A3F00650366 /* BaseModel.swift in Sources */,
+				097AE2C62DC8E18F0096059B /* TimelineTaskView.swift in Sources */,
 				093E79102D295C60006E5120 /* AddItemView.swift in Sources */,
 				09F80BFD2C665A3F00650366 /* DataManager.swift in Sources */,
 				09D7146C2D905661009DB18E /* WeekCalendarView.swift in Sources */,

@@ -63,6 +63,7 @@ enum TaskType {
 }
 
 protocol BasicTaskProtocol: Identifiable {
+    var actionType: EventActionType { get set }
     var setPlanTime: Bool { get set }
     var planTime: Date? { get set }
     var updateAt:Date? { get set }
@@ -109,6 +110,7 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
     
     var fixTimeType: RewardFixTimeType = .everyday
     var fixTimes: [LQDateInterval] = []
+    var actionType: EventActionType = .project
     
     var setPlanTime: Bool = false
     

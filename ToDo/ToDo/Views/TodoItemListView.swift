@@ -17,7 +17,7 @@ struct TodoItemListView: View {
     var addItemEvent: (EventItem) -> ()
     
     @State var calendarMode: CalendarMode = .week
-    @State var eventDisplayMode: EventDisplayMode = .task
+    @State var eventDisplayMode: EventDisplayMode = .timeline
     
     @State private var inspectIsShown: Bool = false
     //@Binding var selectItem: EventItem?
@@ -65,6 +65,8 @@ struct TodoItemListView: View {
     @State var unFinishWeekItems: [Date: [EventItem]] = [:]
     @State var finishWeekItems: [Date: [EventItem]] = [:]
     @State var weekTotalTime: [Date: Int] = [:]
+    
+    @State var weekTimelineItems: [Date: [TimelineItem]] = [:]
     
     var items: [EventItem] {
         return itemList.filter { event in
@@ -299,47 +301,45 @@ struct TodoItemListView: View {
         }
         .onChange(of: calendarMode, { oldValue, newValue in
             currentDate = .now
-            updateWeekItems()
+            updateWeekData()
         })
         .onChange(of: selection, { oldValue, newValue in
             if newValue == .today {
                 updateTodayItems()
             } else if newValue == .calendar {
-                updateWeekItems()
+                updateWeekData()
             }
         })
         .onChange(of: selectionMode, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
             } else if selection == .calendar {
-                updateWeekItems()
+                updateWeekData()
             }
         })
         .onChange(of: selectDate, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
             } else if selection == .calendar {
-                updateWeekItems()
+                updateWeekData()
             }
         })
         .onChange(of: currentDate, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
             } else if selection == .calendar {
-                updateWeekItems()
+                updateWeekData()
             }
         })
-//        .onChange(of: weekDates, { oldValue, newValue in
-//            if selection == .calendar {
-//                updateWeekItems()
-//            }
-//        })
         .onChange(of: modelData.itemList, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
             } else if selection == .calendar {
-                updateWeekItems()
+                updateWeekData()
             }
+        })
+        .onChange(of: eventDisplayMode, { oldValue, newValue in
+            updateWeekData()
         })
         .alert(isPresented: $showDeleteAlert) {
             Alert(title: Text("是否删除该事项"), message: Text(Self.deleteItem?.title ?? ""), primaryButton: .destructive(Text("确认"), action: {
@@ -368,7 +368,7 @@ struct TodoItemListView: View {
             } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")
                 scrolledID = currentDate
-                updateWeekItems()
+                updateWeekData()
             }
         }
     }

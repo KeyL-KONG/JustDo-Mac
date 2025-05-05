@@ -368,7 +368,7 @@ extension Date {
     }
     
     static func timelineHeight(start: Date, end: Date) -> CGFloat {
-        return (end.timeIntervalSince1970 - start.timeIntervalSince1970) / 1800 * 40
+        return (end.timeIntervalSince1970 - start.timeIntervalSince1970) / 3600 * 40
     }
     
     var simpleDayAndWeekStr: String {
@@ -469,8 +469,8 @@ extension Calendar {
     func hours(with date: Date) -> [Date] {
         let startOfDay = self.startOfDay(for: date)
         var hours: [Date] = []
-        for index in 0..<48 {
-            if let date = self.date(byAdding: .minute, value: index * 30, to: startOfDay) {
+        for index in 0..<24 {
+            if let date = self.date(byAdding: .hour, value: index * 1, to: startOfDay) {
                 hours.append(date)
             }
         }

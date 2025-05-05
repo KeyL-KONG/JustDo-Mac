@@ -25,6 +25,12 @@ extension TodoItemListView {
         ScrollView {
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                 GridRow {
+                    if eventDisplayMode == .timeline {
+                        HStack(alignment: .center) {
+                            Spacer()
+                            Text("时间").bold()
+                        }
+                    }
                     ForEach(0..<7) { index in
                         let date = weekDates[index]
                         HStack(alignment: .center) {
@@ -45,13 +51,18 @@ extension TodoItemListView {
                 }
                 
                 GridRow {
+                    if eventDisplayMode == .timeline {
+                        TimelineTaskView(currentDate: .now, showTask: false).id(UUID())
+                    }
                     ForEach(0..<7) { index in
                         let date = weekDates[index]
                         
                         if eventDisplayMode == .task {
                             weekListView(date: date)
                         } else {
-                            weekTimelineView(date: date)
+                            let timelineItems: [TimelineItem] = weekTimelineItems[date] ?? []
+                            TimelineTaskView(currentDate: date, timelineItems: timelineItems)
+                                .id(UUID()).environmentObject(modelData)
                         }
                     }
                 }
@@ -256,7 +267,15 @@ extension TodoItemListView {
 
 extension TodoItemListView {
     
-    func updateWeekItems() {
+    func updateWeekData() {
+        if eventDisplayMode == .timeline {
+            updateWeekTimelineItems()
+        } else {
+            updateWeekListItems()
+        }
+    }
+    
+    func updateWeekListItems() {
         weekDates.forEach { date in
             let dayItems = items.filter { event in
                 return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
@@ -278,6 +297,33 @@ extension TodoItemListView {
             }.reduce(0, +)
             weekTotalTime[date] = totalTime
         }
+    }
+    
+}
+
+extension TodoItemListView {
+    
+    func updateWeekTimelineItems() {
+        weekDates.forEach { date in
+            self.weekTimelineItems[date] = timelineItems(with: date)
+        }
+    }
+    
+    func timelineItems(with date: Date) -> [TimelineItem] {
+        
+        var items = [TimelineItem]()
+        modelData.itemList.forEach { event in
+
+            modelData.taskTimeItems.filter { item in
+                item.eventId == event.id && (item.startTime.isInSameDay(as: date) || item.endTime.isInSameDay(as: date)) && item.interval > 60 && item.interval < 60 * 60 * 12
+            }.forEach { item in
+                let timeItem = TimelineItem(event: event, interval: LQDateInterval(start: item.startTime, end: item.endTime), timeItem: item)
+                items.append(timeItem)
+            }
+            
+        }
+        print("timeline items date: \(date), count: \(items.count)")
+        return items.sorted { $0.interval.start.timeIntervalSince1970 < $1.interval.start.timeIntervalSince1970 }
     }
     
 }
