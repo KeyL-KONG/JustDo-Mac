@@ -13,7 +13,7 @@ class ModelData: ObservableObject {
     @Published var editStates: [String: Bool] = [:]
     @Published var itemList: [EventItem] = [] {
         didSet {
-            print("set itemlist: \(itemList.count)")
+            updateItemIndex += 1
         }
     }
     @Published var goalList: [GoalModel] = []
@@ -37,11 +37,23 @@ class ModelData: ObservableObject {
     @Published var summaryItemList: [SummaryItem] = []
     @Published var summaryModelList: [SummaryModel] = []
     @Published var summaryTagList: [SummaryTag] = []
-    @Published var taskTimeItems: [TaskTimeItem] = []
+    @Published var taskTimeItems: [TaskTimeItem] = [] {
+        didSet {
+            updateTimeIndex += 1
+        }
+    }
     
     @Published var principleItems: [PrincipleModel] = []
     
     @Published var toggleToRefresh: Bool = false
+    
+    @Published var updateItemIndex = 0
+    @Published var updateTimeIndex = 0
+    
+    
+    // Cache
+    var weekTimelineItems: [Date: [TimelineItem]] = [:]
+    
     
     let cache = CacheManager()
     

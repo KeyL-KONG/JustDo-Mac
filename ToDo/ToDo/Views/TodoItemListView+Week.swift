@@ -304,8 +304,20 @@ extension TodoItemListView {
 extension TodoItemListView {
     
     func updateWeekTimelineItems() {
-        weekDates.forEach { date in
-            self.weekTimelineItems[date] = timelineItems(with: date)
+        print("update week timeline items")
+        if modelData.weekTimelineItems.count > 0 {
+            self.weekTimelineItems = modelData.weekTimelineItems
+        }
+        let weekDates = self.weekDates
+        DispatchQueue.global().async {
+            var weekTimelineItems: [Date: [TimelineItem]] = [:]
+            weekDates.forEach { date in
+                weekTimelineItems[date] = timelineItems(with: date)
+            }
+            DispatchQueue.main.async {
+                self.weekTimelineItems = weekTimelineItems
+                modelData.weekTimelineItems = weekTimelineItems
+            }
         }
     }
     

@@ -331,26 +331,26 @@ struct TodoItemListView: View {
                 updateWeekData()
             }
         })
-        .onChange(of: modelData.itemList, { oldValue, newValue in
+        .onChange(of: modelData.updateItemIndex, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
             } else if selection == .calendar {
                 updateWeekData()
             }
         })
-        .onReceive(modelData.$taskTimeItems, perform: { _ in
+        .onChange(of: modelData.updateTimeIndex, { _, _ in
             if selection == .today {
                 updateTodayItems()
             } else if selection == .calendar {
                 updateWeekData()
             }
         })
-//        .onChange(of: modelData.taskTimeItems, { _ in
-////            if selection == .today {
-////                updateTodayItems()
-////            } else if selection == .calendar {
-////                updateWeekData()
-////            }
+//        .onReceive(modelData.$taskTimeItems, perform: { _ in
+//            if selection == .today {
+//                updateTodayItems()
+//            } else if selection == .calendar {
+//                updateWeekData()
+//            }
 //        })
         .onChange(of: eventDisplayMode, { oldValue, newValue in
             updateWeekData()
