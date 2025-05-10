@@ -48,11 +48,6 @@ struct TimelineTaskView: View {
             
         }
         .vSpacing(.top)
-//        .customAlert("添加时间记录", isPresented: $showEditTimeItemAlert, actionText: "", action: {
-//            
-//        }, message: {
-//            EditTimeIntervalView(showSheetView: $showEditTimeItemAlert, startTime: .now, endTime: .now, selectedTag: "")
-//        })
         .alert("添加时间记录", isPresented: $showEditTimeItemAlert) {
             
                 Picker("选择标签", selection: $selectedTag) {
@@ -75,18 +70,6 @@ struct TimelineTaskView: View {
 
     }
     
-    func interverlTime() -> LQDateInterval {
-        var startTime: Date = Self.selectedTimeInterval ?? .now
-        if let lastItem = timelineItems.filter({ $0.interval.end <= startTime }).last {
-            startTime = lastItem.interval.end
-        }
-        var endTime = startTime.dateByAddingMinutes(60)
-        if let firstItem = timelineItems.filter({ $0.interval.start >= startTime }).first {
-            endTime = firstItem.interval.start
-        }
-        return LQDateInterval(start: startTime, end: endTime)
-    }
-    
 
     @ViewBuilder
     func TimelineView() -> some View {
@@ -100,7 +83,8 @@ struct TimelineTaskView: View {
                         .onTapGesture {
                             Self.selectedTimeInterval = hour
                             TimelineTaskView.selectedTimeItem = nil
-                            self.showEditTimeItemAlert.toggle()
+                            ToDoListView.newTimelineInterval = interverlTime()
+                            self.selectItemID = ToDoListView.newTimelineItemId + UUID().uuidString
                     }
                 }
             }
@@ -226,6 +210,24 @@ struct TimelineTaskView: View {
         .onTapGesture {
             selectItemID = task.id
         }
+    }
+    
+}
+
+extension TimelineTaskView {
+    
+    func interverlTime() -> LQDateInterval {
+        var startTime: Date = Self.selectedTimeInterval ?? .now
+        if let lastItem = timelineItems.sorted(by: { $0.interval.end.timeIntervalSince1970 >= $1.interval.end.timeIntervalSince1970
+        }).filter({ $0.interval.start <= startTime }).first {
+            startTime = lastItem.interval.end
+        }
+        var endTime = startTime.dateByAddingMinutes(60)
+        if let firstItem = timelineItems.sorted(by: { $0.interval.end.timeIntervalSince1970 >= $1.interval.end.timeIntervalSince1970
+        }).filter({ $0.interval.end > startTime }).last {
+            endTime = firstItem.interval.start
+        }
+        return LQDateInterval(start: startTime, end: endTime)
     }
     
 }

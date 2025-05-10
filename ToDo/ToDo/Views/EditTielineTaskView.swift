@@ -10,7 +10,6 @@ import SwiftUI
 struct EditTimeIntervalView: View {
     
     @EnvironmentObject var modelData: ModelData
-    @Binding var showSheetView: Bool
     @State var startTime: Date
     @State var endTime: Date
     @State var selectTitle: String = ""
@@ -38,61 +37,64 @@ struct EditTimeIntervalView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                List {
-                    Section {
-                        if itemType == .task {
-                            Text(selectTitle)
-                        }
-                        Picker("选择标签", selection: $selectedTag) {
-                            ForEach(sortedTagList.map({$0.title}), id: \.self) { title in
-                                if let tag = modelData.tagList.first(where: { $0.title == title }) {
-                                    Text(tag.title).tag(tag)
-                                }
-                            }
-                        }
-                        
-                        Picker("选择类型", selection: $itemType) {
-                            ForEach(itemTypeList, id: \.self) { type in
-                                Text(type.title).tag(type)
-                            }
-                        }
-                        
-                        if itemType == .task {
-                            Picker("选择任务事项", selection: $selectTitle) {
-                                ForEach(itemListTitles, id: \.self) { title in
-                                    Text(title).tag(title)
-                                }
-                            }
-                        } else {
-                            Picker("选择项目事项", selection: $selectTitle) {
-                                ForEach(itemListTitles, id: \.self) { title in
-                                    Text(title).tag(title)
-                                }
+        VStack {
+            List {
+                Section {
+                    if itemType == .task {
+                        Text(selectTitle)
+                    }
+                    Picker("选择标签", selection: $selectedTag) {
+                        ForEach(sortedTagList.map({$0.title}), id: \.self) { title in
+                            if let tag = modelData.tagList.first(where: { $0.title == title }) {
+                                Text(tag.title).tag(tag)
                             }
                         }
                     }
                     
-                    Section {
-                        DatePicker(selection: $startTime, displayedComponents: [.date, .hourAndMinute]) {
-                            Text("开始时间")
-                        }
-                        DatePicker(selection: $endTime, displayedComponents: [.date, .hourAndMinute]) {
-                            Text("结束时间")
+                    Picker("选择类型", selection: $itemType) {
+                        ForEach(itemTypeList, id: \.self) { type in
+                            Text(type.title).tag(type)
                         }
                     }
                     
-                    Section(header: Text("编辑内容")) {
-                        TextEditor(text: $recordContent)
-                            .focused($focusedField, equals: .record)
-                            .font(.system(size: 15))
-                            .frame(minHeight: 100)
+                    if itemType == .task {
+                        Picker("选择任务事项", selection: $selectTitle) {
+                            ForEach(itemListTitles, id: \.self) { title in
+                                Text(title).tag(title)
+                            }
+                        }
+                    } else {
+                        Picker("选择项目事项", selection: $selectTitle) {
+                            ForEach(itemListTitles, id: \.self) { title in
+                                Text(title).tag(title)
+                            }
+                        }
                     }
                 }
+                
+                Section {
+                    DatePicker(selection: $startTime, displayedComponents: [.date, .hourAndMinute]) {
+                        Text("开始时间")
+                    }
+                    DatePicker(selection: $endTime, displayedComponents: [.date, .hourAndMinute]) {
+                        Text("结束时间")
+                    }
+                }
+                
+                Section(header: Text("编辑内容")) {
+                    TextEditor(text: $recordContent)
+                        .focused($focusedField, equals: .record)
+                        .font(.system(size: 15))
+                        .frame(minHeight: 100)
+                }
             }
-
         }
+        .toolbar(content: {
+            Spacer()
+            Button("保存") {
+                saveTimeInterval()
+            }.foregroundColor(.blue)
+        })
         .onChange(of: selectedTag, { oldValue, newValue in
             print("selected tag from \(oldValue) to \(newValue)")
             if let firstTitle = itemListTitles.first, oldValue.count > 0 {

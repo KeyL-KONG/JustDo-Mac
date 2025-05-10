@@ -36,6 +36,9 @@ struct ToDoListView: View, Equatable {
         }
     }
     
+    static var newTimelineInterval: LQDateInterval? = nil
+    static let newTimelineItemId = "newTimelineItemId"
+    
     var itemList: [EventItem] {
         return items(with: selection)
     }
@@ -204,8 +207,11 @@ struct ToDoListView: View, Equatable {
                     .environmentObject(modelData)
                     .id(selectItemID)
                 }
-                else {
-                    Text("empty")
+                else if let interval = Self.newTimelineInterval, selectItemID.contains(Self.newTimelineItemId) {
+                    EditTimeIntervalView(startTime: interval.start, endTime: interval.end).environmentObject(modelData)
+                        .id(selectItemID)
+                } else {
+                    Text("Empty")
                 }
                 
             }

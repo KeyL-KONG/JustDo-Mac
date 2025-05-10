@@ -338,6 +338,20 @@ struct TodoItemListView: View {
                 updateWeekData()
             }
         })
+        .onReceive(modelData.$taskTimeItems, perform: { _ in
+            if selection == .today {
+                updateTodayItems()
+            } else if selection == .calendar {
+                updateWeekData()
+            }
+        })
+//        .onChange(of: modelData.taskTimeItems, { _ in
+////            if selection == .today {
+////                updateTodayItems()
+////            } else if selection == .calendar {
+////                updateWeekData()
+////            }
+//        })
         .onChange(of: eventDisplayMode, { oldValue, newValue in
             updateWeekData()
         })
