@@ -61,7 +61,8 @@ extension TodoItemListView {
                             weekListView(date: date)
                         } else {
                             let timelineItems: [TimelineItem] = weekTimelineItems[date] ?? []
-                            TimelineTaskView(selectItemID: $selectItemID, currentDate: date, timelineItems: timelineItems)
+                            let timelinePlanItems: [TimelineItem] = weekTimelinePlanItems[date] ?? []
+                            TimelineTaskView(selectItemID: $selectItemID, currentDate: date, timelineItems: timelineItems, timelinePlanItems: timelinePlanItems)
                                 .id(UUID()).environmentObject(modelData)
                         }
                     }
@@ -198,7 +199,7 @@ extension TodoItemListView {
 extension TodoItemListView {
     
     func weekTimelineView(date: Date) -> some View {
-        let timelineItems = modelData.taskTimeItems.filter { $0.endTime.isInSameDay(as: date) && $0.interval > 60 }.sorted {  $0.startTime.timeIntervalSince1970 < $1.startTime.timeIntervalSince1970
+        let timelineItems = modelData.taskTimeItems.filter { $0.endTime.isInSameDay(as: date) && $0.interval > 60 && !$0.isPlan }.sorted {  $0.startTime.timeIntervalSince1970 < $1.startTime.timeIntervalSince1970
         }
         let totalTime = timelineItems.map { $0.interval }.reduce(0, +)
         return VStack {
@@ -276,9 +277,10 @@ extension TodoItemListView {
     }
     
     func updateWeekListItems() {
+        let taskTimeItems = modelData.taskTimeItems.filter { !$0.isPlan }
         weekDates.forEach { date in
             let dayItems = items.filter { event in
-                return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
+                return event.intervals(with: .day, selectDate: date).count > 0 || event.timeTasks(with: .day, tasks: taskTimeItems, selectDate: date).count > 0 || (event.planTime?.isInSameDay(as: date) ?? false)
             }
             
             let unfinishItemList = dayItems.filter { item in
@@ -291,7 +293,7 @@ extension TodoItemListView {
             finishWeekItems[date] = finishItemList
             
             let totalTime = dayItems.compactMap { event in
-                event.timeTasks(with: .day, tasks: modelData.taskTimeItems, selectDate: date)
+                event.timeTasks(with: .day, tasks: taskTimeItems, selectDate: date)
             }.compactMap { items in
                 items.compactMap { $0.interval }.reduce(0, +)
             }.reduce(0, +)
@@ -308,26 +310,33 @@ extension TodoItemListView {
         if modelData.weekTimelineItems.count > 0 {
             self.weekTimelineItems = modelData.weekTimelineItems
         }
+        if modelData.weekTimelinePlanItems.count > 0 {
+            self.weekTimelinePlanItems = modelData.weekTimelinePlanItems
+        }
         let weekDates = self.weekDates
         DispatchQueue.global().async {
             var weekTimelineItems: [Date: [TimelineItem]] = [:]
+            var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
             weekDates.forEach { date in
-                weekTimelineItems[date] = timelineItems(with: date)
+                weekTimelineItems[date] = timelineItems(with: date, isPlan: false)
+                weekTimelinePlanItems[date] = timelineItems(with: date, isPlan: true)
             }
             DispatchQueue.main.async {
                 self.weekTimelineItems = weekTimelineItems
+                self.weekTimelinePlanItems = weekTimelinePlanItems
                 modelData.weekTimelineItems = weekTimelineItems
+                modelData.weekTimelinePlanItems = weekTimelinePlanItems
             }
         }
     }
     
-    func timelineItems(with date: Date) -> [TimelineItem] {
+    func timelineItems(with date: Date, isPlan: Bool) -> [TimelineItem] {
         
         var items = [TimelineItem]()
         modelData.itemList.forEach { event in
 
             modelData.taskTimeItems.filter { item in
-                item.eventId == event.id && (item.startTime.isInSameDay(as: date) || item.endTime.isInSameDay(as: date)) && item.interval > 60 && item.interval < 60 * 60 * 12
+                item.eventId == event.id && (item.startTime.isInSameDay(as: date) || item.endTime.isInSameDay(as: date)) && item.interval > 60 && item.interval < 60 * 60 * 12 && item.isPlan == isPlan
             }.forEach { item in
                 let timeItem = TimelineItem(event: event, interval: LQDateInterval(start: item.startTime, end: item.endTime), timeItem: item)
                 items.append(timeItem)

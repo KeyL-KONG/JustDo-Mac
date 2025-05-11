@@ -28,6 +28,8 @@ struct TimelineTaskView: View {
     
     @State var timelineItems: [TimelineItem] = []
     
+    @State var timelinePlanItems: [TimelineItem] = []
+    
     @State var showEditTimeItemAlert: Bool = false
     
     @State var selectedTag: String = ""
@@ -103,46 +105,105 @@ struct TimelineTaskView: View {
     @ViewBuilder
     func TimelineBgView() -> some View {
         GeometryReader { geometry in
-            VStack(alignment: .leading, spacing: 0) {
-                ForEach(timelineItems.indices, id: \.self) { index in
-                    let item = timelineItems[index]
-                    let tag = modelData.tagList.filter({ $0.id == item.event.tag}).first ?? .work
-                    if index == 0 {
-                        let marginHeight = Date.timelineHeight(start: currentDate.startTimeOfDay, end: item.interval.start)
-                        if marginHeight > 0 {
-                            Spacer().frame(height: marginHeight)
-                        }
-                    } else {
-                        let lastItem = timelineItems[index-1]
-                        let marginHeight = Date.timelineHeight(start: lastItem.interval.end, end: item.interval.start)
-                        if marginHeight > 0 {
-                            Spacer().frame(height: marginHeight)
-                        }
+            HStack(spacing: 0) {
+                TimelinePlanView().frame(width: geometry.size.width / 2)
+                TimelineExecuteView().frame(width: geometry.size.width / 2)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func TimelinePlanView() -> some View {
+       
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(timelinePlanItems.indices, id: \.self) { index in
+                let item = timelinePlanItems[index]
+                let tag = modelData.tagList.filter({ $0.id == item.event.tag}).first ?? .work
+                if index == 0 {
+                    let marginHeight = Date.timelineHeight(start: currentDate.startTimeOfDay, end: item.interval.start, isPlan: true)
+                    if marginHeight > 1 {
+                        Spacer().frame(height: marginHeight)
                     }
-                    
-                    let start = Date.min(date1: item.interval.start, date2: currentDate.lastTimeOfDay)
-                    let end = Date.min(date1: item.interval.end, date2: currentDate.lastTimeOfDay)
-                    let height =  Date.timelineHeight(start: start, end: end)
-                    
-                    TaskRow(item.event, item: item, interval: LQDateInterval(start: start, end: end), height: height)
-                        .frame(height: height)
-                    .background {
-                        ZStack(alignment: .leading) {
-                            Rectangle()
-                                .fill(tag.titleColor)
-                                .frame(width: 4, height: height)
-                                .cornerRadius(5)
-                            
-                            Rectangle()
-                                .fill(tag.titleColor.opacity(0.25))
-                                .frame(height: height)
-                                .cornerRadius(5)
-                        }
-                        .padding(.trailing, 10)
-                        .padding(.vertical, 5)
-                        .cornerRadius(5)
-                        .contentShape(Rectangle())
+                } else {
+                    let lastItem = timelinePlanItems[index-1]
+                    let marginHeight = Date.timelineHeight(start: lastItem.interval.end, end: item.interval.start, isPlan: true)
+                    if marginHeight > 0 {
+                        Spacer().frame(height: marginHeight)
                     }
+                }
+                
+                let start = Date.min(date1: item.interval.start, date2: currentDate.lastTimeOfDay)
+                let end = Date.min(date1: item.interval.end, date2: currentDate.lastTimeOfDay)
+                let height =  Date.timelineHeight(start: start, end: end, isPlan: true)
+                
+                TaskRow(item.event, item: item, interval: LQDateInterval(start: start, end: end), height: height)
+                    .frame(height: height)
+                .background {
+                    ZStack(alignment: .leading) {
+                    
+//                        Rectangle()
+//                            .fill(tag.titleColor)
+//                            .frame(width: 4, height: height)
+//                            .cornerRadius(5)
+                        
+                        Rectangle()
+                            .fill(tag.titleColor.opacity(0.25))
+                            .frame(height: height)
+                            .cornerRadius(5)
+                    }
+                    //.padding(.trailing, 10)
+                    .padding(.vertical, 5)
+                    .cornerRadius(5)
+                    .contentShape(Rectangle())
+                }
+            }
+        }
+        
+        
+    }
+    
+    
+    @ViewBuilder
+    func TimelineExecuteView() -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(timelineItems.indices, id: \.self) { index in
+                let item = timelineItems[index]
+                let tag = modelData.tagList.filter({ $0.id == item.event.tag}).first ?? .work
+                if index == 0 {
+                    let marginHeight = Date.timelineHeight(start: currentDate.startTimeOfDay, end: item.interval.start)
+                    if marginHeight > 0 {
+                        Spacer().frame(height: marginHeight)
+                    }
+                } else {
+                    let lastItem = timelineItems[index-1]
+                    let marginHeight = Date.timelineHeight(start: lastItem.interval.end, end: item.interval.start)
+                    if marginHeight > 0 {
+                        Spacer().frame(height: marginHeight)
+                    }
+                }
+                
+                let start = Date.min(date1: item.interval.start, date2: currentDate.lastTimeOfDay)
+                let end = Date.min(date1: item.interval.end, date2: currentDate.lastTimeOfDay)
+                let height =  Date.timelineHeight(start: start, end: end)
+                
+                TaskRow(item.event, item: item, interval: LQDateInterval(start: start, end: end), height: height)
+                    .frame(height: height)
+                .background {
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .fill(tag.titleColor)
+                            .frame(width: 4, height: height)
+                            .cornerRadius(5)
+                        
+                        Rectangle()
+                            .fill(tag.titleColor.opacity(0.25))
+                            .frame(height: height)
+                            .cornerRadius(5)
+                    }
+                    //.padding(.trailing, 10)
+                    .padding(.vertical, 5)
+                    .cornerRadius(5)
+                    .contentShape(Rectangle())
                 }
             }
         }
@@ -156,14 +217,14 @@ struct TimelineTaskView: View {
                     if !showTask {
                         Text(hour.format("HH:mm"))
                             .font(.system(size: 12, weight: .bold))
-                            .frame(width: 40, alignment: .leading)
+                            .frame(width: 80, alignment: .leading)
                     } else {
                         Rectangle()
                             .stroke(.gray.opacity(0.5), style: StrokeStyle(lineWidth: 0.5, lineCap: .butt, lineJoin: .bevel, dash: [5], dashPhase: 5))
                             .frame(height: 0.5)
                     }
                 })
-                .hSpacing(.leading)
+                .        hSpacing(.leading)
             } else {
                 HStack(alignment: .center, content: {
                     Spacer()
@@ -183,13 +244,14 @@ struct TimelineTaskView: View {
     @ViewBuilder
     func TaskRow(_ task: any BasicTaskProtocol, item: TimelineItem? = nil, interval: LQDateInterval? = nil, height: CGFloat = 40) -> some View {
         let tag = modelData.tagList.filter({ $0.id == task.tag }).first ?? .work
-        return VStack(alignment: .leading, content: {
-            HStack {
-                if height <= 15 {
+        let isPlan = item?.timeItem?.isPlan ?? false
+        return VStack(alignment: .leading, spacing:2, content: {
+            
+                if height <= 20 {
                     Text("")
                 } else {
                     Text(task.title.prefix(15))
-                        .font(.system(size: 12, weight: .regular))
+                        .font(.system(size: 10, weight: .regular))
                         .foregroundColor(tag.titleColor)
                     
                     if let interval = interval {
@@ -201,8 +263,7 @@ struct TimelineTaskView: View {
                             .foregroundColor(tag.titleColor.opacity(0.8))
                     }
                 }
-                Spacer()
-            }
+            
         })
         .hSpacing(.leading)
         .padding(.leading, 10)

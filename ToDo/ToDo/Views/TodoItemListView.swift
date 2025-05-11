@@ -67,6 +67,7 @@ struct TodoItemListView: View {
     @State var weekTotalTime: [Date: Int] = [:]
     
     @State var weekTimelineItems: [Date: [TimelineItem]] = [:]
+    @State var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
     
     var items: [EventItem] {
         return itemList.filter { event in

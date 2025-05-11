@@ -53,6 +53,7 @@ class ModelData: ObservableObject {
     
     // Cache
     var weekTimelineItems: [Date: [TimelineItem]] = [:]
+    var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
     
     
     let cache = CacheManager()

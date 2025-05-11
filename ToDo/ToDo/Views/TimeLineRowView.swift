@@ -6,6 +6,7 @@ struct TimeLineRowView: View {
     @State var item: TaskTimeItem
     @Binding var isEditing: Bool
     @State var onlyStarTime: Bool = false
+    @State var setRepeat: Bool = false
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -15,6 +16,14 @@ struct TimeLineRowView: View {
     
     var body: some View {
         VStack {
+            if item.isPlan {
+                HStack {
+                    Toggle(isOn: $setRepeat) {
+                        Text("设置每日重复计划时间")
+                    }
+                    Spacer()
+                }
+            }
             HStack(alignment: .center) {
                 if isEditing {
                     if onlyStarTime {
@@ -89,6 +98,17 @@ struct TimeLineRowView: View {
         .padding()
         .background(isEditing ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
         .cornerRadius(10)
+        .onChange(of: setRepeat, { oldValue, newValue in
+            updateItem()
+        })
+        .onAppear {
+            setRepeat = item.isRepeat
+        }
+    }
+    
+    func updateItem() {
+        item.isRepeat = setRepeat
+        modelData.updateTimeItem(item)
     }
     
 }

@@ -367,7 +367,12 @@ extension Date {
         return date1.timeIntervalSince1970 < date2.timeIntervalSince1970 ? date1 : date2
     }
     
-    static func timelineHeight(start: Date, end: Date) -> CGFloat {
+    static func timelineHeight(start: Date, end: Date, isPlan: Bool = false) -> CGFloat {
+//        if isPlan {
+//            let startTime = start.timeIntervalSince(start.startTimeOfDay)
+//            let endTime = end.timeIntervalSince(end.startTimeOfDay)
+//            return (endTime - startTime) / 3600 * 40
+//        }
         return (end.timeIntervalSince1970 - start.timeIntervalSince1970) / 3600 * 40
     }
     

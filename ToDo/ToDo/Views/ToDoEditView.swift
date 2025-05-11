@@ -95,7 +95,16 @@ struct ToDoEditView: View {
     var taskTimeItems: [TaskTimeItem] {
         modelData.taskTimeItems.filter { item in
             guard let selectItem else { return false }
-            return item.eventId == selectItem.id
+            return item.eventId == selectItem.id && !item.isPlan
+        }.sorted(by: {
+            $0.startTime.timeIntervalSince1970 > $1.startTime.timeIntervalSince1970
+        })
+    }
+    
+    var taskPlanTimeItems: [TaskTimeItem] {
+        modelData.taskTimeItems.filter { item in
+            guard let selectItem else { return false }
+            return item.eventId == selectItem.id && item.isPlan
         }.sorted(by: {
             $0.startTime.timeIntervalSince1970 > $1.startTime.timeIntervalSince1970
         })
@@ -246,16 +255,6 @@ struct ToDoEditView: View {
                         Text("是否需要复盘")
                     }
             
-                    HStack {
-                        Toggle(isOn: $setPlanTime) {
-                            Text("")
-                        }.labelsHidden()
-                        
-                        DatePicker(selection: $planTime, displayedComponents: .date) {
-                            Text("\(actionType == .task ? "设置为计划时间" : "设置为开始时间")")
-                        }
-                    }
-                    
                     if actionType == .project {
                         HStack {
                             Toggle(isOn: $setFixedEvent) {
@@ -286,6 +285,55 @@ struct ToDoEditView: View {
 //                    }
                     
                 })
+                
+                Section(header: HStack(content: {
+                    Text("设置计划")
+                    Spacer()
+                    
+                    if setPlanTime {
+                        Button {
+                            let item = TaskTimeItem(startTime: .now, endTime: .now, content: "")
+                            item.eventId = selectItem?.id ?? ""
+                            item.isPlan = true
+                            modelData.updateTimeItem(item)
+                        } label: {
+                            Text("添加计划").font(.system(size: 14))
+                        }
+                    }
+                    
+                })) {
+                    HStack {
+                        Toggle(isOn: $setPlanTime) {
+                            Text("")
+                        }.labelsHidden()
+                        
+                        DatePicker(selection: $planTime, displayedComponents: .date) {
+                            Text("设置为计划时间")
+                        }
+                    }
+                    
+                        ForEach(taskPlanTimeItems) { item in
+                            TimeLineRowView(
+                                item: item,
+                                isEditing: Binding(
+                                    get: { return modelData.isEditing(id: item.id) },
+                                    set: { value in
+                                        modelData.markEdit(id: item.id, edit: value)
+                                    }
+                                )
+                            )
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    // 添加删除确认弹窗
+                                    modelData.deleteTimeItem(item)
+                                } label: {
+                                    Text("删除").foregroundColor(.red)
+                                }
+                    
+                            }
+                        }
+                    
+                }
                 
                 if subItems.count > 0 {
                     Section(header: HStack(content: {

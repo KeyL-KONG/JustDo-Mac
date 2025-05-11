@@ -16,6 +16,7 @@ struct EditTimeIntervalView: View {
 
     @State var selectedTag: String = ""
     @State var selectReward: String = ""
+    @State var setPlanTime: Bool = false
     
     @State var recordContent: String = ""
     @FocusState var focusedField: FocusedField?
@@ -26,14 +27,21 @@ struct EditTimeIntervalView: View {
     @State var itemType: EventActionType = .project
     var itemTypeList: [EventActionType] = [.task, .project]
     
-    @State var itemList: [any BasicTaskProtocol] = []
+    @State var itemList: [EventItem] = []
     @State var sortedTagList: [ItemTag] = []
     
     var itemListTitles: [String] {
         guard let tagId = modelData.tagList.filter({ $0.title == selectedTag }).first?.id else {
             return []
         }
-        return itemList.filter { $0.tag == tagId && itemType == $0.actionType }.compactMap { $0.title }
+        return itemList.filter { $0.tag == tagId && itemType == $0.actionType }.sorted { event1, event2 in
+            if event1.setPlanTime != event2.setPlanTime {
+                return event1.setPlanTime ? true : false
+            } else if let planTime1 = event1.planTime, let planTime2 = event2.planTime {
+                return planTime1.timeIntervalSince1970 > planTime2.timeIntervalSince1970
+            }
+            return (event1.createTime?.timeIntervalSince1970 ?? 0) > (event2.createTime?.timeIntervalSince1970 ?? 0)
+        }.compactMap { $0.title }
     }
     
     var body: some View {
@@ -73,6 +81,7 @@ struct EditTimeIntervalView: View {
                 }
                 
                 Section {
+                    Toggle("是否设置为计划时间", isOn: $setPlanTime)
                     DatePicker(selection: $startTime, displayedComponents: [.date, .hourAndMinute]) {
                         Text("开始时间")
                     }
@@ -122,6 +131,7 @@ extension EditTimeIntervalView {
         
         let timeItem = TaskTimeItem(startTime: startTime, endTime: endTime, content: recordContent)
         timeItem.eventId = item.id
+        timeItem.isPlan = setPlanTime
         modelData.updateTimeItem(timeItem)
     }
     

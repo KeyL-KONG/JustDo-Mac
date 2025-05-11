@@ -248,7 +248,7 @@ extension TodoItemListView {
     
     var finishPrincipleTimeItems: [TaskTimeItem] {
         principleList.compactMap { model in
-            modelData.taskTimeItems.first { $0.eventId == model.id  && $0.state != .none && $0.startTime.isInSameDay(as: selectDate) }
+            modelData.taskTimeItems.first { $0.eventId == model.id  && $0.state != .none && $0.startTime.isInSameDay(as: selectDate) && !$0.isPlan }
         }
     }
     
@@ -293,7 +293,7 @@ extension TodoItemListView {
     }
     
     func principleTaskItem(item: PrincipleModel, date: Date) -> TaskTimeItem? {
-        return modelData.taskTimeItems.first { $0.eventId == item.id && $0.endTime.isInSameDay(as: date)
+        return modelData.taskTimeItems.first { $0.eventId == item.id && $0.endTime.isInSameDay(as: date) && !$0.isPlan
         }
     }
     
@@ -400,9 +400,10 @@ extension TodoItemListView {
     
     func fetchTodayItems() -> [EventItem] {
         print("today items")
+        let taskTimeItems = modelData.taskTimeItems.filter { !$0.isPlan }
         return items.filter { event in
             guard !event.isCollect else { return false }
-            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || modelData.taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
+            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
         }.sorted { event1, event2 in
             if event1.setPlanTime != event2.setPlanTime {
                 return event1.setPlanTime ? true : false

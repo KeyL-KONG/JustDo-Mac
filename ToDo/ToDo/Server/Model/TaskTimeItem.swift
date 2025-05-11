@@ -13,6 +13,8 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
     var content: String = ""
     var eventId: String = ""
     var state: TaskItemResultState = .none
+    var isPlan: Bool = false
+    var isRepeat: Bool = false
     
     var interval: Int {
         Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970)
@@ -24,6 +26,8 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         case content
         case eventId
         case state
+        case isPlan
+        case isRepeat
     }
     
     required init() {
@@ -38,6 +42,8 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         content = try container.decode(String.self, forKey: .content)
         eventId = try container.decode(String.self, forKey: .eventId)
         state = TaskItemResultState(rawValue: try container.decode(Int.self, forKey: .state)) ?? .none
+        isPlan = try container.decodeIfPresent(Bool.self, forKey: .isPlan) ?? false
+        isRepeat = try container.decodeIfPresent(Bool.self, forKey: .isRepeat) ?? false
     }
     
     init(startTime: Date, endTime: Date, content: String) {
@@ -54,6 +60,8 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         try container.encode(content, forKey: .content)
         try container.encode(eventId, forKey: .eventId)
         try container.encode(state.rawValue, forKey: .state)
+        try container.encode(isPlan, forKey: .isPlan)
+        try container.encode(isRepeat, forKey: .isRepeat)
     }
     
     override class func modelClassName() -> String {
@@ -71,6 +79,8 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         content = cloudObj.get(TaskTimeKeys.content.rawValue)?.stringValue ?? ""
         eventId = cloudObj.get(TaskTimeKeys.eventId.rawValue)?.stringValue ?? ""
         state = TaskItemResultState(rawValue: (cloudObj.get(TaskTimeKeys.state.rawValue)?.intValue ?? 0)) ?? .none
+        isPlan = cloudObj.get(TaskTimeKeys.isPlan.rawValue)?.boolValue ?? false
+        isRepeat = cloudObj.get(TaskTimeKeys.isRepeat.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -80,10 +90,12 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         try cloudObj.set(TaskTimeKeys.content.rawValue, value: content.lcString)
         try cloudObj.set(TaskTimeKeys.eventId.rawValue, value: eventId.lcString)
         try cloudObj.set(TaskTimeKeys.state.rawValue, value: state.rawValue.lcNumber)
+        try cloudObj.set(TaskTimeKeys.isPlan.rawValue, value: isPlan)
+        try cloudObj.set(TaskTimeKeys.isRepeat.rawValue, value: isRepeat)
     }
     
     private enum CodingKeys: String, CodingKey {
-        case startTime, endTime, content, eventId, state
+        case startTime, endTime, content, eventId, state, isPlan,isRepeat
     }
     
     
