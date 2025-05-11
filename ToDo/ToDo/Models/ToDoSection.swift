@@ -11,6 +11,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     case today
     case review
     case summary
+    case plan
     case calendar
     case project
     case unplan
@@ -23,6 +24,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "today"
+        case .plan:
+            return "plan"
         case .calendar:
             return "calendar"
         case .review:
@@ -48,6 +51,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "today"
+        case .plan:
+            return "plan"
         case .project:
             return "project"
         case .review:
@@ -73,6 +78,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
         switch self {
         case .today:
             return "checklist.unchecked"
+        case .plan:
+            return "square.and.pencil"
         case .calendar:
             return "calendar"
         case .review:
@@ -95,7 +102,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     }
     
     static var allCases: [ToDoSection] {
-        return [.today, .calendar, .principle, .project, .unplan, .all]
+        return [.plan, .today, .calendar, .principle, .project, .unplan, .all]
     }
     
 }

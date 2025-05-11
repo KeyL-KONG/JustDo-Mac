@@ -12,6 +12,7 @@
 		090C722C2C8409E100FA21C5 /* script in Resources */ = {isa = PBXBuildFile; fileRef = 090C72262C8409E100FA21C5 /* script */; };
 		090C722D2C8409E100FA21C5 /* default-iOS in Resources */ = {isa = PBXBuildFile; fileRef = 090C72282C8409E100FA21C5 /* default-iOS */; };
 		090C722E2C8409E100FA21C5 /* default-macOS in Resources */ = {isa = PBXBuildFile; fileRef = 090C72292C8409E100FA21C5 /* default-macOS */; };
+		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
 		093E78FA2D238533006E5120 /* ReadTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F82D238533006E5120 /* ReadTag.swift */; };
@@ -88,6 +89,7 @@
 		090C72262C8409E100FA21C5 /* script */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = script; sourceTree = "<group>"; };
 		090C72282C8409E100FA21C5 /* default-iOS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-iOS"; sourceTree = "<group>"; };
 		090C72292C8409E100FA21C5 /* default-macOS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-macOS"; sourceTree = "<group>"; };
+		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
 		093E78F72D238533006E5120 /* ReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadModel.swift; sourceTree = "<group>"; };
@@ -375,6 +377,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				092AF5252DD102450067DA7D /* PlanView.swift */,
 				097AE2C72DC901130096059B /* EditTielineTaskView.swift */,
 				097AE2C52DC8E18F0096059B /* TimelineTaskView.swift */,
 				09D7147A2DAB6517009DB18E /* ToDoEditPrincipleView.swift */,
@@ -552,6 +555,7 @@
 				09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */,
 				093E78FA2D238533006E5120 /* ReadTag.swift in Sources */,
 				093E78FB2D238533006E5120 /* ReadModel.swift in Sources */,
+				092AF5262DD102480067DA7D /* PlanView.swift in Sources */,
 				090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */,
 				09D714772DAB5C50009DB18E /* ModelData+Principle.swift in Sources */,
 				09F80C062C665A3F00650366 /* RewardModel.swift in Sources */,

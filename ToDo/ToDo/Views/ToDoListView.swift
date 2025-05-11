@@ -16,12 +16,8 @@ struct ToDoListView: View, Equatable {
     @EnvironmentObject var modelData: ModelData
     @State var uniqueID: String = ""
     @ObservedObject var timerModel: TimerModel
-    @State private var selection: ToDoSection = .today
-    @State private var selectItem: BaseModel? = nil {
-        didSet {
-            print("select item change: \((selectItem as? EventItem)?.title)")
-        }
-    }
+    @State private var selection: ToDoSection = .plan
+    @State private var selectItem: BaseModel? = nil
     @State private var selectItemID: String = "" {
         didSet {
             print("select item id: \(selectItemID)")
@@ -128,7 +124,11 @@ struct ToDoListView: View, Equatable {
                 })
                     .environmentObject(modelData)
                     .frame(minWidth: 400)
-            } else {
+            }
+            else if selection == .plan {
+                PlanView().environmentObject(modelData)
+            }
+            else {
                 TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                     selectItemID = item.id
                 }, timerModel: timerModel).environmentObject(modelData)
