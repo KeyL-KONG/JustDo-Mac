@@ -17,6 +17,7 @@ enum CacheDataType {
     case summaryTag
     case summaryItem
     case planItem
+    case readItem
     
     var cacheKey: String {
         switch self {
@@ -38,6 +39,8 @@ enum CacheDataType {
             return "com.cache.summary.item"
         case .planItem:
             return "com.cache.planitem"
+        case .readItem:
+            return "com.cache.readitem"
         }
     }
     
@@ -61,6 +64,8 @@ enum CacheDataType {
             return SummaryItem.self
         case .planItem:
             return PlanTimeItem.self
+        case .readItem:
+            return ReadModel.self
         }
     }
 }

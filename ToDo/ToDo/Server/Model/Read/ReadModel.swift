@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class ReadModel: BaseModel, Identifiable {
+class ReadModel: BaseModel, Identifiable, Codable {
     
     var title: String = ""
     var url: String = ""
@@ -16,7 +16,7 @@ class ReadModel: BaseModel, Identifiable {
     var tag: String = ""
     
     required init() {
-        
+        super.init()
     }
     
     override class func modelClassName() -> String {
@@ -25,6 +25,23 @@ class ReadModel: BaseModel, Identifiable {
     
     override func modelClassName() -> String {
         return "ReadModel"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: ReadModelKeys.self)
+        title = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
+        url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
+        tag = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: ReadModelKeys.self)
+        try container.encode(tag, forKey: .tag)
+        try container.encode(title, forKey: .title)
+        try container.encode(url, forKey: .url)
+        try container.encode(note, forKey: .note)
     }
     
     override func fillModel(with cloudObj: LCObject) {
@@ -48,7 +65,7 @@ class ReadModel: BaseModel, Identifiable {
 
 extension ReadModel {
     
-    enum ReadModelKeys: String {
+    enum ReadModelKeys: String, CodingKey {
         case title = "title"
         case url = "url"
         case note = "note"

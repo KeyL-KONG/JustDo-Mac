@@ -32,11 +32,19 @@ extension ModelData {
         }
     }
     
-    public func updatePlanTimeItem(_ item: PlanTimeItem, completion: (() -> ())? = nil) {
+    public func updatePlanTimeItem(_ item: PlanTimeItem, shouldAdd: Bool = true, completion: (() -> ())? = nil) {
+        var isUpdate = false
         if let index = planTimeItems.firstIndex(where: { $0.id == item.id }) {
             planTimeItems[index] = item
+            isUpdate = true
         } else {
-            planTimeItems.append(item)
+            if shouldAdd {
+                planTimeItems.append(item)
+            }
+        }
+        
+        if !isUpdate && !shouldAdd {
+            return
         }
         
         DataManager.shared.save(with: PlanTimeItem.modelClassName(), models: [item]) { error in

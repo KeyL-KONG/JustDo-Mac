@@ -192,18 +192,6 @@ class ModelData: ObservableObject {
     func loadFromServer() {
         asyncLoadCacheData()
         asyncLoadServer()
-//        loadTag {
-//            self.loadMainData {
-//                self.loadPrincipleItems()
-//                self.loadSummaryList {
-//                    self.loadReadList {
-//                        self.loadNoteList {
-//                            
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
     
     func loadMainData(completion: (() -> ())? = nil) {
