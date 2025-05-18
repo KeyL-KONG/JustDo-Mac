@@ -16,7 +16,7 @@ struct ToDoListView: View, Equatable {
     @EnvironmentObject var modelData: ModelData
     @State var uniqueID: String = ""
     @ObservedObject var timerModel: TimerModel
-    @State private var selection: ToDoSection = .plan
+    @State private var selection: ToDoSection = .today
     @State private var selectItem: BaseModel? = nil
     @State private var selectItemID: String = "" {
         didSet {
@@ -34,6 +34,8 @@ struct ToDoListView: View, Equatable {
     
     static var newTimelineInterval: LQDateInterval? = nil
     static let newTimelineItemId = "newTimelineItemId"
+    
+    static var newPlanTimeItemId = "newPlanTimeItemId"
     
     var itemList: [EventItem] {
         return items(with: selection)
@@ -126,7 +128,7 @@ struct ToDoListView: View, Equatable {
                     .frame(minWidth: 400)
             }
             else if selection == .plan {
-                PlanView().environmentObject(modelData)
+                PlanView(selectItemID: $selectItemID).environmentObject(modelData)
             }
             else {
                 TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
@@ -162,7 +164,7 @@ struct ToDoListView: View, Equatable {
             }
             
         } detail: {
-            if let selectedTask, selection == .review || selection == .summary || selection == .principle {
+            if let selectedTask, selection == .review || selection == .summary || selection == .principle || selection == .plan {
                 if let eventItem = modelData.itemList.first(where: { $0.id == selectedTask.id
                 }) {
                     ToDoEditView(selectItem: eventItem, selectionChange: { selectId in
@@ -183,13 +185,21 @@ struct ToDoListView: View, Equatable {
                     }
                     .id(principleItem.id)
                     .environmentObject(modelData)
+                } else if let planTimeItem = selectedTask as? PlanTimeItem {
+                    PlanItemEditView(selectedItem: planTimeItem).environmentObject(modelData)
+                        .id(planTimeItem.id)
                 }
                 else {
                     EmptyView()
                 }
                 
             } else {
-                if let eventItem = currentSelectItem() as? EventItem {
+                if let planTimeItem = modelData.planTimeItems.first(where: { $0.id == selectItemID
+                }) {
+                    PlanItemEditView(selectedItem: planTimeItem).environmentObject(modelData)
+                        .id(selectItemID)
+                }
+                else if let eventItem = currentSelectItem() as? EventItem {
                     ToDoEditView(selectItem: eventItem, selectionChange: { selectId in
                         self.selectItemID = selectId
                     }, updateEvent: {
@@ -197,7 +207,8 @@ struct ToDoListView: View, Equatable {
                     }).environmentObject(modelData)
                         .id(selectItemID)
                         .frame(minWidth: 400)
-                } else if let summaryItem = currentSelectItem() as? SummaryItem {
+                } else if let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectItemID
+                }) {
                     SummaryEditView(summaryItem: summaryItem)
                         .environmentObject(modelData).id(selectItemID)
                 } else if let principleItem = currentSelectItem() as? PrincipleModel {
@@ -209,8 +220,11 @@ struct ToDoListView: View, Equatable {
                 }
                 else if let interval = Self.newTimelineInterval, selectItemID.contains(Self.newTimelineItemId) {
                     EditTimeIntervalView(startTime: interval.start, endTime: interval.end).environmentObject(modelData)
-                        .id(selectItemID)
-                } else {
+                        .id(Self.newTimelineItemId)
+                } else if selectItemID == Self.newPlanTimeItemId {
+                    PlanItemEditView().environmentObject(modelData).id(Self.newPlanTimeItemId)
+                }
+                else {
                     Text("Empty")
                 }
                 

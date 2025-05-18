@@ -82,6 +82,12 @@ struct ToDoEditView: View {
     
     @State var needReview: Bool = false
     
+    @State var setKeyEvent: Bool = false
+    
+    @State var setIsProgress: Bool = false
+    
+    @State var progressValue: String = "0"
+    
     @State var finishReview: Bool = false
     
     @State var reviewDate: Date = .now
@@ -253,6 +259,23 @@ struct ToDoEditView: View {
                     
                     Toggle(isOn: $needReview) {
                         Text("是否需要复盘")
+                    }
+                    
+                    Toggle(isOn: $setKeyEvent) {
+                        Text("是否设置为关键事项")
+                    }
+                    
+                    HStack {
+                        Toggle(isOn: $setIsProgress) {
+                            Text("是否设置进度值")
+                        }
+                        Spacer()
+                        if setIsProgress {
+                            TextField("", text: $progressValue).frame(maxWidth: 30)
+                                .border(.gray, width: 1)
+                                .multilineTextAlignment(.trailing)
+                            Text("%")
+                        }
                     }
             
                     if actionType == .project {
@@ -550,12 +573,15 @@ struct ToDoEditView: View {
                 isArchive = selectedItem.isArchive
                 isTempInsert = selectedItem.isTempInsert
                 needReview = selectedItem.needReview
+                setKeyEvent = selectedItem.isKeyEvent
                 finishReview = selectedItem.finishReview
                 reviewDate = selectedItem.reviewDate ?? .now 
                 reviewText = selectedItem.reviewText
                 setFixedEvent = selectedItem.isFixedEvent
                 fixedStartTime = selectedItem.fixedStartTime ?? .now
                 fixedEndTime = selectedItem.fixedEndTime ?? .now
+                setIsProgress = selectedItem.setProgress
+                progressValue = selectedItem.progressValue.stringValue ?? "0"
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -608,6 +634,7 @@ struct ToDoEditView: View {
         selectedItem.isArchive = isArchive
         selectedItem.isTempInsert = isTempInsert
         selectedItem.needReview = needReview
+        selectedItem.isKeyEvent = setKeyEvent
         selectedItem.reviewDate = reviewDate
         selectedItem.reviewText = reviewText
         selectedItem.finishReview = finishReview
@@ -615,6 +642,8 @@ struct ToDoEditView: View {
         selectedItem.fixedStartTime = fixedStartTime
         selectedItem.fixedEndTime = fixedEndTime
         selectedItem.quickEvent = isQuick
+        selectedItem.setProgress = setIsProgress
+        selectedItem.progressValue = Int(progressValue) ?? 0
         modelData.updateItem(selectedItem)
         updateEvent()
     }

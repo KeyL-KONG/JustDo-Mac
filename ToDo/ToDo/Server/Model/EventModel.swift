@@ -96,6 +96,11 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     
     var quickEvent: Bool = false
     
+    var isKeyEvent: Bool = false
+    
+    var setProgress: Bool = false
+    var progressValue: Int = 0
+    
     // 废弃字段
     var finishState: FinishState = .normal
     var finishRating: Int = 3
@@ -158,6 +163,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.fixedStartTime = try container.decodeIfPresent(Date.self, forKey: .fixedStartTime)
         self.fixedEndTime = try container.decodeIfPresent(Date.self, forKey: .fixedEndTime)
         self.quickEvent = try container.decodeIfPresent(Bool.self, forKey: .quickEvent) ?? false
+        self.isKeyEvent = try container.decodeIfPresent(Bool.self, forKey: .isKeyEvent) ?? false
+        self.setProgress = try container.decodeIfPresent(Bool.self, forKey: .setProgress) ?? false
+        self.progressValue = try container.decodeIfPresent(Int.self, forKey: .progressValue) ?? 0
     }
     
     func encode(to encoder: Encoder) throws {
@@ -211,6 +219,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
             try container.encode(fixedEndTime, forKey: .fixedEndTime)
         }
         try container.encode(quickEvent, forKey: .quickEvent)
+        try container.encode(isKeyEvent, forKey: .isKeyEvent)
+        try container.encode(setProgress, forKey: .setProgress)
+        try container.encode(progressValue, forKey: .progressValue)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -312,6 +323,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
             self.fixedEndTime = fixedEndTime
         }
         quickEvent = cloudObj.get(EventModelKeys.quickEvent.rawValue)?.boolValue ?? false
+        isKeyEvent = cloudObj.get(EventModelKeys.isKeyEvent.rawValue)?.boolValue ?? false
+        setProgress = cloudObj.get(EventModelKeys.setProgress.rawValue)?.boolValue ?? false
+        progressValue = cloudObj.get(EventModelKeys.progressValue.rawValue)?.intValue ?? 0
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -375,6 +389,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
             try cloudObj.set(EventModelKeys.fixedEndTime.rawValue, value: fixedEndTime.lcDate)
         }
         try cloudObj.set(EventModelKeys.quickEvent.rawValue, value: quickEvent.lcBool)
+        try cloudObj.set(EventModelKeys.isKeyEvent.rawValue, value: isKeyEvent.lcBool)
+        try cloudObj.set(EventModelKeys.setProgress.rawValue, value: setProgress.lcBool)
+        try cloudObj.set(EventModelKeys.progressValue.rawValue, value: progressValue.lcNumber)
     }
     
 }
@@ -440,6 +457,9 @@ extension EventModel {
         case fixedStartTime
         case fixedEndTime
         case quickEvent
+        case isKeyEvent
+        case setProgress
+        case progressValue
     }
     
 }

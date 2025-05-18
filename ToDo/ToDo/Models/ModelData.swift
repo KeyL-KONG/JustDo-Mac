@@ -45,6 +45,8 @@ class ModelData: ObservableObject {
     
     @Published var principleItems: [PrincipleModel] = []
     
+    @Published var planTimeItems: [PlanTimeItem] = []
+    
     @Published var toggleToRefresh: Bool = false
     
     @Published var updateItemIndex = 0

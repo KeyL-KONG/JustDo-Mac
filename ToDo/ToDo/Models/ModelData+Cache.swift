@@ -19,6 +19,7 @@ extension ModelData {
         var cachePrincipleItems: [PrincipleModel] = []
         var cacheSummaryTags: [SummaryTag] = []
         var cacheSummaryItems: [SummaryItem] = []
+        var cachePlanItems: [PlanTimeItem] = []
         
         group.enter()
         cache.asyncLoadCache(type: .tag) { tags in
@@ -56,6 +57,12 @@ extension ModelData {
             group.leave()
         }
         
+        group.enter()
+        cache.asyncLoadCache(type: .planItem) { items in
+            cachePlanItems = items as? [PlanTimeItem] ?? []
+            group.leave()
+        }
+        
         group.notify(queue: .main) {
             self.tagList = cacheTags
             self.taskTimeItems = cacheTimeItems
@@ -63,8 +70,9 @@ extension ModelData {
             self.itemList = cacheEventItems
             self.summaryTagList = cacheSummaryTags
             self.summaryItemList = cacheSummaryItems
+            self.planTimeItems = cachePlanItems
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
-            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), duration: \(Int(duration * 1000))ms")
+            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), duration: \(Int(duration * 1000))ms")
         }
         
     }
@@ -83,6 +91,7 @@ extension ModelData {
         var serverPrincipleItems: [PrincipleModel] = []
         var serverSummaryTags: [SummaryTag] = []
         var serverSummaryItems: [SummaryItem] = []
+        var serverPlanItems: [PlanTimeItem] = []
         var isFailRequest = false
         
         group.enter()
@@ -162,6 +171,18 @@ extension ModelData {
             group.leave()
         }
         
+        group.enter()
+        DataManager.shared.query(type: PlanTimeItem.self) { items, error in
+            if let error {
+                print("cloud load all server plan items error: \(error)")
+                isFailRequest = true
+            } else {
+                serverPlanItems = items ?? []
+                print("cloud load all server plan items: \(serverPlanItems.count)")
+            }
+            group.leave()
+        }
+        
         group.notify(queue: .main) {
             self.isLoadingServer = false
             if isFailRequest {
@@ -174,19 +195,21 @@ extension ModelData {
             self.itemList = serverEventItems
             self.summaryTagList = serverSummaryTags
             self.summaryItemList = serverSummaryItems
+            self.planTimeItems = serverPlanItems
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
-            print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count) duration: \(Int(duration * 1000))ms")
-            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems)
+            print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), duration: \(Int(duration * 1000))ms")
+            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems)
         }
     }
     
-    func asyncStoreCache(tags: [ItemTag], times: [TaskTimeItem], events: [EventItem], principles: [PrincipleModel], summaryTags: [SummaryTag], summaryItems: [SummaryItem]) {
+    func asyncStoreCache(tags: [ItemTag], times: [TaskTimeItem], events: [EventItem], principles: [PrincipleModel], summaryTags: [SummaryTag], summaryItems: [SummaryItem], planItems: [PlanTimeItem]) {
         cache.asyncStoreCache(type: .tag, items: tags)
         cache.asyncStoreCache(type: .timeItem, items: times)
         cache.asyncStoreCache(type: .event, items: events)
         cache.asyncStoreCache(type: .principle, items: principles)
         cache.asyncStoreCache(type: .summaryTag, items: summaryTags)
         cache.asyncStoreCache(type: .summaryItem, items: summaryItems)
+        cache.asyncStoreCache(type: .planItem, items: planItems)
     }
     
     func asyncUpdateCache(type: CacheDataType) {

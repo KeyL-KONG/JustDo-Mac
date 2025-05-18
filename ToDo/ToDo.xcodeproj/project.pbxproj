@@ -12,6 +12,10 @@
 		090C722C2C8409E100FA21C5 /* script in Resources */ = {isa = PBXBuildFile; fileRef = 090C72262C8409E100FA21C5 /* script */; };
 		090C722D2C8409E100FA21C5 /* default-iOS in Resources */ = {isa = PBXBuildFile; fileRef = 090C72282C8409E100FA21C5 /* default-iOS */; };
 		090C722E2C8409E100FA21C5 /* default-macOS in Resources */ = {isa = PBXBuildFile; fileRef = 090C72292C8409E100FA21C5 /* default-macOS */; };
+		092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545E82DD81E7600D324DB /* ProgressBar.swift */; };
+		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
+		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
+		092545F02DD8666300D324DB /* PlanItemEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EF2DD8665A00D324DB /* PlanItemEditView.swift */; };
 		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
@@ -89,6 +93,10 @@
 		090C72262C8409E100FA21C5 /* script */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = script; sourceTree = "<group>"; };
 		090C72282C8409E100FA21C5 /* default-iOS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-iOS"; sourceTree = "<group>"; };
 		090C72292C8409E100FA21C5 /* default-macOS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-macOS"; sourceTree = "<group>"; };
+		092545E82DD81E7600D324DB /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
+		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
+		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
+		092545EF2DD8665A00D324DB /* PlanItemEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanItemEditView.swift; sourceTree = "<group>"; };
 		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
@@ -214,6 +222,14 @@
 			path = stylesheets;
 			sourceTree = "<group>";
 		};
+		092545EA2DD83F7300D324DB /* Plan */ = {
+			isa = PBXGroup;
+			children = (
+				092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */,
+			);
+			path = Plan;
+			sourceTree = "<group>";
+		};
 		093E78F42D23852D006E5120 /* Note */ = {
 			isa = PBXGroup;
 			children = (
@@ -306,6 +322,7 @@
 		09F80BE92C665A3100650366 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */,
 				097AE2C02DC481210096059B /* ModelData+Cache.swift */,
 				09D714762DAB5C4B009DB18E /* ModelData+Principle.swift */,
 				093E79052D2385B4006E5120 /* ModelData+Summary.swift */,
@@ -342,6 +359,7 @@
 		09F80BF42C665A3F00650366 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				092545EA2DD83F7300D324DB /* Plan */,
 				09D714732DAB5AB0009DB18E /* Principle */,
 				09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */,
 				093E79002D23858E006E5120 /* Summary */,
@@ -362,6 +380,7 @@
 		09F80C092C665A5B00650366 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				092545E82DD81E7600D324DB /* ProgressBar.swift */,
 				093E79092D23BD57006E5120 /* RatingView.swift */,
 				09F80C0A2C665A5B00650366 /* Int+Extensions.swift */,
 				09F80C0B2C665A5B00650366 /* View+Extensions.swift */,
@@ -377,6 +396,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				092545EF2DD8665A00D324DB /* PlanItemEditView.swift */,
 				092AF5252DD102450067DA7D /* PlanView.swift */,
 				097AE2C72DC901130096059B /* EditTielineTaskView.swift */,
 				097AE2C52DC8E18F0096059B /* TimelineTaskView.swift */,
@@ -551,6 +571,7 @@
 				09F80C012C665A3F00650366 /* WishModel.swift in Sources */,
 				09F80BFE2C665A3F00650366 /* UserManager.swift in Sources */,
 				093E790A2D23BD57006E5120 /* RatingView.swift in Sources */,
+				092545F02DD8666300D324DB /* PlanItemEditView.swift in Sources */,
 				097AE2CC2DC9041B0096059B /* View-CustomAlert.swift in Sources */,
 				09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */,
 				093E78FA2D238533006E5120 /* ReadTag.swift in Sources */,
@@ -558,12 +579,14 @@
 				092AF5262DD102480067DA7D /* PlanView.swift in Sources */,
 				090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */,
 				09D714772DAB5C50009DB18E /* ModelData+Principle.swift in Sources */,
+				092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */,
 				09F80C062C665A3F00650366 /* RewardModel.swift in Sources */,
 				097AE2C12DC481210096059B /* ModelData+Cache.swift in Sources */,
 				093E79082D23A010006E5120 /* ReviewView.swift in Sources */,
 				09F80C0E2C665A5B00650366 /* Int+Extensions.swift in Sources */,
 				09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */,
 				09D714792DAB60DA009DB18E /* ToDoItemListView+Principle.swift in Sources */,
+				092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */,
 				09F80BDD2C66540F00650366 /* ContentView.swift in Sources */,
 				09D714682D8FEBAB009DB18E /* DayView.swift in Sources */,
 				09F80C052C665A3F00650366 /* BaseModel.swift in Sources */,
@@ -580,6 +603,7 @@
 				097A04102C6C588300521483 /* Array+Extensions.swift in Sources */,
 				09F80C162C66F63200650366 /* SidebarView.swift in Sources */,
 				09F80BED2C665A3100650366 /* ModelData.swift in Sources */,
+				092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */,
 				09F80C072C665A3F00650366 /* CloudProtocol.swift in Sources */,
 				09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */,
 				09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */,

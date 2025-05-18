@@ -102,7 +102,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     }
     
     static var allCases: [ToDoSection] {
-        return [.plan, .today, .calendar, .principle, .project, .unplan, .all]
+        return [.today, .plan, .calendar, .principle, .project, .unplan, .all]
     }
     
 }
