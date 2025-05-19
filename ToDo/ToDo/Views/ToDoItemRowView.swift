@@ -159,8 +159,7 @@ struct ToDoItemRowView: View {
                         Text("过期\(days)天").foregroundStyle(.red)
                     }
                 }
-                
-                if let item = self.item as? EventItem, item.isPlay {
+                else if let item = self.item as? EventItem, item.isPlay {
                     Spacer()
                     Text("进行中").foregroundStyle(.blue)
                 } else if totalTime > 0 {

@@ -51,13 +51,15 @@ struct PlanView: View {
                 Spacer()
             }
         }
+        .onChange(of: currentDate) { _, _ in
+            updateData()
+        }
         .onAppear {
-            updateMostImportanceItems()
-            updatePlanTimeInterval()
-            updatePlanItems()
-            updateTagSummaryTime()
-            updateSummaryItems()
-            updateReadItems()
+            currentDate = modelData.planCacheTime ?? .now 
+            updateData()
+        }
+        .onDisappear {
+            modelData.planCacheTime = currentDate
         }
         .onReceive(modelData.$itemList) { _ in
             updateMostImportanceItems()
@@ -68,6 +70,34 @@ struct PlanView: View {
         .onReceive(modelData.$updateItemIndex) { _ in
             updateMostImportanceItems()
         }
+        .toolbar {
+            HStack {
+                Button {
+                    currentDate = currentDate.previousWeekDate
+                } label: {
+                    Label("left", systemImage: "arrowshape.left.fill")
+                }
+                
+                Text(currentDate.simpleWeek)
+                
+                Button {
+                    currentDate = currentDate.nextWeekDate
+                } label: {
+                    Label("rigth", systemImage: "arrowshape.right.fill")
+                }
+                
+                Spacer()
+            }
+        }
+    }
+    
+    func updateData() {
+        updateMostImportanceItems()
+        updatePlanTimeInterval()
+        updatePlanItems()
+        updateTagSummaryTime()
+        updateSummaryItems()
+        updateReadItems()
     }
 }
 
@@ -420,7 +450,7 @@ extension PlanView {
     
     func updatePlanItems() {
         self.planTimeItems = modelData.planTimeItems.filter({ item in
-            item.startTime.isInThisWeek || item.endTime.isInThisWeek
+            item.startTime.isInSameWeek(as: currentDate)
         })
     }
     
@@ -510,7 +540,7 @@ extension PlanView {
             guard let planTime = event.planTime else {
                 return false
             }
-            return planTime.isInThisWeek && event.isKeyEvent
+            return planTime.isInSameWeek(as: currentDate) && event.isKeyEvent
         }).sorted(by: {
             ($0.createTime?.timeIntervalSince1970 ?? 0) >= ($1.createTime?.timeIntervalSince1970 ?? 0)
         }).prefix(3))

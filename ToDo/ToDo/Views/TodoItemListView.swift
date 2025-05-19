@@ -45,8 +45,8 @@ struct TodoItemListView: View {
     @State var principleDisplayMode: PrincipleDisplayMode = .week
 
     // 添加状态变量
-    @State var isCollectExpanded = true
-    @State var isQuickExpanded = true
+    @State var isCollectExpanded = false
+    @State var isQuickExpanded = false
     @State var isTodayExpanded = true
     @State var isDeadlineExpanded = true
     @State var isExpiredExpanded = true

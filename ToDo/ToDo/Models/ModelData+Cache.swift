@@ -213,6 +213,10 @@ extension ModelData {
             self.isLoadingServer = false
             if isFailRequest {
                 print("cloud load all server fail")
+                if self.retryLoadServerTimes == 0 {
+                    self.retryLoadServerTimes += 1
+                    self.asyncLoadServer()
+                }
                 return
             }
             self.tagList = serverTags

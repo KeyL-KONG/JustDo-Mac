@@ -89,6 +89,22 @@ extension TodoItemListView {
             
             Section(header:
                 HStack {
+                    Text("今日事项")
+                    Spacer()
+                    Button(action: { isTodayExpanded.toggle() }) {
+                        Image(systemName: isTodayExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isTodayExpanded {
+                    ForEach(todayItems, id: \.self.id) { item in
+                        itemRowView(item: item, date: selectDate, showDeadline: false)
+                    }
+                }
+            }
+            
+            Section(header:
+                HStack {
                     Text("收藏事项")
                     Spacer()
                 Button(action: { isCollectExpanded.toggle() }) {
@@ -119,21 +135,7 @@ extension TodoItemListView {
                 }
             }
             
-            Section(header:
-                HStack {
-                    Text("今日事项")
-                    Spacer()
-                    Button(action: { isTodayExpanded.toggle() }) {
-                        Image(systemName: isTodayExpanded ? "chevron.down" : "chevron.right")
-                    }
-                }
-            ) {
-                if isTodayExpanded {
-                    ForEach(todayItems, id: \.self.id) { item in
-                        itemRowView(item: item, date: selectDate, showDeadline: false)
-                    }
-                }
-            }
+            
             
             Section(header:
                 HStack {

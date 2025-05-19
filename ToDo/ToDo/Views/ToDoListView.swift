@@ -230,8 +230,20 @@ struct ToDoListView: View, Equatable {
                 
             }
         }
+        .onChange(of: modelData.itemList, { oldValue, newValue in
+            updateDefaultSelectItemID()
+        })
         .onAppear {
-            selectItemID = itemList.first?.id ?? ""
+            updateDefaultSelectItemID()
+        }
+    }
+    
+    func updateDefaultSelectItemID() {
+        if itemList.count > 0, selectItemID.isEmpty {
+            let todayItem = itemList.first { event in
+                event.planTime?.isToday ?? false
+            }
+            selectItemID = todayItem?.id ?? (itemList.first?.id ?? "")
             print("select id: \(selectItemID), itemList count: \(itemList.count)")
         }
     }

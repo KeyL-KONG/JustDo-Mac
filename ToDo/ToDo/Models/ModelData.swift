@@ -57,8 +57,12 @@ class ModelData: ObservableObject {
     var weekTimelineItems: [Date: [TimelineItem]] = [:]
     var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
     
+    var planCacheTime: Date?
+    
     
     let cache = CacheManager()
+    
+    var retryLoadServerTimes = 0
     
     var tryLoadReadTagTimes = 0
     
