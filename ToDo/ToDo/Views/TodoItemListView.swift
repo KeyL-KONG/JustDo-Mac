@@ -14,6 +14,8 @@ struct TodoItemListView: View {
     var itemList: [EventItem]
     @Binding var selectItemID: String
     @Binding var selectionMode: TodoMode
+    
+    @State var taskFinishState: TaskFinishState = .unfinish
     var addItemEvent: (EventItem) -> ()
     
     @State var calendarMode: CalendarMode = .week
@@ -274,6 +276,14 @@ struct TodoItemListView: View {
 //                            Text(tag.title).tag(tag)
 //                        }
                         Text(title).tag(title)
+                    }
+                }
+            }
+            
+            if selection == .project {
+                Picker("任务模式", selection: $taskFinishState) {
+                    ForEach(TaskFinishState.allCases, id: \.self) { mode in
+                        Text(mode.rawValue)
                     }
                 }
             }

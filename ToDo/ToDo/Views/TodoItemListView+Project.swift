@@ -31,7 +31,14 @@ struct CustomDisclosureStyle: DisclosureGroupStyle {
 extension TodoItemListView {
     
     var subItemList: [EventItem] {
-        modelData.itemList.filter { $0.projectId.count > 0 || $0.fatherId.count > 0 }
+        modelData.itemList.filter { item in
+            if taskFinishState == .finish && !item.isFinish && item.actionType == .task {
+                return false
+            } else if taskFinishState == .unfinish && item.isFinish && item.actionType == .task {
+                return false
+            }
+            return item.projectId.count > 0 || item.fatherId.count > 0
+        }
     }
     
     func projectItems(with tag: ItemTag) -> [TodoProjectDetailItem] {
@@ -82,7 +89,13 @@ extension TodoItemListView {
             
             // 获取项目的直接子任务（fatherId为空的）
             let eventItems = subItemList
-                .filter { $0.projectId == project.id || $0.fatherId == project.id }
+                .filter { event in
+                    if !event.fatherId.isEmpty {
+                        return event.fatherId == project.id
+                    } else {
+                        return event.projectId == project.id
+                    }
+                }
                 .sorted(by: { event1, event2 in
                     if !event1.isFinish, event2.isFinish {
                         return true
