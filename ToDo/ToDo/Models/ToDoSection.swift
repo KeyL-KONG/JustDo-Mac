@@ -154,3 +154,11 @@ enum TodoMode {
     
     static var allCases: [TodoMode] = [.synthesis, .work]
 }
+
+enum TaskFinishState: String {
+    case all
+    case unfinish
+    case finish
+    
+    static var allCases: [TaskFinishState] = [.all, .unfinish, .finish]
+}
