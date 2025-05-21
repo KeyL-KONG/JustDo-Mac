@@ -68,12 +68,14 @@ struct ToDoItemRowView: View {
                         tagView(title: tag.title, color: tag.titleColor)
                     }
                     
-                    if let item = self.item as? EventItem, item.isTempInsert {
-                        tagView(title: "临时", color: Color.init(hex: "f5b041"))
-                    }
-                    
                     if let item = self.item as? EventItem, item.needReview, !item.finishReview {
                         tagView(title: "待复盘", color: Color.init(hex: "e74c3c"))
+                    }
+                    else if let item = self.item as? EventItem, item.isFinish, item.finishState != .normal {
+                        tagView(title: item.finishState.description, color: Color.init(hex: item.finishState.titleColor))
+                    }
+                    else if let item = self.item as? EventItem, item.isTempInsert {
+                        tagView(title: "临时", color: Color.init(hex: "f5b041"))
                     }
                     
                     if let item = self.item as? EventItem, let planTime = item.planTime?.lastTimeOfDay,  showDeadline {
@@ -137,8 +139,13 @@ struct ToDoItemRowView: View {
                 if let item = self.item as? EventItem, showImportance {
                     tagView(title: item.importance.description, color: item.importance.titleColor)
                 }
-                
-                if let item = self.item as? EventItem, item.isTempInsert {
+                if let item = self.item as? EventItem, item.needReview, !item.finishReview {
+                    tagView(title: "待复盘", color: Color.init(hex: "e74c3c"))
+                }
+                else if let item = self.item as? EventItem, item.isFinish, item.finishState != .normal {
+                    tagView(title: item.finishState.description, color: Color.init(hex: item.finishState.titleColor))
+                }
+                else if let item = self.item as? EventItem, item.isTempInsert {
                     tagView(title: "临时", color: Color.init(hex: "e59866"))
                 }
                 

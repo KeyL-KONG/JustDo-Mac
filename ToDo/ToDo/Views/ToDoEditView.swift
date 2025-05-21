@@ -70,6 +70,8 @@ struct ToDoEditView: View {
     
     @State var isExpandType: Bool = false
     
+    @State var isExpandProperty: Bool = false
+    
     @State var isExpandSubItems: Bool = false
     
     @State var isCollect: Bool = false
@@ -96,7 +98,15 @@ struct ToDoEditView: View {
     
     @State var isEditingReview: Bool = false
     
+    @State var isEditingStartText: Bool = false
+    
     @State var isEditingMark: Bool = false
+    
+    @State var finishState: String = ""
+    
+    @State var startText: String = ""
+    
+    var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
     var taskTimeItems: [TaskTimeItem] {
         modelData.taskTimeItems.filter { item in
@@ -149,6 +159,14 @@ struct ToDoEditView: View {
                 Section(header: HStack {
                     Text("事项类型")
                     Spacer()
+                    
+                    Button("\(isEditingStartText ? "完成" : "编辑")") {
+                        self.isEditingStartText.toggle()
+                        if !self.isEditingStartText {
+                            self.saveTask()
+                        }
+                    }
+                    
                     Button {
                         isExpandType = !isExpandType
                     } label: {
@@ -197,18 +215,6 @@ struct ToDoEditView: View {
                                 Text(tag.description).tag(tag)
                             }
                         }
-                        
-                        Picker("选择事项类型", selection: $eventType) {
-                            ForEach(eventTypeList, id: \.self) { type in
-                                Text(type.description).tag(type)
-                            }
-                        }
-                        
-                        Picker("选择积分事项", selection: $selectReward) {
-                            ForEach(rewardListTitle, id: \.self) { rewardTitle in
-                                Text(rewardTitle).tag(rewardTitle)
-                            }
-                        }
                     }
                     
                     if let fatherItem {
@@ -238,74 +244,145 @@ struct ToDoEditView: View {
                         }
                     }
                     
+                    if startText.count > 0 || isEditingStartText {
+                        HStack {
+                            if isEditingStartText {
+                                TextEditor(text: $startText)
+                                    .font(.system(size: 14))
+                                    .padding(10)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.init(hex: "#e8f6f3"))
+                                    .frame(minHeight: 120)
+                                    .cornerRadius(8)
+                            } else {
+                                MarkdownWebView(startText)
+                            }
+                        }
+                        .padding()
+                        .background(isEditingStartText ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+                        .cornerRadius(10)
+                    }
+                    
                 })
                 
-                Section(header: Text("设置属性"), content: {
-                    Toggle(isOn: $isQuick) {
-                        Text("设置为快捷事项")
-                    }
-                    
-                    Toggle(isOn: $isCollect) {
-                        Text("设置为收藏事项")
-                    }
-                    
-                    Toggle(isOn: $isArchive) {
-                        Text("是否归档")
-                    }
-                    
-                    Toggle(isOn: $isTempInsert) {
-                        Text("是否临时插入事项")
-                    }
-                    
-                    Toggle(isOn: $needReview) {
-                        Text("是否需要复盘")
-                    }
-                    
-                    Toggle(isOn: $setKeyEvent) {
-                        Text("是否设置为关键事项")
-                    }
-                    
-                    HStack {
-                        Toggle(isOn: $setIsProgress) {
-                            Text("是否设置进度值")
+                if isFinish {
+                    Section {
+                        Picker("选择完成情况", selection: $finishState) {
+                            ForEach(finishStateTitleList, id: \.self) { state in
+                                Text(state).tag(state)
+                            }
                         }
-                        Spacer()
-                        if setIsProgress {
-                            TextField("", text: $progressValue).frame(maxWidth: 30)
-                                .border(.gray, width: 1)
-                                .multilineTextAlignment(.trailing)
-                            Text("%")
+                        
+                        Toggle(isOn: $needReview) {
+                            Text("是否需要复盘")
                         }
-                    }
-            
-                    if actionType == .project {
+                        
+                        if needReview {
+                            HStack {
+                                Toggle(isOn: $finishReview) {
+                                    Text("是否完成复盘")
+                                }
+                                Spacer()
+                                if finishReview {
+                                    DatePicker(selection: $reviewDate, displayedComponents: [.date, .hourAndMinute]) {
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        
                         HStack {
-                            Toggle(isOn: $setFixedEvent) {
-                                Text("设置为固定事项")
+                            if isEditingReview {
+                                TextEditor(text: $reviewText)
+                                    .font(.system(size: 14))
+                                    .padding(10)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.init(hex: "#e8f6f3"))
+                                    .frame(minHeight: 120)
+                                    .cornerRadius(8)
+                            } else {
+                                MarkdownWebView(reviewText)
                             }
+                        }
+                        .padding()
+                        .background(isEditingReview ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+                        .cornerRadius(10)
+                    } header: {
+                        HStack {
+                            Text("复盘事项")
+                            Spacer()
                             
-                            if setFixedEvent {
-                                Spacer()
-                                
-                                DatePicker("start:", selection: $fixedStartTime, displayedComponents: [.hourAndMinute])
-                                Spacer()
-                                DatePicker("end:", selection: $fixedEndTime, displayedComponents: [.hourAndMinute])
+                            Button("\(isEditingReview ? "完成" : "编辑")") {
+                                self.isEditingReview.toggle()
+                                if !self.isEditingReview {
+                                    self.saveTask()
+                                }
                             }
                         }
                     }
-                    
-//                    if actionType == .project {
-//                        HStack {
-//                            Toggle(isOn: $setFinishTime) {
-//                                Text("")
-//                            }.labelsHidden()
-//                            
-//                            DatePicker(selection: $finishTime, displayedComponents: .date) {
-//                                Text("设置为完成时间")
-//                            }
-//                        }
-//
-//                    }
+
+                }
+                
+                Section(header: HStack(content: {
+                    Text("设置属性")
+                    Spacer()
+                    Button {
+                        isExpandProperty = !isExpandProperty
+                    } label: {
+                        let image = isExpandProperty ? "chevron.down" : "chevron.right"
+                        Image(systemName: image)
+                    }
+                }), content: {
+                    if isExpandProperty {
+                        Toggle(isOn: $isQuick) {
+                            Text("设置为快捷事项")
+                        }
+                        
+                        Toggle(isOn: $isCollect) {
+                            Text("设置为收藏事项")
+                        }
+                        
+                        Toggle(isOn: $isArchive) {
+                            Text("是否归档")
+                        }
+                        
+                        Toggle(isOn: $isTempInsert) {
+                            Text("是否临时插入事项")
+                        }
+                        
+                        Toggle(isOn: $setKeyEvent) {
+                            Text("是否设置为关键事项")
+                        }
+                        
+                        HStack {
+                            Toggle(isOn: $setIsProgress) {
+                                Text("是否设置进度值")
+                            }
+                            Spacer()
+                            if setIsProgress {
+                                TextField("", text: $progressValue).frame(maxWidth: 30)
+                                    .border(.gray, width: 1)
+                                    .multilineTextAlignment(.trailing)
+                                Text("%")
+                            }
+                        }
+                
+                        if actionType == .project {
+                            HStack {
+                                Toggle(isOn: $setFixedEvent) {
+                                    Text("设置为固定事项")
+                                }
+                                
+                                if setFixedEvent {
+                                    Spacer()
+                                    
+                                    DatePicker("start:", selection: $fixedStartTime, displayedComponents: [.hourAndMinute])
+                                    Spacer()
+                                    DatePicker("end:", selection: $fixedEndTime, displayedComponents: [.hourAndMinute])
+                                }
+                            }
+                        }
+                    }
                     
                 })
                 
@@ -383,55 +460,6 @@ struct ToDoEditView: View {
                             }
                         }
                     }
-                }
-                
-                if needReview {
-                    Section {
-                        VStack {
-                            HStack {
-                                Toggle(isOn: $finishReview) {
-                                    Text("是否完成复盘")
-                                }
-                                Spacer()
-                                if finishReview {
-                                    DatePicker(selection: $reviewDate, displayedComponents: [.date, .hourAndMinute]) {
-                                        
-                                    }
-                                }
-                            }
-                            
-                            HStack {
-                                if isEditingReview {
-                                    TextEditor(text: $reviewText)
-                                        .font(.system(size: 14))
-                                        .padding(10)
-                                        .scrollContentBackground(.hidden)
-                                        .background(Color.init(hex: "#e8f6f3"))
-                                        .frame(minHeight: 120)
-                                        .cornerRadius(8)
-                                } else {
-                                    MarkdownWebView(reviewText)
-                                }
-                            }
-                            .padding()
-                            .background(isEditingReview ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
-                            .cornerRadius(10)
-                            
-                        }
-                    } header: {
-                        HStack {
-                            Text("复盘")
-                            Spacer()
-                            
-                            Button("\(isEditingReview ? "完成" : "编辑")") {
-                                self.isEditingReview.toggle()
-                                if !self.isEditingReview {
-                                    self.saveTask()
-                                }
-                            }
-                        }
-                    }
-
                 }
                 
                 Section {
@@ -575,6 +603,8 @@ struct ToDoEditView: View {
                 fixedEndTime = selectedItem.fixedEndTime ?? .now
                 setIsProgress = selectedItem.setProgress
                 progressValue = selectedItem.progressValue.stringValue ?? "0"
+                finishState = selectedItem.finishState.description
+                startText = selectedItem.startText
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -637,6 +667,8 @@ struct ToDoEditView: View {
         selectedItem.quickEvent = isQuick
         selectedItem.setProgress = setIsProgress
         selectedItem.progressValue = Int(progressValue) ?? 0
+        selectedItem.finishState = FinishState.state(with: finishState)
+        selectedItem.startText = startText
         modelData.updateItem(selectedItem)
         updateEvent()
     }

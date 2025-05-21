@@ -26,11 +26,13 @@ struct MarkdownView: View {
                             .scrollContentBackground(.hidden)
                             .background(Color.init(hex: "#e8f6f3"))
                             .cornerRadius(8)
+                            .frame(minHeight: 400)
                         Spacer()
                         VStack {
                             MarkdownWebView(mark)
                             Spacer()
                         }
+                        .frame(minHeight: 400)
                     }
                 } else {
                     MarkdownWebView(mark)

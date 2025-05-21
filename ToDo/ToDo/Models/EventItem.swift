@@ -234,27 +234,38 @@ enum FinishState: String, Codable, Identifiable {
         return description
     }
     
-    var description: String {
+    var titleColor: String {
         switch self {
         case .bad:
-            return "糟糕"
+            return "d35400"
         case .normal:
-            return "正常"
+            return "3498db"
         case .good:
-            return "优秀"
+            return "28b463"
         }
     }
     
-    var markText: String {
+    var description: String {
         switch self {
         case .bad:
-            return "不足之处"
+            return "不足预期"
         case .normal:
-            return "总结"
+            return "符合预期"
         case .good:
-            return "满意之处"
+            return "超出预期"
         }
     }
+    
+    static func state(with description: String) -> FinishState {
+        if description == FinishState.bad.description {
+            return .bad
+        } else if description == FinishState.good.description {
+            return .good
+        } else {
+            return .normal
+        }
+    }
+
 }
 
 enum ProgressTimeTab: String, Identifiable {

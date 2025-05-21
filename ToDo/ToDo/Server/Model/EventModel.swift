@@ -47,6 +47,12 @@ enum EventActionType: String {
     }
 }
 
+enum EventFinishResultType: Int {
+    case bad
+    case normal
+    case good
+}
+
 class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     
     var generateId: String = UUID().uuidString
@@ -100,12 +106,16 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     
     var setProgress: Bool = false
     var progressValue: Int = 0
+    var finishState: FinishState = .normal
+    var finishText: String = ""
+    
+    var startText: String = ""
     
     // 废弃字段
-    var finishState: FinishState = .normal
+    
     var finishRating: Int = 3
     var difficultRating: Int = 3
-    var finishText: String = ""
+    
     var difficultText: String = ""
 
     
@@ -166,6 +176,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.isKeyEvent = try container.decodeIfPresent(Bool.self, forKey: .isKeyEvent) ?? false
         self.setProgress = try container.decodeIfPresent(Bool.self, forKey: .setProgress) ?? false
         self.progressValue = try container.decodeIfPresent(Int.self, forKey: .progressValue) ?? 0
+        self.finishState = FinishState(rawValue: try container.decodeIfPresent(String.self, forKey: .finishState) ?? "") ?? .normal
+        self.finishText = try container.decodeIfPresent(String.self, forKey: .finishText) ?? ""
+        self.startText = try container.decodeIfPresent(String.self, forKey: .startText) ?? ""
     }
     
     func encode(to encoder: Encoder) throws {
@@ -222,6 +235,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(isKeyEvent, forKey: .isKeyEvent)
         try container.encode(setProgress, forKey: .setProgress)
         try container.encode(progressValue, forKey: .progressValue)
+        try container.encode(finishState.rawValue, forKey: .finishState)
+        try container.encode(finishText, forKey: .finishText)
+        try container.encode(startText, forKey: .startText)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -272,6 +288,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
             self.finishState = .normal
         }
         finishText = cloudObj.get(EventModelKeys.finishText.rawValue)?.stringValue ?? ""
+        startText = cloudObj.get(EventModelKeys.startText.rawValue)?.stringValue ?? ""
         isFinish = (cloudObj.get(EventModelKeys.isFinish.rawValue) as? LCBool)?.value ?? false
         finishTime = cloudObj.get(EventModelKeys.finishTime.rawValue)?.dateValue
         planTime = cloudObj.get(EventModelKeys.planTime.rawValue)?.dateValue
@@ -336,6 +353,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.importance.rawValue, value: importance.rawValue.lcString)
         try cloudObj.set(EventModelKeys.finishState.rawValue, value: finishState.rawValue.lcString)
         try cloudObj.set(EventModelKeys.finishText.rawValue, value: finishText.lcString)
+        try cloudObj.set(EventModelKeys.startText.rawValue, value: startText.lcString)
         try cloudObj.set(EventModelKeys.isFinish.rawValue, value: isFinish.lcBool)
         if let finishTime = finishTime {
             try cloudObj.set(EventModelKeys.finishTime.rawValue, value: finishTime.lcDate)
@@ -427,6 +445,7 @@ extension EventModel {
         case setPlanTime = "setPlanTime"
         case finishState = "finishState"
         case finishText = "finishText"
+        case startText
         case finishRating = "finishRating"
         case difficultRating = "difficultRating"
         case difficultText = "difficultText"
