@@ -16,6 +16,7 @@ struct MarkdownView: View {
     @State var item: EventItem
     
     var body: some View {
+        ScrollView {
             VStack {
                 if isEditingMark {
                     HStack {
@@ -39,13 +40,15 @@ struct MarkdownView: View {
             .padding()
             .background(isEditingMark ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
             .cornerRadius(10)
-            .onAppear {
+        }
+            
+        .onAppear {
             mark = item.mark
             isEditingMark = true
         }
-            .onDisappear(perform: {
-                saveItem()
-            })
+        .onDisappear(perform: {
+            saveItem()
+        })
         .toolbar() {
             HStack {
                 Text(item.title)

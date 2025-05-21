@@ -49,10 +49,10 @@ struct TodoItemListView: View {
     @State var isQuickExpanded = false
     @State var isTodayExpanded = true
     @State var isDeadlineExpanded = true
-    @State var isExpiredExpanded = true
-    @State var isUnplanExpanded = true
-    @State var isSummaryExpanded = true
-    @State var isPrincipleExpanded = true
+    @State var isExpiredExpanded = false
+    @State var isUnplanExpanded = false
+    @State var isSummaryExpanded = false
+    @State var isPrincipleExpanded = false
     
     // 过滤条件
     @State var actionType: EventActionType = .all
@@ -379,7 +379,6 @@ struct TodoItemListView: View {
             print("todo itemlist appear")
             if selection == .today {
                 updateTodayItems()
-                isPrincipleExpanded = selectionMode != .work
             } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")
                 scrolledID = currentDate

@@ -146,9 +146,9 @@ enum TodoMode {
     var title: String {
         switch self {
         case .synthesis:
-            return "综合模式"
+            return "all"
         case .work:
-            return "工作模式"
+            return "work"
         }
     }
     

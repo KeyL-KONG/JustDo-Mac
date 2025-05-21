@@ -522,13 +522,6 @@ struct ToDoEditView: View {
         })
         .onChange(of: isFinish, { oldValue, newValue in
         })
-        .onChange(of: setPlanTime, { oldValue, newValue in
-            print("set plan time")
-            //saveTask()
-        })
-        .onChange(of: isCollect, { _, _ in
-            //saveTask()
-        })
         .toolbar(content: {
             Spacer()
             Button("保存") {

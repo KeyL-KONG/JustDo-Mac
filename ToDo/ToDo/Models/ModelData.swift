@@ -72,6 +72,8 @@ class ModelData: ObservableObject {
     
     var isLoadingServer = false
     
+    @State var cacheTodoMode: TodoMode?
+    
     public func notifyEventItemsUpdate() {
         self.itemList = self.itemList
     }

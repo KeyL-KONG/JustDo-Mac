@@ -89,8 +89,10 @@ struct TaskSaveView: View {
         case mark
     }
     
+    @State var todayItems: [EventItem] = []
+    
     var body: some View {
-        VStack(spacing: 5) {
+        VStack {
             if timerModel.isTiming {
                 Text("任务【\(timerModel.title.prefix(15))】 进行中...")
                 
@@ -120,6 +122,13 @@ struct TaskSaveView: View {
                     )
                     .padding()
             }
+            else {
+                ForEach(todayItems, id: \.self) { item in
+                    HStack {
+                        Text(item.title)
+                    }
+                }
+            }
             
             TextField("添加任务", text: $eventContent)
                 .focused($focusedField, equals: .task)
@@ -139,11 +148,21 @@ struct TaskSaveView: View {
         }
         .padding()
         .onAppear {
+            updateTodayItems()
             if timerModel.isTiming {
                 self.focusedField = .record
             } else {
                 self.focusedField = .task
             }
+        }
+    }
+    
+    func updateTodayItems() {
+        todayItems = modelData.itemList.filter { event in
+            guard let planTime = event.planTime else {
+                return false
+            }
+            return planTime.isToday
         }
     }
     
