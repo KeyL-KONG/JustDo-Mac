@@ -29,13 +29,13 @@ struct MarkdownView: View {
                             .frame(minHeight: 400)
                         Spacer()
                         VStack {
-                            MarkdownWebView(mark)
+                            MarkdownWebView(mark, itemId: item.id)
                             Spacer()
                         }
                         .frame(minHeight: 400)
                     }
                 } else {
-                    MarkdownWebView(mark)
+                    MarkdownWebView(mark, itemId: item.id)
                 }
                 Spacer()
             }

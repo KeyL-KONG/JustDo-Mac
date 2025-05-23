@@ -71,7 +71,7 @@ struct ToDoItemRowView: View {
                     if let item = self.item as? EventItem, item.needReview, !item.finishReview {
                         tagView(title: "待复盘", color: Color.init(hex: "e74c3c"))
                     }
-                    else if let item = self.item as? EventItem, item.isFinish, item.finishState != .normal {
+                    if let item = self.item as? EventItem, item.isFinish, item.finishState != .normal {
                         tagView(title: item.finishState.description, color: Color.init(hex: item.finishState.titleColor))
                     }
                     else if let item = self.item as? EventItem, item.isTempInsert {
@@ -142,7 +142,7 @@ struct ToDoItemRowView: View {
                 if let item = self.item as? EventItem, item.needReview, !item.finishReview {
                     tagView(title: "待复盘", color: Color.init(hex: "e74c3c"))
                 }
-                else if let item = self.item as? EventItem, item.isFinish, item.finishState != .normal {
+                if let item = self.item as? EventItem, item.isFinish, item.finishState != .normal {
                     tagView(title: item.finishState.description, color: Color.init(hex: item.finishState.titleColor))
                 }
                 else if let item = self.item as? EventItem, item.isTempInsert {

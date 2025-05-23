@@ -127,18 +127,6 @@ struct ToDoApp: App {
     }
 }
 
-
-// 新增预览视图
-struct PreviewMarkdownView: View {
-    let content: String
-    
-    var body: some View {
-        MarkdownWebView(content)
-            .frame(minWidth: 400, minHeight: 600)
-            .padding()
-    }
-}
-
 #if os(macOS)
 class AppDelegate: NSObject, NSApplicationDelegate {
  

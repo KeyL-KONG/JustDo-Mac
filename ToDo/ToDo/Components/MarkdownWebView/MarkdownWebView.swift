@@ -11,20 +11,23 @@ typealias PlatformViewRepresentable = UIViewRepresentable
 @available(macOS 11.0, iOS 14.0, *)
 public struct MarkdownWebView: PlatformViewRepresentable {
     let markdownContent: String
+    let itemId: String
     let customStylesheet: String?
     let linkActivationHandler: ((URL) -> Void)?
     let renderedContentHandler: ((String) -> Void)?
     
-    public init(_ markdownContent: String, customStylesheet: String? = nil) {
+    public init(_ markdownContent: String, itemId: String = "", customStylesheet: String? = nil) {
         self.markdownContent = markdownContent
+        self.itemId = itemId
         self.customStylesheet = customStylesheet
         self.linkActivationHandler = nil
         self.renderedContentHandler = nil
     }
     
-    internal init(_ markdownContent: String, customStylesheet: String?, linkActivationHandler: ((URL) -> Void)?, renderedContentHandler: ((String) -> Void)?) {
+    internal init(_ markdownContent: String, itemId: String = "", customStylesheet: String?, linkActivationHandler: ((URL) -> Void)?, renderedContentHandler: ((String) -> Void)?) {
         self.markdownContent = markdownContent
         self.customStylesheet = customStylesheet
+        self.itemId = itemId
         self.linkActivationHandler = linkActivationHandler
         self.renderedContentHandler = renderedContentHandler
     }
@@ -38,6 +41,7 @@ public struct MarkdownWebView: PlatformViewRepresentable {
     #endif
     
     func updatePlatformView(_ platformView: CustomWebView, context: Context) {
+        platformView.itemId = itemId
         guard !platformView.isLoading else { return } /// This function might be called when the page is still loading, at which time `window.proxy` is not available yet.
         platformView.updateMarkdownContent(self.markdownContent)
     }
@@ -49,11 +53,11 @@ public struct MarkdownWebView: PlatformViewRepresentable {
     #endif
     
     public func onLinkActivation(_ linkActivationHandler: @escaping (URL) -> Void) -> Self {
-        .init(self.markdownContent, customStylesheet: self.customStylesheet, linkActivationHandler: linkActivationHandler, renderedContentHandler: self.renderedContentHandler)
+        .init(self.markdownContent, itemId: itemId, customStylesheet: self.customStylesheet, linkActivationHandler: linkActivationHandler, renderedContentHandler: self.renderedContentHandler)
     }
     
     public func onRendered(_ renderedContentHandler: @escaping (String) -> Void) -> Self {
-        .init(self.markdownContent, customStylesheet: self.customStylesheet, linkActivationHandler: self.linkActivationHandler, renderedContentHandler: renderedContentHandler)
+        .init(self.markdownContent, itemId: itemId, customStylesheet: self.customStylesheet, linkActivationHandler: self.linkActivationHandler, renderedContentHandler: renderedContentHandler)
     }
     
     public class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
@@ -162,6 +166,7 @@ public struct MarkdownWebView: PlatformViewRepresentable {
     
     public class CustomWebView: WKWebView {
         var contentHeight: CGFloat = 0
+        var itemId: String? = nil
         
         public override var intrinsicContentSize: CGSize {
             .init(width: super.intrinsicContentSize.width, height: self.contentHeight)
@@ -182,7 +187,39 @@ public struct MarkdownWebView: PlatformViewRepresentable {
         #if os(macOS)
         public override func willOpenMenu(_ menu: NSMenu, with event: NSEvent) {
             menu.items.removeAll { $0.identifier == .init("WKMenuItemIdentifierReload") }
+            
+            evaluateJavaScript("window.getSelection().toString()") { result, error in
+                if let selectedText = result as? String, !selectedText.isEmpty {
+                    if let addToNoteItem = menu.items.first(where: { $0.title == CommonDefine.addNewTask }) {
+                        addToNoteItem.isHidden = false
+                    } else {
+                        let newItem = NSMenuItem(
+                            title: CommonDefine.addNewTask,
+                            action: #selector(self.addSelectedTextToNote(_:)),
+                            keyEquivalent: ""
+                        )
+                        menu.insertItem(newItem, at: 0)
+                    }
+                } else {
+                    menu.items.first(where: { $0.title == CommonDefine.addNewTask })?.isHidden = true
+                }
+            }
         }
+        
+        @objc func addSelectedTextToNote(_ sender: NSMenuItem) {
+            evaluateJavaScript("window.getSelection().toString()") { [weak self] result, error in
+                if let selectedText = result as? String, !selectedText.isEmpty {
+                    DispatchQueue.main.async {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name(CommonDefine.addNewTask),
+                            object: nil,
+                            userInfo: ["content": selectedText, "id": (self?.itemId ?? "")]
+                        )
+                    }
+                }
+            }
+        }
+        
         #endif
         
         func updateMarkdownContent(_ markdownContent: String) {

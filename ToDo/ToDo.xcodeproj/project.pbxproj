@@ -16,6 +16,7 @@
 		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
 		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
 		092545F02DD8666300D324DB /* PlanItemEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EF2DD8665A00D324DB /* PlanItemEditView.swift */; };
+		092546082DE0D7BB00D324DB /* CommonDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546072DE0D7B200D324DB /* CommonDefine.swift */; };
 		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
@@ -97,6 +98,7 @@
 		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
 		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
 		092545EF2DD8665A00D324DB /* PlanItemEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanItemEditView.swift; sourceTree = "<group>"; };
+		092546072DE0D7B200D324DB /* CommonDefine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonDefine.swift; sourceTree = "<group>"; };
 		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 		09F80BF42C665A3F00650366 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				092546072DE0D7B200D324DB /* CommonDefine.swift */,
 				092545EA2DD83F7300D324DB /* Plan */,
 				09D714732DAB5AB0009DB18E /* Principle */,
 				09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */,
@@ -598,6 +601,7 @@
 				09D714722D9DA538009DB18E /* MarkdownView.swift in Sources */,
 				093E78FF2D23855D006E5120 /* ModelData+NoteList.swift in Sources */,
 				09D7147B2DAB651D009DB18E /* ToDoEditPrincipleView.swift in Sources */,
+				092546082DE0D7BB00D324DB /* CommonDefine.swift in Sources */,
 				09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */,
 				09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */,
 				097A04102C6C588300521483 /* Array+Extensions.swift in Sources */,

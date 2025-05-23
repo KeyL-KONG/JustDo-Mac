@@ -91,7 +91,7 @@ struct TimeLineRowView: View {
                     .frame(minHeight: 120)
                     .cornerRadius(8)
             } else {
-                MarkdownWebView(item.content)
+                MarkdownWebView(item.content, itemId: item.id)
             }
             
         }

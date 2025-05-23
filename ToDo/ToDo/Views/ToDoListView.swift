@@ -235,6 +235,27 @@ struct ToDoListView: View, Equatable {
         })
         .onAppear {
             updateDefaultSelectItemID()
+            addObserver()
+        }
+    }
+    
+    func addObserver() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(CommonDefine.addNewTask),
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let content = notification.userInfo?["content"] as? String, let id = notification.userInfo?["id"] as? String {
+                let event = EventItem()
+                event.title = content
+                if let fatherItem = modelData.itemList.first(where: {  $0.id == id
+                }) {
+                    event.projectId = fatherItem.projectId
+                    event.fatherId = fatherItem.id
+                    event.tag = fatherItem.tag
+                }
+                modelData.updateItem(event)
+            }
         }
     }
     
