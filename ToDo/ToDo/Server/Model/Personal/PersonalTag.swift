@@ -7,14 +7,66 @@
 
 import Foundation
 import LeanCloud
+import SwiftUI
+
+
+enum PersonalTagType {
+    case good
+    case bad
+    
+    var title: String {
+        switch self {
+        case .good:
+            return "正向"
+        case .bad:
+            return "负向"
+        }
+    }
+    
+    var nums: [Int] {
+        switch self {
+        case .good:
+            return [1, 3, 5]
+        case .bad:
+            return [-1, -3, -5]
+        }
+    }
+    
+    static func type(with title: String) -> PersonalTagType {
+        if title == PersonalTagType.bad.title {
+            return .bad
+        }
+        return .good
+    }
+    
+    static let titles = [PersonalTagType.good.title, PersonalTagType.bad.title]
+}
+
+enum PersonalTagNumType {
+    case normal
+    case more
+    case excellent
+}
 
 class PersonalTag: BaseModel, Identifiable, Codable {
     var tag: String = ""
     var goodEvents: [String: Int] = [:]
     var badEvents: [String: Int] = [:]
+    var goodColorHex: String = "4CAF50" // 新增默认绿色
+    var badColorHex: String = "F44336" // 新增默认红色
     
-    init(tag: String) {
+    var goodColor: Color {
+        Color.init(hex: goodColorHex)
+    }
+    
+    var badColor: Color {
+        Color.init(hex: badColorHex)
+    }
+    
+    init(tag: String, goodColorHex: String = "#4CAF50", badColorHex: String = "#F44336") {
         self.tag = tag
+        self.goodColorHex = goodColorHex
+        self.badColorHex = badColorHex
         super.init()
     }
     
@@ -36,6 +88,8 @@ class PersonalTag: BaseModel, Identifiable, Codable {
         tag = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
         goodEvents = try container.decodeIfPresent([String: Int].self, forKey: .goodEvents) ?? [:]
         badEvents = try container.decodeIfPresent([String: Int].self, forKey: .badEvents) ?? [:]
+        goodColorHex = try container.decodeIfPresent(String.self, forKey: .goodColorHex) ?? "#4CAF50"
+        badColorHex = try container.decodeIfPresent(String.self, forKey: .badColorHex) ?? "#F44336"
     }
     
     func encode(to encoder: Encoder) throws {
@@ -43,6 +97,8 @@ class PersonalTag: BaseModel, Identifiable, Codable {
         try container.encode(tag, forKey: .tag)
         try container.encode(goodEvents, forKey: .goodEvents)
         try container.encode(badEvents, forKey: .badEvents)
+        try container.encode(goodColorHex, forKey: .goodColorHex)
+        try container.encode(badColorHex, forKey: .badColorHex)
     }
     
     override func fillModel(with cloudObj: LCObject) {
@@ -56,6 +112,12 @@ class PersonalTag: BaseModel, Identifiable, Codable {
         if let badEventStr = cloudObj.get(PersonalTagKeys.badEvents.rawValue)?.dictionaryValue as? String, let badEvents = badEventStr.toJson() as? [String: Int] {
             self.badEvents = badEvents
         }
+        if let goodColor = cloudObj.get(PersonalTagKeys.goodColorHex.rawValue)?.stringValue {
+            self.goodColorHex = goodColor
+        }
+        if let badColor = cloudObj.get(PersonalTagKeys.badColorHex.rawValue)?.stringValue {
+            self.badColorHex = badColor
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -67,6 +129,8 @@ class PersonalTag: BaseModel, Identifiable, Codable {
         if let badEventJson = badEvents.toJsonString() {
             try cloudObj.set(PersonalTagKeys.badEvents.rawValue, value: badEventJson)
         }
+        try cloudObj.set(PersonalTagKeys.goodColorHex.rawValue, value: goodColorHex.lcString)
+        try cloudObj.set(PersonalTagKeys.badColorHex.rawValue, value: badColorHex.lcString)
     }
 }
 
@@ -75,5 +139,7 @@ extension PersonalTag {
         case tag
         case goodEvents
         case badEvents
+        case goodColorHex // 新增
+        case badColorHex  // 新增
     }
 }

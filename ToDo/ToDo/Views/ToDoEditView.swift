@@ -11,7 +11,7 @@ import LeanCloud
 struct ToDoEditView: View {
     
     @EnvironmentObject var modelData: ModelData
-    var selectItem: EventItem?
+    @State var selectItem: EventItem?
     var selectionChange: ((String) -> ())
     var updateEvent: (() -> ())
     
@@ -105,6 +105,8 @@ struct ToDoEditView: View {
     @State var finishState: String = ""
     
     @State var startText: String = ""
+    
+    @State var showPersonalAlert: Bool = false
     
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
@@ -322,6 +324,22 @@ struct ToDoEditView: View {
                     }
 
                 }
+                
+                Section {
+                    
+                } header: {
+                    HStack {
+                        Text("设置关联")
+                        Spacer()
+                        
+                        Button {
+                            showPersonalAlert.toggle()
+                        } label: {
+                            Text("添加关联").font(.system(size: 14))
+                        }
+                    }
+                }
+
                 
                 Section(header: HStack(content: {
                     Text("设置属性")
@@ -555,6 +573,11 @@ struct ToDoEditView: View {
             Button("保存") {
                 saveTask()
             }.foregroundColor(.blue)
+        })
+        .sheet(isPresented: $showPersonalAlert, content: {
+            if let itemId = selectItem?.id {
+                PersonalTagWindowView(isPresented: $showPersonalAlert, itemId: itemId)                 .environmentObject(modelData)
+            }
         })
         .onAppear {
             print("edit view appear")

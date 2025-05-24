@@ -20,6 +20,9 @@
 		0925460B2DE15B2C00D324DB /* PersonalTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925460A2DE15B2700D324DB /* PersonalTag.swift */; };
 		0925460D2DE1703F00D324DB /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925460C2DE1703800D324DB /* String+Extension.swift */; };
 		0925460F2DE1711200D324DB /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925460E2DE1710900D324DB /* Dictionary+Extensions.swift */; };
+		092546112DE1740400D324DB /* PersonalTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546102DE173FC00D324DB /* PersonalTagView.swift */; };
+		092546132DE17A5200D324DB /* PersonalEditTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546122DE17A4C00D324DB /* PersonalEditTagView.swift */; };
+		092546172DE1CE6200D324DB /* PersonalTagWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */; };
 		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
@@ -105,6 +108,9 @@
 		0925460A2DE15B2700D324DB /* PersonalTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalTag.swift; sourceTree = "<group>"; };
 		0925460C2DE1703800D324DB /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		0925460E2DE1710900D324DB /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
+		092546102DE173FC00D324DB /* PersonalTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalTagView.swift; sourceTree = "<group>"; };
+		092546122DE17A4C00D324DB /* PersonalEditTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalEditTagView.swift; sourceTree = "<group>"; };
+		092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalTagWindowView.swift; sourceTree = "<group>"; };
 		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
@@ -416,6 +422,9 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */,
+				092546122DE17A4C00D324DB /* PersonalEditTagView.swift */,
+				092546102DE173FC00D324DB /* PersonalTagView.swift */,
 				092545EF2DD8665A00D324DB /* PlanItemEditView.swift */,
 				092AF5252DD102450067DA7D /* PlanView.swift */,
 				097AE2C72DC901130096059B /* EditTielineTaskView.swift */,
@@ -631,7 +640,9 @@
 				09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */,
 				09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */,
 				09F80C1C2C66FF8D00650366 /* ToDoItemRowView.swift in Sources */,
+				092546172DE1CE6200D324DB /* PersonalTagWindowView.swift in Sources */,
 				09F80C0F2C665A5B00650366 /* View+Extensions.swift in Sources */,
+				092546112DE1740400D324DB /* PersonalTagView.swift in Sources */,
 				097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */,
 				09F80C132C66F55C00650366 /* ToDoSection.swift in Sources */,
 				09F80C182C66F7F700650366 /* ToDoListView.swift in Sources */,
@@ -643,6 +654,7 @@
 				09F80BFF2C665A3F00650366 /* CacheManager.swift in Sources */,
 				093E78F52D23852D006E5120 /* TagModel.swift in Sources */,
 				093E78F62D23852D006E5120 /* NoteModel.swift in Sources */,
+				092546132DE17A5200D324DB /* PersonalEditTagView.swift in Sources */,
 				09D714632D865F34009DB18E /* StateManager.swift in Sources */,
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
 				09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */,

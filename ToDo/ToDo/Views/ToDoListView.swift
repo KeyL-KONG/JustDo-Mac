@@ -127,6 +127,9 @@ struct ToDoListView: View, Equatable {
                     .environmentObject(modelData)
                     .frame(minWidth: 400)
             }
+            else if selection == .personalTag {
+                PersonalTagView(selectItemID: $selectItemID).environmentObject(modelData)
+            }
             else if selection == .plan {
                 PlanView(selectItemID: $selectItemID).environmentObject(modelData)
             }
@@ -179,7 +182,13 @@ struct ToDoListView: View, Equatable {
                 else if let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectedTask.id
                 }) {
                     SummaryEditView(summaryItem: summaryItem).id(summaryItem.id).environmentObject(modelData)
-                } else if let principleItem = selectedTask as? PrincipleModel {
+                }
+                else if let personalTag = modelData.personalTagList.first(where: { $0.id == selectedTask.id
+                }) {
+                    PersonalEditTagView(tag: personalTag).environmentObject(modelData)
+                        .id(personalTag.id)
+                }
+                else if let principleItem = selectedTask as? PrincipleModel {
                     ToDoEditPrincipleView(selectItem: principleItem) { selectId in
                         selectItemID = selectId
                     }
@@ -207,7 +216,13 @@ struct ToDoListView: View, Equatable {
                     }).environmentObject(modelData)
                         .id(selectItemID)
                         .frame(minWidth: 400)
-                } else if let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectItemID
+                }
+                else if let personalTag = modelData.personalTagList.first(where: { $0.id == selectItemID
+                }) {
+                    PersonalEditTagView(tag: personalTag).environmentObject(modelData)
+                        .id(personalTag.id)
+                }
+                else if let summaryItem = modelData.summaryItemList.first(where: { $0.id == selectItemID
                 }) {
                     SummaryEditView(summaryItem: summaryItem)
                         .environmentObject(modelData).id(selectItemID)
