@@ -107,6 +107,7 @@ struct ToDoEditView: View {
     @State var startText: String = ""
     
     @State var showPersonalAlert: Bool = false
+    static var selectPersonalTag: PersonalTag?
     
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
@@ -152,6 +153,25 @@ struct ToDoEditView: View {
             }
             return event1.createTime?.timeIntervalSince1970 ?? 0 > event2.createTime?.timeIntervalSince1970 ?? 0
         }
+    }
+    
+    struct EventItemPersonalItem {
+        let type: PersonalTagType
+        let num: Int
+        let tag: PersonalTag
+    }
+    
+    var personalItems: [EventItemPersonalItem] {
+        guard let eventId = selectItem?.id else { return [] }
+        var items = [EventItemPersonalItem]()
+        modelData.personalTagList.forEach { tag in
+            if let num = tag.goodEvents[eventId] {
+                items.append(.init(type: .good, num: num, tag: tag))
+            } else if let num = tag.badEvents[eventId] {
+                items.append(.init(type: .bad, num: num, tag: tag))
+            }
+        }
+        return items
     }
     
     var body: some View {
@@ -326,13 +346,27 @@ struct ToDoEditView: View {
                 }
                 
                 Section {
-                    
+                    if personalItems.count > 0 {
+                        LazyVStack(alignment: .leading) {
+                            ForEach(personalItems, id: \.self.tag.id) { item in
+                                let color = item.type == .good ? item.tag.goodColor : item.tag.badColor
+                                let title = "\(item.tag.tag) \(item.num.symbolStr)"
+                                tagView(title: title, color: color)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        Self.selectPersonalTag = item.tag
+                                        self.showPersonalAlert.toggle()
+                                    }
+                            }
+                        }
+                    }
                 } header: {
                     HStack {
                         Text("设置关联")
                         Spacer()
                         
                         Button {
+                            Self.selectPersonalTag = nil
                             showPersonalAlert.toggle()
                         } label: {
                             Text("添加关联").font(.system(size: 14))
@@ -576,7 +610,7 @@ struct ToDoEditView: View {
         })
         .sheet(isPresented: $showPersonalAlert, content: {
             if let itemId = selectItem?.id {
-                PersonalTagWindowView(isPresented: $showPersonalAlert, itemId: itemId)                 .environmentObject(modelData)
+                PersonalTagWindowView(isPresented: $showPersonalAlert, itemId: itemId, personalTag: Self.selectPersonalTag)                 .environmentObject(modelData)
             }
         })
         .onAppear {
@@ -703,6 +737,16 @@ struct ToDoEditView: View {
     private func showPreviewWindow() {
         guard let selectItem else { return }
         openWindow(id: "markdown-preview", value: selectItem)
+    }
+    
+    func tagView(title: String, color: Color) -> some View {
+        Text(title)
+            .foregroundColor(.white)
+            .font(.system(size: 12))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(color)
+            .clipShape(Capsule())
     }
     
 }

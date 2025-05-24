@@ -12,6 +12,7 @@ import SwiftUI
 struct PersonalTagWindowView: View {
     @Binding var isPresented: Bool
     @State var itemId: String
+    @State var personalTag: PersonalTag?
     @State var selectPersonalTag: String = ""
     @State var tagType: String = ""
     @State var numType: Int = 1
@@ -47,6 +48,18 @@ struct PersonalTagWindowView: View {
             }.pickerStyle(.segmented)
             
             HStack(spacing: 40) {
+                
+                if let personalTag {
+                    Button {
+                        personalTag.goodEvents.removeValue(forKey: itemId)
+                        personalTag.badEvents.removeValue(forKey: itemId)
+                        modelData.updatePersonalTag(personalTag)
+                        isPresented = false
+                    } label: {
+                        Text("删除").foregroundStyle(.red)
+                    }
+                }
+                
                 Button("取消") {
                     isPresented = false
                 }
@@ -66,15 +79,26 @@ struct PersonalTagWindowView: View {
             numType = -1 * numType
         })
         .onAppear(perform: {
-            selectPersonalTag = modelData.personalTagList.first?.tag ?? ""
-            tagType = PersonalTagType.good.title
+            if let personalTag {
+                selectPersonalTag = personalTag.tag
+                if let num = personalTag.goodEvents[itemId] {
+                    self.numType = num
+                    self.tagType = PersonalTagType.good.title
+                } else if let num = personalTag.badEvents[itemId] {
+                    self.numType = num
+                    self.tagType = PersonalTagType.bad.title
+                }
+            } else {
+                selectPersonalTag = modelData.personalTagList.first?.tag ?? ""
+                tagType = PersonalTagType.good.title
+            }
         })
         .padding()
         .background(Color(.windowBackgroundColor)) // 使用系统窗口背景色
     }
     
     func updateTag() {
-        guard let tag = modelData.personalTagList.first(where: { $0.tag == selectPersonalTag
+        guard let tag = personalTag ?? modelData.personalTagList.first(where: { $0.tag == selectPersonalTag
         }) else {
             return
         }

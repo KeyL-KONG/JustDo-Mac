@@ -32,4 +32,8 @@ extension Int {
         return hour > 0 ? (min > 0 ? "\(hour)h\(min)m" : "\(hour)h") : (min > 0 ? "\(min)m" : "")
     }
     
+    var symbolStr: String {
+        return self > 0 ? "+\(self)" : "\(self)"
+    }
+    
 }

@@ -106,10 +106,10 @@ class PersonalTag: BaseModel, Identifiable, Codable {
         if let tag = cloudObj.get(PersonalTagKeys.tag.rawValue)?.stringValue {
             self.tag = tag
         }
-        if let goodEventStr = cloudObj.get(PersonalTagKeys.goodEvents.rawValue)?.dictionaryValue as? String, let goodEvents = goodEventStr.toJson() as? [String: Int] {
+        if let goodEventStr = cloudObj.get(PersonalTagKeys.goodEvents.rawValue)?.stringValue, let goodEvents = goodEventStr.toJson() as? [String: Int] {
             self.goodEvents = goodEvents
         }
-        if let badEventStr = cloudObj.get(PersonalTagKeys.badEvents.rawValue)?.dictionaryValue as? String, let badEvents = badEventStr.toJson() as? [String: Int] {
+        if let badEventStr = cloudObj.get(PersonalTagKeys.badEvents.rawValue)?.stringValue, let badEvents = badEventStr.toJson() as? [String: Int] {
             self.badEvents = badEvents
         }
         if let goodColor = cloudObj.get(PersonalTagKeys.goodColorHex.rawValue)?.stringValue {
