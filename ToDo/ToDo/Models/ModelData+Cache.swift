@@ -9,8 +9,8 @@ import Foundation
 extension ModelData {
     
     
+    // 在 asyncLoadCacheData 方法中添加
     func asyncLoadCacheData() {
-        
         let startTime = Date()
         let group = DispatchGroup()
         var cacheTags: [ItemTag] = []
@@ -21,6 +21,7 @@ extension ModelData {
         var cacheSummaryItems: [SummaryItem] = []
         var cachePlanItems: [PlanTimeItem] = []
         var cacheReadItems: [ReadModel] = []
+        var cachePersonalTags: [PersonalTag] = [] // 新增
         
         group.enter()
         cache.asyncLoadCache(type: .tag) { tags in
@@ -70,6 +71,13 @@ extension ModelData {
             group.leave()
         }
         
+        // 新增 PersonalTag 缓存加载
+        group.enter()
+        cache.asyncLoadCache(type: .personalTag) { tags in
+            cachePersonalTags = tags as? [PersonalTag] ?? []
+            group.leave()
+        }
+        
         group.notify(queue: .main) {
             self.tagList = cacheTags
             self.taskTimeItems = cacheTimeItems
@@ -85,6 +93,7 @@ extension ModelData {
         
     }
     
+    // 在 asyncLoadServer 方法中添加
     func asyncLoadServer() {
         if self.isLoadingServer {
             print("cloud load all return")
@@ -101,6 +110,7 @@ extension ModelData {
         var serverSummaryItems: [SummaryItem] = []
         var serverPlanItems: [PlanTimeItem] = []
         var serverReadItems: [ReadModel] = []
+        var serverPersonalTags: [PersonalTag] = []
         var isFailRequest = false
         
         group.enter()
@@ -209,6 +219,18 @@ extension ModelData {
             }
         }
         
+        group.enter()
+        DataManager.shared.query(type: PersonalTag.self) { tagList, error in
+            if let error {
+                print("cloud load all personal tags error: \(error)")
+                isFailRequest = true
+            } else {
+                serverPersonalTags = tagList ?? []
+                print("cloud load all personal tags: \(serverPersonalTags.count)")
+            }
+            group.leave()
+        }
+        
         group.notify(queue: .main) {
             self.isLoadingServer = false
             if isFailRequest {
@@ -229,11 +251,17 @@ extension ModelData {
             self.readList = serverReadItems
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
             print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), duration: \(Int(duration * 1000))ms")
-            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems)
+            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags) // 新增参数
         }
     }
     
-    func asyncStoreCache(tags: [ItemTag], times: [TaskTimeItem], events: [EventItem], principles: [PrincipleModel], summaryTags: [SummaryTag], summaryItems: [SummaryItem], planItems: [PlanTimeItem], readItems: [ReadModel]) {
+    // 更新 asyncStoreCache 方法
+    func asyncStoreCache(tags: [ItemTag], times: [TaskTimeItem], 
+                   events: [EventItem], principles: [PrincipleModel],
+                   summaryTags: [SummaryTag], summaryItems: [SummaryItem],
+                   planItems: [PlanTimeItem], readItems: [ReadModel],
+                   personalTags: [PersonalTag]) { // 新增参数
+    
         cache.asyncStoreCache(type: .tag, items: tags)
         cache.asyncStoreCache(type: .timeItem, items: times)
         cache.asyncStoreCache(type: .event, items: events)
@@ -241,6 +269,7 @@ extension ModelData {
         cache.asyncStoreCache(type: .summaryTag, items: summaryTags)
         cache.asyncStoreCache(type: .summaryItem, items: summaryItems)
         cache.asyncStoreCache(type: .planItem, items: planItems)
+        cache.asyncStoreCache(type: .personalTag, items: personalTags) // 新增
     }
     
     func asyncUpdateCache(type: CacheDataType) {
@@ -257,6 +286,8 @@ extension ModelData {
             cache.storeCache(type: .planItem, items: self.planTimeItems)
         case .summaryItem:
             cache.storeCache(type: .summaryItem, items: summaryItemList)
+        case .personalTag:
+            cache.storeCache(type: .personalTag, items: self.personalTagList)
         default:
             break
         }

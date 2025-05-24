@@ -227,3 +227,49 @@ extension ModelData {
     }
     
 }
+
+// 新增 PersonalTag 管理扩展
+extension ModelData {
+
+    func savePersonalTag(_ tag: PersonalTag) {
+        if personalTagList.contains(where: { $0.id == tag.id }) {
+            return
+        }
+        personalTagList.append(tag)
+        savePersonalTagToServer([tag])
+    }
+    
+    func updatePersonalTag(_ tag: PersonalTag) {
+        if let index = personalTagList.firstIndex(where: { $0.id == tag.id }) {
+            personalTagList[index] = tag
+        } else {
+            personalTagList.append(tag)
+        }
+        savePersonalTagToServer([tag])
+    }
+    
+    func deletePersonalTag(_ tag: PersonalTag) {
+        guard let index = personalTagList.firstIndex(where: { $0.id == tag.id }) else {
+            return
+        }
+        personalTagList.remove(at: index)
+        DataManager.shared.delete(models: [tag]) { error in
+            if let error = error {
+                print(error)
+            } else {
+                self.asyncUpdateCache(type: .personalTag)
+            }
+        }
+    }
+    
+    private func savePersonalTagToServer(_ tags: [PersonalTag]) {
+        DataManager.shared.save(with: PersonalTag.modelClassName(), models: tags) { error in
+            if let error = error {
+                print(error)
+            } else {
+                self.asyncUpdateCache(type: .personalTag)
+            }
+        }
+    }
+}
+

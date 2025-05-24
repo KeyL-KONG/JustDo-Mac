@@ -47,6 +47,8 @@ class ModelData: ObservableObject {
     
     @Published var planTimeItems: [PlanTimeItem] = []
     
+    @Published var personalTagList: [PersonalTag] = []
+    
     @Published var toggleToRefresh: Bool = false
     
     @Published var updateItemIndex = 0
