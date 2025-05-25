@@ -26,7 +26,11 @@ struct PlanView: View {
     
     @State var readItems: [ReadModel] = []
     
+    @State var eventList: [PlanEventItem] = []
+    
     @State var currentDate: Date = .now
+    
+    @State var isEventListExpand: Bool = false
     
     var body: some View {
         ScrollView(showsIndicators: true) { // 添加垂直滚动容器
@@ -41,6 +45,9 @@ struct PlanView: View {
                 
                 summaryTimeHeaderView()
                 summaryTagTimeItems()
+                
+                eventListHeaderView()
+                eventListView()
                 
                 summaryItemHeaderView()
                 summaryItemsView()
@@ -62,6 +69,7 @@ struct PlanView: View {
         }
         .onReceive(modelData.$itemList) { _ in
             updateMostImportanceItems()
+            updateEventList()
         }
         .onReceive(modelData.$planTimeItems, perform: { _ in
             updatePlanItems()
@@ -114,12 +122,170 @@ struct PlanView: View {
         updateSummaryItems()
         print("summaryItems: \((Date().timeIntervalSince1970 - start5.timeIntervalSince1970) * 1000)ms")
         
+        updateEventList()
+        
         let start6 = Date()
         updateReadItems()
         print("readItems: \((Date().timeIntervalSince1970 - start6.timeIntervalSince1970) * 1000)ms")
         
         print("total duration: \((Date().timeIntervalSince1970 - totalStart.timeIntervalSince1970) * 1000)ms")
     }
+}
+
+// MARK: event view
+extension PlanView {
+    
+    func eventListHeaderView() -> some View {
+        HStack {
+            Text("本周事项").bold().font(.system(size: 16))
+                .foregroundStyle(Color.init(hex: "884ea0"))
+            let count = eventList.count
+            let finishCount = eventList.filter { $0.event.isFinish }.count
+            let numText = " (\(finishCount)/\(count))"
+            Text(numText).foregroundStyle(.gray)
+            
+            Spacer()
+            if count > 5 {
+                Button {
+                    self.isEventListExpand = !self.isEventListExpand
+                } label: {
+                    Image(systemName: isEventListExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.init(hex: "884ea0"))
+                }
+                .buttonStyle(.plain)
+            }
+            
+            
+        }.padding(.top, 20)
+        .padding(.horizontal, 20)
+    }
+    
+    func eventListView() -> some View {
+        VStack(alignment: .leading) {
+            let eventList = isEventListExpand ? self.eventList : Array(self.eventList.prefix(5))
+            ForEach(eventList, id: \.self.event.id) { item in
+                eventItemView(item: item).id(item.event.id)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 20)
+        .background {
+            ZStack {
+                Rectangle()
+                    .fill(Color.init(hex: "884ea0").opacity(0.1))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 10)
+            }
+        }
+    }
+    
+    func eventItemView(item: PlanEventItem) -> some View {
+        HStack(alignment: .center) {
+            Toggle("", isOn: .constant(item.event.isFinish))
+            
+            Text(item.event.title)
+            
+            
+            if item.interval > 0 {
+                let title = " (\(item.interval.simpleTimeStr))"
+                Text(title).foregroundStyle(.gray)
+            }
+            
+            Spacer()
+            
+            if let personalItem = item.personalItem {
+                let color = personalItem.num > 0 ? personalItem.tag.goodColor : personalItem.tag.badColor
+                let title = "\(personalItem.tag.tag) \(personalItem.num.symbolStr)"
+                tagView(title: title, color: color)
+            }
+            
+            if item.event.isFinish, item.event.finishState != .normal {
+                tagView(title: item.event.finishState.description, color: Color.init(hex: item.event.finishState.titleColor))
+            }
+            
+            if item.event.needReview {
+                if !item.event.finishReview {
+                    tagView(title: "待复盘", color: Color.init(hex: "e74c3c"))
+                } else {
+                    tagView(title: "已复盘", color: Color.init(hex: "2ecc71"))
+                }
+            }
+            
+            if let tag = modelData.tagList.first(where: {  $0.id == item.event.tag }) {
+                tagView(title: tag.title, color: tag.titleColor)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            self.selectItemID = item.event.id
+        }
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background {
+            if item.event.id == selectItemID {
+                ZStack {
+                    Rectangle()
+                        .fill(Color.init(hex: "a9cce3"))
+                        .cornerRadius(8)
+                }
+            }
+        }
+    }
+    
+    struct PlanEventItem {
+        let event: EventItem
+        let interval: Int
+        let personalItem: PersonalEventItem?
+    }
+    
+    func updateEventList() {
+        let timeItems = modelData.taskTimeItems
+        let eventList = modelData.itemList
+        let currentDate = self.currentDate
+        let personalTagList = modelData.personalTagList
+        
+        DispatchQueue.global().async {
+            
+            var personalEventList = [PersonalEventItem]()
+            personalTagList.forEach { tag in
+                let items = self.personalEventItems(with: tag, eventList: eventList)
+                personalEventList += items
+            }
+            
+            let planEventList = eventList.filter { event in
+                guard event.planTime != nil else { return false }
+                return timeItems.filter { $0.eventId == event.id && $0.startTime.isInSameWeek(as: currentDate)}.count > 0
+            }.compactMap { event in
+                let interval = event.timeTasks(with: .week, tasks: timeItems, selectDate: currentDate).compactMap { $0.interval }.reduce(0, +)
+                let personalItem = personalEventList.first(where: { $0.item.id == event.id })
+                return PlanEventItem(event: event, interval: interval, personalItem: personalItem)
+            }.sorted {
+                if $0.event.isFinish != $1.event.isFinish {
+                    return $0.event.isFinish ? false : true
+                }
+                return $0.interval > $1.interval
+            }
+            DispatchQueue.main.async {
+                self.eventList = planEventList
+            }
+        }
+        
+    }
+    
+    func personalEventItems(with tag: PersonalTag, eventList: [EventItem]) -> [PersonalEventItem] {
+        return tag.goodEvents.compactMap { (key, value) in
+            guard let event = eventList.first(where: { $0.id == key }) else {
+                return nil
+            }
+            return PersonalEventItem.init(item: event, tag: tag, num: value)
+        } + tag.badEvents.compactMap { (key, value) in
+            guard let event = eventList.first(where: { $0.id == key }) else {
+                return nil
+            }
+            return PersonalEventItem.init(item: event, tag: tag, num: value)
+        }.sorted(by: {  $0.num > $1.num })
+    }
+    
 }
 
 // MARK: read view

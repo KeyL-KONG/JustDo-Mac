@@ -107,12 +107,6 @@ struct PersonalTagView: View {
         
     }
     
-    struct PersonalEventItem {
-        let item: EventItem
-        let tag: PersonalTag
-        let num: Int
-    }
-    
     func updateTagList() {
         self.personalTagList = modelData.personalTagList
     }
@@ -154,4 +148,10 @@ struct PersonalTagView: View {
             .background(color)
             .clipShape(Capsule())
     }
+}
+
+struct PersonalEventItem {
+    let item: EventItem
+    let tag: PersonalTag
+    let num: Int
 }
