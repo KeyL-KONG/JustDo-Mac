@@ -250,8 +250,6 @@ extension PlanView {
     }
     
     func fetchSummaryContent(completion: @escaping (String)->Void) {
-        
-        let taskItems = modelData.taskTimeItems
         let items = self.eventList
         let summaryItems = self.summaryItems
         let readList = self.readItems

@@ -256,6 +256,9 @@ extension TodoItemListView {
                     if currentSummaryItem != nil {
                         Button {
                             fetchSummaryContent { content in
+                                if self.summaryContent.contains("\n## 事项\n") {
+                                    self.summaryContent =  self.summaryContent.truncateAfter(substring: "\n## 事项\n")
+                                }
                                 self.summaryContent += content
                             }
                         } label: {
