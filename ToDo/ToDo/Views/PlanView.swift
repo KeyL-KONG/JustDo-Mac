@@ -51,12 +51,11 @@ struct PlanView: View {
                 Spacer()
             }
         }
-        .onChange(of: currentDate) { _, _ in
+        .onChange(of: currentDate) { old, new in
             updateData()
         }
         .onAppear {
-            currentDate = modelData.planCacheTime ?? .now 
-            updateData()
+            currentDate = modelData.planCacheTime ?? .now
         }
         .onDisappear {
             modelData.planCacheTime = currentDate
@@ -92,12 +91,34 @@ struct PlanView: View {
     }
     
     func updateData() {
+        print("update data")
+        let totalStart = Date()
+        
+        let start1 = Date()
         updateMostImportanceItems()
-        updatePlanTimeInterval()
+        print("mostImportanceItems: \((Date().timeIntervalSince1970 - start1.timeIntervalSince1970) * 1000)ms")
+        
+        let start3 = Date()
         updatePlanItems()
+        print("planItems: \((Date().timeIntervalSince1970 - start3.timeIntervalSince1970) * 1000)ms")
+        
+        let start2 = Date()
+        updatePlanTimeInterval()
+        print("planTimeInterval: \((Date().timeIntervalSince1970 - start2.timeIntervalSince1970) * 1000)ms")
+        
+        let start4 = Date()
         updateTagSummaryTime()
+        print("tagSummaryTime: \((Date().timeIntervalSince1970 - start4.timeIntervalSince1970) * 1000)ms")
+        
+        let start5 = Date()
         updateSummaryItems()
+        print("summaryItems: \((Date().timeIntervalSince1970 - start5.timeIntervalSince1970) * 1000)ms")
+        
+        let start6 = Date()
         updateReadItems()
+        print("readItems: \((Date().timeIntervalSince1970 - start6.timeIntervalSince1970) * 1000)ms")
+        
+        print("total duration: \((Date().timeIntervalSince1970 - totalStart.timeIntervalSince1970) * 1000)ms")
     }
 }
 
@@ -150,6 +171,7 @@ extension PlanView {
     }
     
     func updateReadItems() {
+        print("update read items")
         readItems = modelData.readList.filter { item in
             guard let createTime = item.createTime else {
                 return false
@@ -214,6 +236,7 @@ extension PlanView {
     }
     
     func updateSummaryItems() {
+        print("update summary items")
         summaryItems = modelData.summaryItemList.filter({ item in
             guard let createTime = item.createTime else {
                 return false
@@ -332,51 +355,61 @@ extension PlanView {
     }
     
     func updateTagSummaryTime() {
+        print("update tag time items")
         let tagList = modelData.tagList
         let timeItems = modelData.taskTimeItems
         let itemList = modelData.itemList
+        
         var totalTimes = 0
         var tagEventList = [String: [EventItem]]()
         var eventTotalTime = [String: Int]()
+        var tagTotalTimes = [String: Int]()
         
-        tagList.forEach { tag in
-            var eventList: [EventItem] = []
-            let filteredItems = timeItems.filter { time in
-                guard let event = itemList.first(where: { $0.id == time.eventId }) else {
+        DispatchQueue.global().async {
+            tagList.forEach { tag in
+                var eventList: [EventItem] = []
+                let filteredItems = timeItems.filter { time in
+                    guard let event = itemList.first(where: { $0.id == time.eventId }) else {
+                        return false
+                    }
+                    let result = event.tag == tag.id && time.startTime.isInSameWeek(as: currentDate)
+                    if result && !eventList.contains(event) {
+                        eventList.append(event)
+                    }
+                    if result {
+                        var totalTime = eventTotalTime[event.id] ?? 0
+                        totalTime += time.interval
+                        eventTotalTime[event.id] = totalTime
+                    }
+                    return result
+                }
+                let totalInterval = filteredItems.compactMap { Int($0.interval / 60) }.reduce(0, +)
+                tagTotalTimes[tag.id] = totalInterval
+                totalTimes += totalInterval
+                tagEventList[tag.id] = eventList.sorted { first, second in
+                    if let firstTime = eventTotalTime[first.id], let secondTime = eventTotalTime[second.id] {
+                        return firstTime > secondTime
+                    }
                     return false
                 }
-                let result = event.tag == tag.id && time.startTime.isInSameWeek(as: currentDate)
-                if result && !eventList.contains(event) {
-                    eventList.append(event)
-                }
-                if result {
-                    var totalTime = eventTotalTime[event.id] ?? 0
-                    totalTime += time.interval
-                    eventTotalTime[event.id] = totalTime
-                }
-                return result
             }
-            let totalInterval = filteredItems.compactMap { Int($0.interval / 60) }.reduce(0, +)
-            tagTotalTimes[tag.id] = totalInterval
-            totalTimes += totalInterval
-            tagEventList[tag.id] = eventList.sorted { first, second in
-                if let firstTime = eventTotalTime[first.id], let secondTime = eventTotalTime[second.id] {
+            
+            DispatchQueue.main.async {
+                self.tagTotalTimes = tagTotalTimes
+                self.eventTotalTime = eventTotalTime
+                self.tagItemList = tagEventList
+                self.totalTimeMins = totalTimes
+                self.sortedTagList = tagList.filter({ tag in
+                    (tagTotalTimes[tag.id] ?? 0) > 0
+                }).sorted(by: { first, second in
+                    guard let firstTime = tagTotalTimes[first.id], let secondTime = tagTotalTimes[second.id] else {
+                        return false
+                    }
                     return firstTime > secondTime
-                }
-                return false
+                })
+
             }
         }
-        self.eventTotalTime = eventTotalTime
-        self.tagItemList = tagEventList
-        self.totalTimeMins = totalTimes
-        self.sortedTagList = tagList.filter({ tag in
-            (tagTotalTimes[tag.id] ?? 0) > 0
-        }).sorted(by: { first, second in
-            guard let firstTime = tagTotalTimes[first.id], let secondTime = tagTotalTimes[second.id] else {
-                return false
-            }
-            return firstTime > secondTime
-        })
     }
     
 }
@@ -455,21 +488,31 @@ extension PlanView {
     }
     
     func updatePlanTimeInterval() {
+        print("update plan time items")
         let timeItems = modelData.taskTimeItems
         let itemList = modelData.itemList
-        modelData.planTimeItems.forEach { item in
-            let totalInterval = timeItems.filter { time in
-                guard let event = itemList.first(where: { $0.id == time.eventId }) else {
-                    return false
+        let planTimeItems = self.planTimeItems
+        
+        DispatchQueue.global().async {
+            planTimeItems.forEach { item in
+                let totalInterval = timeItems.filter { time in
+                    guard let event = itemList.first(where: { $0.id == time.eventId }) else {
+                        return false
+                    }
+                    return event.tag == item.tagId && time.startTime >= item.startTime && time.startTime <= item.endTime
+                }.compactMap { Int($0.interval / 60) }.reduce(0, +)
+                if totalInterval != item.totalInterval {
+                    item.totalInterval = totalInterval
+                    DispatchQueue.main.async {
+                        self.modelData.updatePlanTimeItem(item, shouldAdd: false)
+                    }
                 }
-                return event.tag == item.tagId && time.startTime >= item.startTime && time.startTime <= item.endTime
-            }.compactMap { Int($0.interval / 60) }.reduce(0, +)
-            if totalInterval != item.totalInterval {
-                item.totalInterval = totalInterval
-                modelData.updatePlanTimeItem(item, shouldAdd: false)
+            }
+            DispatchQueue.main.async {
+                self.planTimeItems = planTimeItems
+                self.modelData.asyncUpdateCache(type: .planItem)
             }
         }
-        modelData.asyncUpdateCache(type: .planItem)
     }
     
 }
@@ -536,6 +579,7 @@ extension PlanView {
     }
     
     func updateMostImportanceItems() {
+        let startTime = Date()
         mostImportranceItems = Array(modelData.itemList.filter({ event in
             guard let planTime = event.planTime else {
                 return false
@@ -544,6 +588,7 @@ extension PlanView {
         }).sorted(by: {
             ($0.createTime?.timeIntervalSince1970 ?? 0) >= ($1.createTime?.timeIntervalSince1970 ?? 0)
         }).prefix(3))
+        print("update importance items duration: \((Date().timeIntervalSince1970 - startTime.timeIntervalSince1970) * 1000)ms")
     }
     
     func tagView(title: String, color: Color) -> some View {
