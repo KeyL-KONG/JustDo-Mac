@@ -9,6 +9,21 @@ import SwiftUI
 
 extension Date {
     
+    func isSameTime(timeTab: TimeTab, date: Date) -> Bool {
+        switch timeTab {
+        case .day:
+            return self.isInSameDay(as: date)
+        case .week:
+            return self.isInSameWeek(as: date)
+        case .month:
+            return self.isInSameWeek(as: date)
+        case .year:
+            return self.isInSameYear(as: date)
+        case .all:
+            return false
+        }
+    }
+    
     struct WeekDay: Identifiable {
         var id: UUID = .init()
         var date: Date

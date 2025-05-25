@@ -407,7 +407,7 @@ extension PlanView {
             guard let createTime = item.createTime else {
                 return false
             }
-            return currentDate.isInSameWeek(as: createTime)
+            return currentDate.isInSameWeek(as: createTime) && item.summaryDate == nil
         }).sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
         })
     }

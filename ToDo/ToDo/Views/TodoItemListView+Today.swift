@@ -58,7 +58,7 @@ extension TodoItemListView {
     var summaryItemList: [SummaryItem] {
         modelData.summaryItemList.filter { item in
             guard let createDate = item.createTime else { return false }
-            return createDate.isInSameDay(as: selectDate)
+            return createDate.isInSameDay(as: selectDate) && item.summaryDate == nil
         }
     }
     
@@ -243,8 +243,47 @@ extension TodoItemListView {
                     }
                 }
             }
-
             
+            Section {
+                if isAllExpanded {
+                    todaySummaryView()
+                }
+            } header: {
+                HStack {
+                    Text("Summary")
+                    Spacer()
+                    
+                    if currentSummaryItem != nil {
+                        Button {
+                            fetchSummaryContent { content in
+                                self.summaryContent += content
+                            }
+                        } label: {
+                            Text("同步")
+                        }
+
+                    }
+                    
+                    Button {
+                        if currentSummaryItem == nil {
+                            updateSummaryItem()
+                            isAllExpanded = true
+                        } else {
+                            if self.isSummaryEdit {
+                                updateSummaryItem()
+                            }
+                            self.isSummaryEdit = !self.isSummaryEdit
+                        }
+                    } label: {
+                        let title = currentSummaryItem == nil ? "添加" : (isSummaryEdit ? "预览" : "编辑")
+                        Text(title)
+                    }
+
+                    Button(action: { isAllExpanded.toggle() }) {
+                        Image(systemName: isAllExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            }
         }
     }
     
@@ -418,6 +457,100 @@ extension TodoItemListView {
                 return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
             }
         }
+    }
+    
+}
+
+// MARK: summary view
+extension TodoItemListView {
+    
+    func todaySummaryView() -> some View {
+        VStack {
+            if isSummaryEdit {
+                TextEditor(text: $summaryContent)
+                    .font(.system(size: 14))
+                    .padding(10)
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 120)
+                    .cornerRadius(8)
+            } else {
+                MarkdownWebView(summaryContent, itemId: (currentSummaryItem?.id ?? ""))
+                    .padding(5)
+            }
+            Spacer()
+        }
+        .frame(minHeight: 100)
+        .background(isSummaryEdit ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+        .cornerRadius(8)
+    }
+    
+    func updateSummaryContent() {
+        self.summaryContent = self.currentSummaryItem?.content ?? ""
+    }
+    
+    func updateSummaryItem() {
+        let item = currentSummaryItem ?? SummaryItem()
+        item.summaryDate = selectDate
+        item.time = TimeTab.day.rawValue
+        item.content = summaryContent
+        modelData.updateSummaryItem(item)
+    }
+    
+    struct SummaryEventItem {
+        let event: EventItem
+        let interval: Int
+    }
+    
+    func fetchSummaryContent(completion: @escaping (String)->Void) {
+        
+        let taskItems = modelData.taskTimeItems
+        let items = self.todayItems
+        let summaryItems = self.summaryItemList
+        let readList = modelData.readList
+        let selectDate = self.selectDate
+        DispatchQueue.global().async {
+            var content = ""
+            content = "\n## 事项\n"
+            items.compactMap { event in
+                let interval = event.timeTasks(with: .day, tasks: taskItems, selectDate: selectDate).compactMap { $0.interval }.reduce(0, +)
+                return SummaryEventItem.init(event: event, interval: interval)
+            }.sorted { first, second in
+                let firstUnFinish = !first.event.isFinish && first.event.planTime != nil
+                let secondUnFinish = !second.event.isFinish && second.event.planTime != nil
+                if firstUnFinish != secondUnFinish {
+                    return firstUnFinish ? true : false
+                }
+                return first.interval > second.interval
+            }.forEach { item in
+                let finishText = !item.event.isFinish && item.event.planTime != nil ? "[ ]" : "[x]"
+                let timeText = item.interval > 0 ? "(\(item.interval.simpleTimeStr))" : ""
+                content += "- \(finishText) \(item.event.title) \(timeText) \n"
+            }
+            
+            if summaryItems.count > 0 {
+                content += "\n## 思考\n"
+                summaryItems.forEach { item in
+                    content += "```\n\(item.content)\n```\n"
+                }
+            }
+            
+            let currentReadItems = readList.filter { read in
+                guard let createTime = read.createTime else { return false }
+                return createTime.isInSameDay(as: selectDate)
+            }
+            if currentReadItems.count > 0 {
+                content += "\n## 阅读\n"
+                currentReadItems.forEach { read in
+                    let title = read.title.count > 0 ? read.title : "无标题"
+                    content += "\n- [\(title)](readlist://\(read.id))\n"
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(content)
+            }
+        }
+        
     }
     
 }

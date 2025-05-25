@@ -78,6 +78,8 @@ extension EventItem {
             return date.isInSameWeek(as: selectDate)
         case .month:
             return date.isInSameMonth(as: selectDate)
+        case .year:
+            return date.isInSameYear(as: selectDate)
         case .all:
             return true
         }
@@ -307,6 +309,7 @@ enum TimeTab: String, Identifiable {
         case .day: return "day"
         case .week: return "week"
         case .month: return "month"
+        case .year: return "year"
         case .all: return "all"
         }
     }
@@ -319,6 +322,8 @@ enum TimeTab: String, Identifiable {
             return "当周"
         case .month:
             return "当月"
+        case .year:
+            return "当年"
         case .all:
             return "所有"
         }
@@ -327,6 +332,7 @@ enum TimeTab: String, Identifiable {
     case day = "day"
     case week = "week"
     case month = "month"
+    case year = "year"
     case all = "all"
 }
 

@@ -417,6 +417,8 @@ extension RewardModel {
                 return Date.isSameWeek(date1: date, date2: selectDate)
             case .month:
                 return Date.isSameMonth(date1: date, date2: selectDate)
+            case .year:
+                return date.isInSameYear(as: selectDate)
             case .all:
                 return true
             }
@@ -429,6 +431,8 @@ extension RewardModel {
             return date.isInThisWeek
         case .month:
             return date.isInThisMonth
+        case .year:
+            return date.isInThisYear
         case .all:
             return true
         }

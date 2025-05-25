@@ -14,12 +14,22 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     var content: String = ""
     var improve: String = ""
     var tags: [String] = []
+    var time: String = ""
+    var summaryDate: Date? // 新增可选日期属性
     
-    init(generateId: String, summaryId: String, content: String, improve: String) {
+    var timeTab: TimeTab {
+        return TimeTab(rawValue: time) ?? .day
+    }
+    
+    // 修改初始化方法
+    init(generateId: String, summaryId: String, content: String, improve: String, 
+         time: String = "", summaryDate: Date? = nil) {
         self.generateId = generateId
         self.summaryId = summaryId
         self.content = content
         self.improve = improve
+        self.time = time
+        self.summaryDate = summaryDate
     }
     
     required init() {
@@ -40,6 +50,8 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         self.content = try container.decodeIfPresent(String.self, forKey: .content) ?? ""
         self.improve = try container.decodeIfPresent(String.self, forKey: .improve) ?? ""
         self.tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+        self.time = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
+        self.summaryDate = try container.decodeIfPresent(Date.self, forKey: .summaryDate)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -48,6 +60,10 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         try container.encode(self.content, forKey: .content)
         try container.encode(self.improve, forKey: .improve)
         try container.encode(self.tags, forKey: .tags)
+        try container.encode(self.time, forKey: .time)
+        if let summaryDate {
+            try container.encode(summaryDate, forKey: .summaryDate)
+        }
     }
     
     override func fillModel(with cloudObj: LCObject) {
@@ -57,6 +73,10 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         self.content = cloudObj.get(SummaryItemKeys.content.rawValue)?.stringValue ?? ""
         self.improve = cloudObj.get(SummaryItemKeys.improve.rawValue)?.stringValue ?? ""
         self.tags = cloudObj.get(SummaryItemKeys.tags.rawValue)?.arrayValue as? [String] ?? []
+        self.time = cloudObj.get(SummaryItemKeys.time.rawValue)?.stringValue ?? ""
+        if let summaryDate = cloudObj.get(SummaryItemKeys.summaryDate.rawValue)?.dateValue {
+            self.summaryDate = summaryDate
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -66,6 +86,10 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         try cloudObj.set(SummaryItemKeys.content.rawValue, value: content.lcString)
         try cloudObj.set(SummaryItemKeys.improve.rawValue, value: improve.lcString)
         try cloudObj.set(SummaryItemKeys.tags.rawValue, value: tags.lcArray)
+        try cloudObj.set(SummaryItemKeys.time.rawValue, value: time.lcString)
+        if let date = summaryDate {
+            try cloudObj.set(SummaryItemKeys.summaryDate.rawValue, value: date.lcDate)
+        }
     }
     
     enum SummaryItemKeys: String, CodingKey {
@@ -74,6 +98,8 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         case content
         case improve
         case tags
+        case time // 新增时间字段
+        case summaryDate
     }
     
 }

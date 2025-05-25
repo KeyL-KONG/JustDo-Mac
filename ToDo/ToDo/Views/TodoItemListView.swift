@@ -55,6 +55,8 @@ struct TodoItemListView: View {
     @State var isUnplanExpanded = false
     @State var isSummaryExpanded = false
     @State var isPrincipleExpanded = false
+    @State var isAllExpanded = false
+    @State var isSummaryEdit: Bool = false
     
     // 过滤条件
     @State var actionType: EventActionType = .all
@@ -70,6 +72,15 @@ struct TodoItemListView: View {
     
     @State var weekTimelineItems: [Date: [TimelineItem]] = [:]
     @State var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
+    
+    @State var summaryContent: String = ""
+    
+    var currentSummaryItem: SummaryItem? {
+        modelData.summaryItemList.first { item in
+            guard let summaryTime = item.summaryDate else { return false }
+            return summaryTime.isSameTime(timeTab: item.timeTab, date: selectDate)
+        }
+    }
     
     var items: [EventItem] {
         return itemList.filter { event in
@@ -331,13 +342,20 @@ struct TodoItemListView: View {
         .onChange(of: selectDate, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
+                updateSummaryContent()
             } else if selection == .calendar {
                 updateWeekData()
+            }
+        })
+        .onChange(of: modelData.summaryItemList, { oldValue, newValue in
+            if selection == .today {
+                updateSummaryContent()
             }
         })
         .onChange(of: currentDate, { oldValue, newValue in
             if selection == .today {
                 updateTodayItems()
+                updateSummaryContent()
             } else if selection == .calendar {
                 updateWeekData()
             }
@@ -388,6 +406,7 @@ struct TodoItemListView: View {
         .onAppear {
             print("todo itemlist appear")
             if selection == .today {
+                updateSummaryContent()
                 updateTodayItems()
             } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")

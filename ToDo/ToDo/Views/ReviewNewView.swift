@@ -216,6 +216,8 @@ extension ReviewNewView {
             return Date.isSameWeek(date1: date, date2: selectDate)
         case .month:
             return Date.isSameMonth(date1: date, date2: selectDate)
+        case .year:
+            return date.isInSameYear(as: selectDate)
         case .all:
             return true
         }

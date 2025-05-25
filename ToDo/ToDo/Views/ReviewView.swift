@@ -67,6 +67,8 @@ struct EventDetailItem: Identifiable {
             allTime = 24 * 60 * 60 * 7
         case .month:
             allTime = 24 * 60 * 60 * date.totalDaysThisMonth
+        case .year:
+            allTime = 24 * 60 * 60 * 365
         case .all:
             return nil
         }
@@ -235,7 +237,7 @@ struct ReviewListView: View {
                 return model.summaryDate.isInSameWeek(as: selectDate)
             case .month:
                 return model.summaryDate.isInSameMonth(as: selectDate)
-            case .all:
+            default:
                 return model.summaryDate.isInSameYear(as: selectDate)
             }
         }.sorted { $0.createTime?.timeIntervalSince1970 ?? 0 > $1.createTime?.timeIntervalSince1970 ?? 0
@@ -670,7 +672,7 @@ extension ReviewListView {
             text = selectDate.simpleWeek
         case .month:
             text = selectDate.simpleMonthAndYear
-        case .all:
+        default:
             text = "所有事项"
         }
         self.titleText = text
@@ -729,7 +731,7 @@ extension ReviewListView {
             return Date.isSameWeek(date1: date, date2: selectDate)
         case .month:
             return Date.isSameMonth(date1: date, date2: selectDate)
-        case .all:
+        default:
             return true
         }
     }
