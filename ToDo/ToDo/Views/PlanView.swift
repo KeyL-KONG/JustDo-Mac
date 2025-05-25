@@ -31,6 +31,17 @@ struct PlanView: View {
     @State var currentDate: Date = .now
     
     @State var isEventListExpand: Bool = false
+    @State var isReadListExpand: Bool = false
+    @State var isSummaryExpand: Bool = false
+    @State var isSummaryEdit: Bool = false
+    @State var summaryContent: String = ""
+    
+    var currentSummaryItem: SummaryItem? {
+        modelData.summaryItemList.first { item in
+            guard let summaryTime = item.summaryDate else { return false }
+            return summaryTime.isInSameWeek(as: currentDate) && item.timeTab == .week
+        }
+    }
     
     var body: some View {
         ScrollView(showsIndicators: true) { // 添加垂直滚动容器
@@ -55,14 +66,28 @@ struct PlanView: View {
                 readItemHeaderView()
                 readItemListView()
                 
+                summaryHeaderView()
+                if self.isSummaryExpand {
+                    summaryDetailView()
+                }
+                
                 Spacer()
             }
         }
         .onChange(of: currentDate) { old, new in
             updateData()
+            updateSummaryContent()
+        }
+        .onChange(of: modelData.readList) { _, _ in
+            updateReadItems()
+        }
+        .onChange(of: modelData.summaryItemList) { _, _ in
+            updateSummaryItems()
+            updateSummaryContent()
         }
         .onAppear {
             currentDate = modelData.planCacheTime ?? .now
+            updateSummaryContent()
         }
         .onDisappear {
             modelData.planCacheTime = currentDate
@@ -130,6 +155,138 @@ struct PlanView: View {
         
         print("total duration: \((Date().timeIntervalSince1970 - totalStart.timeIntervalSince1970) * 1000)ms")
     }
+}
+
+// MARK: summary view
+extension PlanView {
+    
+    func summaryHeaderView() -> some View {
+        HStack(spacing: 10) {
+            Text("本周总结").bold().font(.system(size: 16))
+                .foregroundStyle(Color.init(hex: "117a65"))
+            
+            Spacer()
+            
+            if currentSummaryItem != nil {
+                Button {
+                    fetchSummaryContent { content in
+                        if self.summaryContent.contains("\n## 事项\n") {
+                            self.summaryContent =  self.summaryContent.truncateAfter(substring: "\n## 事项\n")
+                        }
+                        self.summaryContent += content
+                    }
+                } label: {
+                    Text("同步").foregroundStyle(Color.init(hex: "117a65"))
+                }.buttonStyle(.plain)
+
+            }
+            
+            Button {
+                if currentSummaryItem == nil {
+                    updateSummaryItem()
+                } else {
+                    if self.isSummaryEdit {
+                        updateSummaryItem()
+                    }
+                    self.isSummaryEdit = !self.isSummaryEdit
+                }
+            } label: {
+                let title = currentSummaryItem == nil ? "添加" : (isSummaryEdit ? "预览" : "编辑")
+                Text(title).foregroundStyle(Color.init(hex: "117a65"))
+            }
+            .buttonStyle(.plain)
+            
+            Button {
+                self.isSummaryExpand = !self.isSummaryExpand
+            } label: {
+                Image(systemName: isSummaryExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.init(hex: "117a65"))
+            }
+            .buttonStyle(.plain)
+            
+        }.padding(.top, 20)
+        .padding(.horizontal, 20)
+        .padding(.bottom, (isSummaryExpand ? 0 : 50))
+    }
+    
+    func summaryDetailView() -> some View {
+        VStack {
+            if isSummaryEdit {
+                TextEditor(text: $summaryContent)
+                    .font(.system(size: 14))
+                    .padding(10)
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 120)
+                    .cornerRadius(8)
+            } else {
+                let content = summaryContent.isEmpty ? "添加一条的总结..." : summaryContent
+                MarkdownWebView(content, itemId: (currentSummaryItem?.id ?? ""))
+                    .padding(5)
+            }
+            Spacer()
+        }
+        .frame(minHeight: 100)
+        .background(isSummaryEdit ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+        .cornerRadius(8)
+        .padding(.top, 20)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 50)
+    }
+    
+    func updateSummaryContent() {
+        self.summaryContent = self.currentSummaryItem?.content ?? ""
+    }
+    
+    func updateSummaryItem() {
+        let item = currentSummaryItem ?? SummaryItem()
+        item.summaryDate = currentDate
+        item.time = TimeTab.week.rawValue
+        item.content = summaryContent
+        modelData.updateSummaryItem(item)
+    }
+    
+    struct SummaryEventItem {
+        let event: EventItem
+        let interval: Int
+    }
+    
+    func fetchSummaryContent(completion: @escaping (String)->Void) {
+        
+        let taskItems = modelData.taskTimeItems
+        let items = self.eventList
+        let summaryItems = self.summaryItems
+        let readList = self.readItems
+        let selectDate = self.currentDate
+        DispatchQueue.global().async {
+            var content = ""
+            content = "\n## 事项\n"
+            items.forEach { item in
+                let finishText = !item.event.isFinish && item.event.planTime != nil ? "[ ]" : "[x]"
+                let timeText = item.interval > 0 ? "(\(item.interval.simpleTimeStr))" : ""
+                content += "- \(finishText) \(item.event.title) \(timeText) \n"
+            }
+            
+            if summaryItems.count > 0 {
+                content += "\n## 思考\n"
+                summaryItems.forEach { item in
+                    content += "```\n\(item.content)\n```\n"
+                }
+            }
+        
+            if readList.count > 0 {
+                content += "\n## 阅读\n"
+                readList.forEach { read in
+                    let title = read.title.count > 0 ? read.title : "无标题"
+                    content += "\n- [\(title)](readlist://\(read.id))\n"
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(content)
+            }
+        }
+        
+    }
+    
 }
 
 // MARK: event view
@@ -295,13 +452,29 @@ extension PlanView {
         HStack {
             Text("本周阅读").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "dc7633"))
+            let count = readItems.count
+            if count > 0 {
+                let numText = " (\(count))"
+                Text(numText).foregroundStyle(.gray)
+            }
+            
             Spacer()
+            
+            if count > 5 {
+                Button {
+                    self.isReadListExpand = !self.isReadListExpand
+                } label: {
+                    Image(systemName: isReadListExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.init(hex: "dc7633"))
+                }
+                .buttonStyle(.plain)
+            }
         }.padding(.top, 20)
         .padding(.horizontal, 20)
     }
     
     func readItemListView() -> some View {
         VStack(alignment: .leading) {
+            let readItems = isReadListExpand ? self.readItems : Array(self.readItems.prefix(5))
             ForEach(readItems, id: \.self) { item in
                 readItemView(item: item)
             }
