@@ -9,5 +9,5 @@ import SwiftUI
 
 public struct CommonDefine {
     public static let addNewTask = "添加为子任务"
-    
+    public static let searchWindow = "search-window"
 }

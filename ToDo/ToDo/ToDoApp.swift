@@ -19,21 +19,27 @@ struct ToDoApp: App {
     @StateObject var timerModel = TimerModel()
     
     @State var title: String = "无事项"
+    @State var selectedID: String = ""
     
     // 新增状态属性
     @State private var showStopAlert = false
     @State private var eventContent = ""
     @State private var pendingItem: (item: EventItem, playTime: Date)?
+    @State private var showSearchWindow: Bool = false
     
     // 新增窗口场景
     var body: some Scene {
         WindowGroup {
-            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel))
+            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel, selectItemID: $selectedID))
                 .environmentObject(modelData)
                 .onAppear {
                     print("main view appear")
+                    self.addKeyboardEvent()
                     modelData.loadFromServer()
                 }
+                .sheet(isPresented: $showSearchWindow, content: {
+                    SearchWindowView(showSearchWindowView: $showSearchWindow, selectionId: $selectedID).environmentObject(modelData)
+                })
                 .alert("编辑事件内容", isPresented: $showStopAlert) {
                     TextField("请输入内容...", text: $eventContent)
                     Button("取消", role: .cancel) {
@@ -124,6 +130,18 @@ struct ToDoApp: App {
     func downWindow() {
         let window = NSApp.windows.first
         window?.level = .normal
+    }
+    
+    func addKeyboardEvent() {
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+           if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers?.lowercased() == "k" {
+               self.showSearchWindow.toggle()
+               return nil
+           } else if event.charactersIgnoringModifiers?.lowercased() == "esc" {
+               self.showSearchWindow = false
+           }
+           return event
+       }
     }
 }
 

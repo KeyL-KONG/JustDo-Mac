@@ -18,7 +18,7 @@ struct ToDoListView: View, Equatable {
     @ObservedObject var timerModel: TimerModel
     @State private var selection: ToDoSection = .today
     @State private var selectItem: BaseModel? = nil
-    @State private var selectItemID: String = "" {
+    @Binding var selectItemID: String {
         didSet {
             print("select item id: \(selectItemID)")
         }
