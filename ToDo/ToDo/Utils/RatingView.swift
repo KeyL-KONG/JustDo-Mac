@@ -31,12 +31,11 @@ struct StarView: View {
 
 struct RatingView: View {
     let maxRating: Int
-    let rating: Binding<Int>
+    let rating: Binding<Double>
     let starColor: Color
     let starRounding: StarRounding
     let size: CGFloat
     let spacing: CGFloat
-    var onChange: ((Int)->())? = nil
     
     private let fullStarImage: Image = Image(systemName: "star.fill")
     private let halfStarImage: Image = Image(systemName: "star.lefthalf.fill")
@@ -44,14 +43,13 @@ struct RatingView: View {
     
     @State private var selectedStar: Int?
     
-    init(maxRating: Int, rating: Binding<Int>, starColor: Color = .blue, starRounding: StarRounding = .floorToFullStar, size: CGFloat = 20, spacing: CGFloat = 5, onChange: ((Int)->())? = nil) {
+    init(maxRating: Int, rating: Binding<Double>, starColor: Color = .blue, starRounding: StarRounding = .floorToFullStar, size: CGFloat = 20, spacing: CGFloat = 5) {
         self.maxRating = maxRating
         self.rating = rating
         self.starColor = starColor
         self.starRounding = starRounding
         self.size = size
         self.spacing = spacing
-        self.onChange = onChange
     }
     
     var body: some View {
@@ -60,8 +58,7 @@ struct RatingView: View {
                 starImageView(index: index)
                     .foregroundColor(starColor)
                     .onTapGesture {
-                        self.onChange?(index)
-                        rating.wrappedValue = index
+                        rating.wrappedValue = Double(index)
                         withAnimation(.easeInOut(duration: 0.5)) {
                             selectedStar = index
                         }
@@ -74,19 +71,22 @@ struct RatingView: View {
     }
     
     func starImageView(index: Int) -> some View {
-        let iFloat = index
+        let iFloat = Double(index)
         let image: Image
         switch starRounding {
         case .roundToHalfStar:
-            image = rating.wrappedValue >= iFloat ? fullStarImage : emptyStarImage
+            image = rating.wrappedValue >= iFloat-0.25 ? fullStarImage :
+                   (rating.wrappedValue >= iFloat-0.75 ? halfStarImage : emptyStarImage)
         case .ceilToHalfStar:
-            image = rating.wrappedValue > iFloat ? fullStarImage : emptyStarImage
+            image = rating.wrappedValue > iFloat-0.5 ? fullStarImage :
+                   (rating.wrappedValue > iFloat-1 ? halfStarImage : emptyStarImage)
         case .floorToHalfStar:
-            image = rating.wrappedValue >= iFloat ? fullStarImage :emptyStarImage
+            image = rating.wrappedValue >= iFloat ? fullStarImage :
+                   (rating.wrappedValue >= iFloat-0.5 ? halfStarImage : emptyStarImage)
         case .roundToFullStar:
-            image = rating.wrappedValue >= iFloat ? fullStarImage : emptyStarImage
+            image = rating.wrappedValue >= iFloat-0.5 ? fullStarImage : emptyStarImage
         case .ceilToFullStar:
-            image = rating.wrappedValue > iFloat ? fullStarImage : emptyStarImage
+            image = rating.wrappedValue > iFloat-1 ? fullStarImage : emptyStarImage
         case .floorToFullStar:
             image = rating.wrappedValue >= iFloat ? fullStarImage : emptyStarImage
         }
@@ -108,7 +108,7 @@ struct RatingView: View {
 struct RatingView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            RatingView(maxRating: 5, rating: .constant(3), size: 12, spacing: 2.5)
+            RatingView(maxRating: 5, rating: .constant(3.5))
                 .previewLayout(.sizeThatFits)
             
             RatingView(maxRating: 10, rating: .constant(8), starColor: .yellow, starRounding: .ceilToHalfStar, size: 30)

@@ -91,6 +91,7 @@
 		09FB5D572C69A33B00C079ED /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FB5D562C69A33B00C079ED /* TimerModel.swift */; };
 		09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FDBE4D2C6870A500AC8F38 /* TodoItemListView+Week.swift */; };
 		09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF8CD62C6A4B7800A74F55 /* TodoItemListView+Project.swift */; };
+		2BC54C642DDF54AB00894C6E /* MacEditReadItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */; };
 		5D46435523368AEAFF9A3BF0 /* Pods_ToDo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */; };
 /* End PBXBuildFile section */
 
@@ -182,6 +183,7 @@
 		09FDBE4D2C6870A500AC8F38 /* TodoItemListView+Week.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Week.swift"; sourceTree = "<group>"; };
 		09FF8CD62C6A4B7800A74F55 /* TodoItemListView+Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemListView+Project.swift"; sourceTree = "<group>"; };
 		27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacEditReadItemView.swift; sourceTree = "<group>"; };
 		D3B5A7BD036DC5D0B04CA9A2 /* Pods-ToDo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo.release.xcconfig"; path = "Target Support Files/Pods-ToDo/Pods-ToDo.release.xcconfig"; sourceTree = "<group>"; };
 		F09232FCA5EA1DB299605B8E /* Pods-ToDo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo.debug.xcconfig"; path = "Target Support Files/Pods-ToDo/Pods-ToDo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -425,6 +427,7 @@
 				092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */,
 				092546122DE17A4C00D324DB /* PersonalEditTagView.swift */,
 				092546102DE173FC00D324DB /* PersonalTagView.swift */,
+				2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */,
 				092545EF2DD8665A00D324DB /* PlanItemEditView.swift */,
 				092AF5252DD102450067DA7D /* PlanView.swift */,
 				097AE2C72DC901130096059B /* EditTielineTaskView.swift */,
@@ -659,6 +662,7 @@
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
 				09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */,
 				09D714652D86F8E5009DB18E /* ReviewNewView.swift in Sources */,
+				2BC54C642DDF54AB00894C6E /* MacEditReadItemView.swift in Sources */,
 				093E79062D2385B4006E5120 /* ModelData+Summary.swift in Sources */,
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,
 				097AE2C82DC9011A0096059B /* EditTielineTaskView.swift in Sources */,
@@ -803,7 +807,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ToDo/Preview Content\"";
-				DEVELOPMENT_TEAM = 5V837WG2CJ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -843,7 +847,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ToDo/Preview Content\"";
-				DEVELOPMENT_TEAM = 5V837WG2CJ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;

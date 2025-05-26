@@ -46,5 +46,33 @@ extension ModelData {
             completion()
         }
     }
+    
+    func deleteReadModel(_ model: ReadModel) {
+        guard let index = readList.firstIndex(where: { $0.id == model.id
+        }) else {
+            return
+        }
+        readList.remove(at: index)
+        DataManager.shared.delete(models: [model]) { error in
+            if let error {
+                print(error)
+            }
+        }
+    }
+    
+    func updateReadModel(_ model: ReadModel) {
+        if let index = readList.firstIndex(where: { $0.id == model.id
+        }) {
+            readList[index] = model
+        } else {
+            readList.append(model)
+        }
+        
+        DataManager.shared.save(with: ReadModel.modelClassName(), models: [model]) { error in
+            if let error {
+                print(error)
+            }
+        }
+    }
 
 }

@@ -120,14 +120,14 @@ struct ToDoListView: View, Equatable {
                     }
                 }
         } content: {
-            if selection == .review {
-                ReviewNewView(selectTaskChange: { task in
-                    self.selectedTask = task
-                })
-                    .environmentObject(modelData)
-                    .frame(minWidth: 400)
-            }
-            else if selection == .personalTag {
+//            if selection == .review {
+//                ReviewNewView(selectTaskChange: { task in
+//                    self.selectedTask = task
+//                })
+//                    .environmentObject(modelData)
+//                    .frame(minWidth: 400)
+//            }
+            if selection == .personalTag {
                 PersonalTagView(selectItemID: $selectItemID).environmentObject(modelData)
             }
             else if selection == .plan {
@@ -188,6 +188,12 @@ struct ToDoListView: View, Equatable {
                     PersonalEditTagView(tag: personalTag).environmentObject(modelData)
                         .id(personalTag.id)
                 }
+//                else if let readItem = modelData.readList.first(where: { $0.id == selectedTask.id
+//                }) {
+//                    MacEditReadItemView(readItem: readItem) {
+//                        
+//                    }.environmentObject(modelData)
+//                }
                 else if let principleItem = selectedTask as? PrincipleModel {
                     ToDoEditPrincipleView(selectItem: principleItem) { selectId in
                         selectItemID = selectId
@@ -233,6 +239,12 @@ struct ToDoListView: View, Equatable {
                     .environmentObject(modelData)
                     .id(selectItemID)
                 }
+//                else if let readItem = modelData.readList.first(where: { $0.id == selectedTask.id
+//                }) {
+//                    MacEditReadItemView(readItem: readItem) {
+//                        
+//                    }.environmentObject(modelData)
+//                }
                 else if let interval = Self.newTimelineInterval, selectItemID.contains(Self.newTimelineItemId) {
                     EditTimeIntervalView(startTime: interval.start, endTime: interval.end).environmentObject(modelData)
                         .id(Self.newTimelineItemId)
