@@ -8,12 +8,28 @@
 import Foundation
 import LeanCloud
 
-class TagModel: BaseModel, Identifiable {
+class TagModel: BaseModel, Identifiable, Codable {
     
     var content: String = ""
     
     required init() {
-        
+        super.init()
+    }
+    
+    required init(from decoder: Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: TagModelKeys.self)
+        content = try container.decode(String.self, forKey: .content)
+    }
+    
+    init(content: String) {
+        super.init()
+        self.content = content
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: TagModelKeys.self)
+        try container.encode(content, forKey: .content)
     }
     
     override class func modelClassName() -> String {
@@ -38,7 +54,7 @@ class TagModel: BaseModel, Identifiable {
 
 extension TagModel {
     
-    enum TagModelKeys: String {
+    enum TagModelKeys: String, CodingKey {
         case content = "content"
     }
     

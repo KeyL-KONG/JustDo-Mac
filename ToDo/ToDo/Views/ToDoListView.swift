@@ -133,6 +133,10 @@ struct ToDoListView: View, Equatable {
             else if selection == .plan {
                 PlanView(selectItemID: $selectItemID).environmentObject(modelData)
             }
+            else if selection == .note {
+                NoteListView(selectItemID: $selectItemID)
+                    .environmentObject(modelData)
+            }
             else {
                 TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                     selectItemID = item.id
@@ -183,6 +187,10 @@ struct ToDoListView: View, Equatable {
                 }) {
                     SummaryEditView(summaryItem: summaryItem).id(summaryItem.id).environmentObject(modelData)
                 }
+                else if let noteItem = modelData.noteList.first(where: { $0.id == selectedTask.id
+                }) {
+                    NoteDetailView(noteItem: noteItem).environmentObject(modelData).id(noteItem.id)
+                }
                 else if let personalTag = modelData.personalTagList.first(where: { $0.id == selectedTask.id
                 }) {
                     PersonalEditTagView(tag: personalTag).environmentObject(modelData)
@@ -213,6 +221,9 @@ struct ToDoListView: View, Equatable {
                 }) {
                     PlanItemEditView(selectedItem: planTimeItem).environmentObject(modelData)
                         .id(selectItemID)
+                }
+                else if let noteItem = modelData.noteList.first(where: { $0.id == selectItemID }) {
+                    NoteDetailView(noteItem: noteItem).environmentObject(modelData).id(noteItem.id)
                 }
                 else if let eventItem = currentSelectItem() as? EventItem {
                     ToDoEditView(selectItem: eventItem, selectionChange: { selectId in

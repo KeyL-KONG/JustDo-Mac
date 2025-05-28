@@ -8,14 +8,34 @@
 import Foundation
 import LeanCloud
 
-class NoteModel: BaseModel, Identifiable {
+class NoteModel: BaseModel, Identifiable, Codable {
     
     var title: String = ""
     var content: String = ""
     var tags: [String] = []
     
     required init() {
+        super.init()
+    }
     
+    required init(from decoder: Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: NoteModelKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        tags = try container.decode([String].self, forKey: .tags)
+        content = try container.decode(String.self, forKey: .content)
+    }
+    
+    init(content: String) {
+        super.init()
+        self.content = content
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: NoteModelKeys.self)
+        try container.encode(tags, forKey: .tags)
+        try container.encode(title, forKey: .title)
+        try container.encode(content, forKey: .content)
     }
     
     override class func modelClassName() -> String {
@@ -46,7 +66,7 @@ class NoteModel: BaseModel, Identifiable {
 
 extension NoteModel {
     
-    enum NoteModelKeys: String {
+    enum NoteModelKeys: String, CodingKey {
         
         case title = "title"
         case content = "content"

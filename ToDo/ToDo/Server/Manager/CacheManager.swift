@@ -19,6 +19,8 @@ enum CacheDataType {
     case planItem
     case readItem
     case personalTag
+    case note
+    case noteTag
     
     var cacheKey: String {
         switch self {
@@ -44,6 +46,10 @@ enum CacheDataType {
             return "com.cache.readitem"
         case .personalTag:
             return "com.cache.personalTag"
+        case .note:
+            return "com.cache.note"
+        case .noteTag:
+            return "com.cache.notetag"
         }
     }
     
@@ -71,6 +77,10 @@ enum CacheDataType {
             return ReadModel.self
         case .personalTag:
             return PersonalTag.self
+        case .note:
+            return NoteModel.self
+        case .noteTag:
+            return TagModel.self
         }
     }
 }
@@ -103,7 +113,6 @@ struct CacheManager {
             }
             
         }
-        print("load cache items: \(data.count)")
         return data
     }
     

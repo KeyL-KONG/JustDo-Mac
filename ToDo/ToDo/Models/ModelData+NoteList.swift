@@ -30,6 +30,35 @@ extension ModelData {
         }
     }
     
+    public func updateNote(_ note: NoteModel) {
+        if let index = noteList.firstIndex(where: { $0.id == note.id }) {
+            self.noteList[index] = note
+        } else {
+            self.noteList.append(note)
+        }
+        DataManager.shared.save(with: NoteModel.modelClassName(), models: [note]) { error in
+            if let error {
+                print(error)
+            } else {
+                self.asyncUpdateCache(type: .note)
+            }
+        }
+    }
+    
+    public func deleteNote(_ note: NoteModel) {
+        guard let index = noteList.firstIndex(where: { $0.id == note.id }) else {
+            return
+        }
+        noteList.remove(at: index)
+        DataManager.shared.delete(models: [note]) { error in
+            if let error = error {
+                print(error)
+            } else {
+                self.asyncUpdateCache(type: .note)
+            }
+        }
+    }
+    
     public func queryNoteList(completion: @escaping (() -> ())) {
         DataManager.shared.query(type: NoteModel.self) { [weak self] notes, error in
             if let notes = notes {

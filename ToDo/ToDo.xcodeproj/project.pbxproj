@@ -23,6 +23,12 @@
 		092546112DE1740400D324DB /* PersonalTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546102DE173FC00D324DB /* PersonalTagView.swift */; };
 		092546132DE17A5200D324DB /* PersonalEditTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546122DE17A4C00D324DB /* PersonalEditTagView.swift */; };
 		092546172DE1CE6200D324DB /* PersonalTagWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */; };
+		092546192DE7611F00D324DB /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546182DE7611B00D324DB /* NoteListView.swift */; };
+		0925461B2DE7663300D324DB /* TagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925461A2DE7663300D324DB /* TagListView.swift */; };
+		092546202DE7665700D324DB /* TagCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925461C2DE7665700D324DB /* TagCloudView.swift */; };
+		092546212DE7665700D324DB /* FlowLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925461D2DE7665700D324DB /* FlowLayoutView.swift */; };
+		092546222DE7665700D324DB /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925461E2DE7665700D324DB /* TagView.swift */; };
+		092546242DE7669E00D324DB /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546232DE7669700D324DB /* NoteDetailView.swift */; };
 		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
@@ -113,6 +119,12 @@
 		092546102DE173FC00D324DB /* PersonalTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalTagView.swift; sourceTree = "<group>"; };
 		092546122DE17A4C00D324DB /* PersonalEditTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalEditTagView.swift; sourceTree = "<group>"; };
 		092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalTagWindowView.swift; sourceTree = "<group>"; };
+		092546182DE7611B00D324DB /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
+		0925461A2DE7663300D324DB /* TagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagListView.swift; sourceTree = "<group>"; };
+		0925461C2DE7665700D324DB /* TagCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCloudView.swift; sourceTree = "<group>"; };
+		0925461D2DE7665700D324DB /* FlowLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayoutView.swift; sourceTree = "<group>"; };
+		0925461E2DE7665700D324DB /* TagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
+		092546232DE7669700D324DB /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
@@ -205,6 +217,7 @@
 		090C72212C8409D600FA21C5 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				0925461F2DE7665700D324DB /* TagCloud */,
 				09D714662D8FEB99009DB18E /* Calendar */,
 				090C72222C8409E100FA21C5 /* MarkdownWebView */,
 			);
@@ -254,6 +267,16 @@
 				0925460A2DE15B2700D324DB /* PersonalTag.swift */,
 			);
 			path = Personal;
+			sourceTree = "<group>";
+		};
+		0925461F2DE7665700D324DB /* TagCloud */ = {
+			isa = PBXGroup;
+			children = (
+				0925461C2DE7665700D324DB /* TagCloudView.swift */,
+				0925461D2DE7665700D324DB /* FlowLayoutView.swift */,
+				0925461E2DE7665700D324DB /* TagView.swift */,
+			);
+			path = TagCloud;
 			sourceTree = "<group>";
 		};
 		093E78F42D23852D006E5120 /* Note */ = {
@@ -426,6 +449,8 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				092546232DE7669700D324DB /* NoteDetailView.swift */,
+				092546182DE7611B00D324DB /* NoteListView.swift */,
 				2B10E8F82DE48FC8007B88AC /* SearchWindowView.swift */,
 				092546162DE1CE5100D324DB /* PersonalTagWindowView.swift */,
 				092546122DE17A4C00D324DB /* PersonalEditTagView.swift */,
@@ -454,6 +479,7 @@
 				097A040D2C6B9BA300521483 /* TodoItemListView+Month.swift */,
 				097A04112C71ED9600521483 /* TodoItemListView+Today.swift */,
 				093E790F2D295C60006E5120 /* AddItemView.swift */,
+				0925461A2DE7663300D324DB /* TagListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -644,6 +670,7 @@
 				09F80BED2C665A3100650366 /* ModelData.swift in Sources */,
 				092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */,
 				09F80C072C665A3F00650366 /* CloudProtocol.swift in Sources */,
+				092546192DE7611F00D324DB /* NoteListView.swift in Sources */,
 				09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */,
 				09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */,
 				09F80C1C2C66FF8D00650366 /* ToDoItemRowView.swift in Sources */,
@@ -652,6 +679,7 @@
 				092546112DE1740400D324DB /* PersonalTagView.swift in Sources */,
 				097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */,
 				09F80C132C66F55C00650366 /* ToDoSection.swift in Sources */,
+				092546242DE7669E00D324DB /* NoteDetailView.swift in Sources */,
 				09F80C182C66F7F700650366 /* ToDoListView.swift in Sources */,
 				09F80BEC2C665A3100650366 /* EventItem.swift in Sources */,
 				09F80C032C665A3F00650366 /* EventModel.swift in Sources */,
@@ -667,10 +695,14 @@
 				09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */,
 				09D714652D86F8E5009DB18E /* ReviewNewView.swift in Sources */,
 				2BC54C642DDF54AB00894C6E /* MacEditReadItemView.swift in Sources */,
+				092546202DE7665700D324DB /* TagCloudView.swift in Sources */,
+				092546212DE7665700D324DB /* FlowLayoutView.swift in Sources */,
+				092546222DE7665700D324DB /* TagView.swift in Sources */,
 				093E79062D2385B4006E5120 /* ModelData+Summary.swift in Sources */,
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,
 				097AE2C82DC9011A0096059B /* EditTielineTaskView.swift in Sources */,
 				09F80C1A2C66F88C00650366 /* TodoItemListView.swift in Sources */,
+				0925461B2DE7663300D324DB /* TagListView.swift in Sources */,
 				09FB5D572C69A33B00C079ED /* TimerModel.swift in Sources */,
 				093E790E2D2572B8006E5120 /* EditRewardView.swift in Sources */,
 				09F80C082C665A3F00650366 /* GoalModel.swift in Sources */,
