@@ -9,12 +9,30 @@ import SwiftUI
 
 struct SearchWindowView: View {
     
-    enum SearchType {
+    enum SearchType: String {
         case event
         case task
         case read
         case think
         case principle
+        case note
+        
+        var titleColor: Color {
+            switch self {
+            case .event:
+                return Color.init(hex: "85c1e9")
+            case .task:
+                return Color.init(hex: "2ecc71")
+            case .read:
+                return Color.init(hex: "#884ea0")
+            case .think:
+                return Color.init(hex: "bb8fce")
+            case .principle:
+                return Color.init(hex: "dc7633")
+            case .note:
+                return Color.init(hex: "117a65")
+            }
+        }
     }
     
     struct SearchItem {
@@ -117,8 +135,21 @@ struct SearchWindowView: View {
                     .font(.system(size: 14))
             }
             Spacer()
-            Text(item.time.simpleDateStr)
+            
+            tagView(title: item.type.rawValue, color: item.type.titleColor)
+            
+            Text(item.time.simpleDateStr).frame(width: 80)
         }.padding(.vertical, 5)
+            .padding(.horizontal, 10)
+    }
+    
+    func tagView(title: String, color: Color) -> some View {
+        Text(title)
+            .foregroundColor(.white)
+            .font(.system(size: 10))
+            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .background(color)
+            .clipShape(Capsule())
     }
 }
 
@@ -130,22 +161,27 @@ extension SearchWindowView {
         let readItems = modelData.readList
         let thinkItems = modelData.summaryItemList
         let principleItems = modelData.principleItems
+        let noteItems = modelData.noteList
         
         var searchItems = [SearchItem]()
+        
+        searchItems += noteItems.compactMap({ note in
+            return SearchItem(type: .note, id: note.id, content: [note.title, note.content], time: note.updateAt ?? .now)
+        })
         searchItems += eventList.compactMap { event in
-            return SearchItem(type: .event, id: event.id, content: [event.title, event.mark, event.reviewText], time: event.createTime ?? .now)
+            return SearchItem(type: .event, id: event.id, content: [event.title, event.mark, event.reviewText], time: event.updateAt ?? .now)
         }
         searchItems += taskItems.compactMap({ task in
-            return SearchItem(type: .task, id: task.id, content: [task.content], time: task.createTime ?? .now)
+            return SearchItem(type: .task, id: task.id, content: [task.content], time: task.updateAt ?? .now)
         })
         searchItems += readItems.compactMap({ read in
-            return SearchItem(type: .read, id: read.id, content: [read.title, read.note], time: read.createTime ?? .now)
+            return SearchItem(type: .read, id: read.id, content: [read.title, read.note], time: read.updateAt ?? .now)
         })
         searchItems += thinkItems.compactMap({ item in
-            return SearchItem(type: .think, id: item.id, content: [item.content], time: item.createTime ?? .now)
+            return SearchItem(type: .think, id: item.id, content: [item.content], time: item.updateAt ?? .now)
         })
         searchItems += principleItems.compactMap({ principle in
-            return SearchItem(type: .principle, id: principle.id, content: [principle.content], time: principle.createTime ?? .now)
+            return SearchItem(type: .principle, id: principle.id, content: [principle.content], time: principle.updateAt ?? .now)
         })
         
         // 添加去重逻辑

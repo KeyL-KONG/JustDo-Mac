@@ -30,14 +30,14 @@ struct SummaryEditView: View {
                             .padding(10)
                             .scrollContentBackground(.hidden)
                             .background(Color.init(hex: "#e8f6f3"))
-                            .frame(minHeight: 120)
+                            .frame(minHeight: 120, maxHeight: 500)
                             .cornerRadius(8)
                     } else {
-                        Text(summaryContent)
+                        MarkdownWebView(summaryContent, itemId: summaryItem.id)
                             .background(Color.init(hex: "#d6eaf8"))
                             .cornerRadius(8)
                             .padding(10)
-                            .frame(minHeight: 120)
+                            .frame(minHeight: 120, maxHeight: 500)
                     
                     }
                 }
@@ -52,6 +52,7 @@ struct SummaryEditView: View {
             }
         }.onAppear {
             summaryContent = summaryItem.content
+            isEditing = summaryContent.isEmpty
         }
         .toolbar(content: {
             Spacer()
@@ -60,6 +61,7 @@ struct SummaryEditView: View {
                 if isEditing {
                     saveSummaryItem()
                 }
+                self.isEditing = !self.isEditing
             }.foregroundColor(.blue)
         })
     }

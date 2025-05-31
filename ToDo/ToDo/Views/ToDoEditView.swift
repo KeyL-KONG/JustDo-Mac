@@ -72,6 +72,8 @@ struct ToDoEditView: View {
     
     @State var isExpandProperty: Bool = false
     
+    @State var isExpandPersonal: Bool = false
+    
     @State var isExpandSubItems: Bool = false
     
     @State var isCollect: Bool = false
@@ -346,7 +348,7 @@ struct ToDoEditView: View {
                 }
                 
                 Section {
-                    if personalItems.count > 0 {
+                    if personalItems.count > 0, isExpandPersonal {
                         LazyVStack(alignment: .leading) {
                             ForEach(personalItems, id: \.self.tag.id) { item in
                                 let color = item.type == .good ? item.tag.goodColor : item.tag.badColor
@@ -362,7 +364,8 @@ struct ToDoEditView: View {
                     }
                 } header: {
                     HStack {
-                        Text("设置关联")
+                        let title = personalItems.count > 0 ? "设置关联（\(personalItems.count)）" : "设置关联"
+                        Text(title)
                         Spacer()
                         
                         Button {
@@ -370,6 +373,15 @@ struct ToDoEditView: View {
                             showPersonalAlert.toggle()
                         } label: {
                             Text("添加关联").font(.system(size: 14))
+                        }
+                        
+                        if personalItems.count > 0 {
+                            Button {
+                                isExpandPersonal = !isExpandPersonal
+                            } label: {
+                                let image = isExpandPersonal ? "chevron.down" : "chevron.right"
+                                Image(systemName: image)
+                            }
                         }
                     }
                 }

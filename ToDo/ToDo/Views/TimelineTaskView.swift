@@ -106,8 +106,8 @@ struct TimelineTaskView: View {
     func TimelineBgView() -> some View {
         GeometryReader { geometry in
             HStack(spacing: 0) {
-                TimelinePlanView().frame(width: geometry.size.width / 2)
-                TimelineExecuteView().frame(width: geometry.size.width / 2)
+//                TimelinePlanView().frame(width: geometry.size.width / 2)
+                TimelineExecuteView().frame(width: geometry.size.width)
             }
         }
     }

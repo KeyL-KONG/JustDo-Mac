@@ -19,7 +19,11 @@ struct ToDoApp: App {
     @StateObject var timerModel = TimerModel()
     
     @State var title: String = "无事项"
-    @State var selectedID: String = ""
+    @State var selectedID: String = "" {
+        didSet {
+            print("select id: \(selectedID)")
+        }
+    }
     
     // 新增状态属性
     @State private var showStopAlert = false
