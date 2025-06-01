@@ -49,7 +49,6 @@ class CloudManager {
         query.count { result in
             switch result {
             case .success(let count):
-                print("cloud query type: \(type.className()), count: \(count)")
                 self.pageQuery(type: type, user:nil, count: count, completion: completion)
                 break
             case .failure(let error):
@@ -78,7 +77,6 @@ class CloudManager {
                     switch result {
                     case .success(objects: let objs):
                         results.append(contentsOf: objs)
-                        print("cloud page query type: \(type.className()), count: \(results.count)")
                         break
                     case .failure(error: let error):
                         print("cloud page query type: \(type.className()), error: \(error)")

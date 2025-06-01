@@ -26,64 +26,48 @@ extension ModelData {
         group.enter()
         cache.asyncLoadCache(type: .tag) { tags in
             cacheTags = tags as? [ItemTag] ?? []
-            print("cache tags")
-            self.tagList = cacheTags
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .timeItem) { items in
             cacheTimeItems = items as? [TaskTimeItem] ?? []
-            print("cache times")
-            self.taskTimeItems = cacheTimeItems
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .event) { items in
             cacheEventItems = items as? [EventItem] ?? []
-            self.itemList = cacheEventItems
-            print("cache events")
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .principle) { items in
             cachePrincipleItems = items as? [PrincipleModel] ?? []
-            self.principleItems = cachePrincipleItems
-            print("cache principles")
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .summaryTag) { tags in
             cacheSummaryTags = tags as? [SummaryTag] ?? []
-            self.summaryTagList = cacheSummaryTags
-            print("cache summarys")
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .summaryItem) { items in
             cacheSummaryItems = items as? [SummaryItem] ?? []
-            self.summaryItemList = cacheSummaryItems
-            print("cache summary items")
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .planItem) { items in
             cachePlanItems = items as? [PlanTimeItem] ?? []
-            self.planTimeItems = cachePlanItems
-            print("cache plans")
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .readItem) { items in
             cacheReadItems = items as? [ReadModel] ?? []
-            self.readList = cacheReadItems
-            print("cache reads")
             group.leave()
         }
         
@@ -91,12 +75,9 @@ extension ModelData {
         group.enter()
         cache.asyncLoadCache(type: .personalTag) { tags in
             cachePersonalTags = tags as? [PersonalTag] ?? []
-            self.personalTagList = cachePersonalTags
-            print("cache personal")
             group.leave()
         }
         
-        group.enter()
         var cacheNoteItems: [NoteModel] = []
         var cacheNoteTags: [TagModel] = []
     
@@ -104,16 +85,12 @@ extension ModelData {
         group.enter()
         cache.asyncLoadCache(type: .note) { items in
             cacheNoteItems = items as? [NoteModel] ?? []
-            self.noteList = cacheNoteItems
-            print("cache notes")
             group.leave()
         }
         
         group.enter()
         cache.asyncLoadCache(type: .noteTag) { tags in
             cacheNoteTags = tags as? [TagModel] ?? []
-            self.noteTagList = cacheNoteTags
-            print("cache note tags")
             group.leave()
         }
     
@@ -130,7 +107,7 @@ extension ModelData {
             self.noteList = cacheNoteItems
             self.noteTagList = cacheNoteTags
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
-            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), duration: \(Int(duration * 1000))ms")
+            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count) duration: \(Int(duration * 1000))ms")
         }
         
     }

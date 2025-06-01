@@ -123,7 +123,6 @@ struct CacheManager {
                 jsonStringArray.append(jsonString)
             }
         }
-        print("store cache items: \(items.count)")
         UserDefaults.standard.setValue(jsonStringArray, forKey: type.cacheKey)
     }
     

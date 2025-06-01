@@ -82,6 +82,16 @@ struct ToDoApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         
+        WindowGroup("Markdown Preview", id: CommonDefine.noteWindow, for: NoteModel.self) { $item in
+            if let item {
+                NoteDetailView(isWindow: true, noteItem: item)
+                    .environmentObject(modelData)
+                    .frame(minWidth: 300, minHeight: 200)
+                    .padding()
+            }
+        }
+        .windowStyle(.hiddenTitleBar)
+        
         
         MenuBarExtra {
             AddItemView()

@@ -30,11 +30,6 @@ struct ToDoListView: View, Equatable {
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
-//    @State var selectedTask: BaseModel? {
-//        didSet {
-//            print("select task")
-//        }
-//    }
     
     static var newTimelineInterval: LQDateInterval? = nil
     static let newTimelineItemId = "newTimelineItemId"
@@ -114,23 +109,7 @@ struct ToDoListView: View, Equatable {
     var body: some View {
         NavigationSplitView {
             SidebarView(selection: $selection, todayItems: items(with: .today)).environmentObject(modelData)
-                .onChange(of: selection) { oldValue, newValue in
-//                    if oldValue != newValue {
-//                        if selection == .principle, let selectId = modelData.principleItems.first?.id {
-//                            self.selectItemID = selectId
-//                        } else if let selectId = itemList.first?.id {
-//                            self.selectItemID = selectId
-//                        }
-//                    }
-                }
         } content: {
-//            if selection == .review {
-//                ReviewNewView(selectTaskChange: { task in
-//                    self.selectedTask = task
-//                })
-//                    .environmentObject(modelData)
-//                    .frame(minWidth: 400)
-//            }
             if selection == .personalTag {
                 PersonalTagView(selectItemID: $selectItemID).environmentObject(modelData)
             }
@@ -145,7 +124,6 @@ struct ToDoListView: View, Equatable {
                 TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                     selectItemID = item.id
                 }, timerModel: timerModel).environmentObject(modelData)
-                    //.id(UUID().uuidString)
                     .onChange(of: selectItemID) { oldValue, newValue in
                         func update() {
                             if let item = modelData.itemList.first(where: { $0.id == newValue

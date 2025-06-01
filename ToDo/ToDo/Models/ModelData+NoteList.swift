@@ -45,6 +45,35 @@ extension ModelData {
         }
     }
     
+    public func updateTagNote(_ tag: TagModel) {
+        if let index = noteTagList.firstIndex(where: { $0.id == tag.id }) {
+            self.noteTagList[index] = tag
+        } else {
+            self.noteTagList.append(tag)
+        }
+        DataManager.shared.save(with: TagModel.modelClassName(), models: [tag]) { error in
+            if let error {
+                print(error)
+            } else {
+                self.asyncUpdateCache(type: .noteTag)
+            }
+        }
+    }
+    
+    public func deleteTag(_ tag: TagModel) {
+        guard let index = noteTagList.firstIndex(where: { $0.id == tag.id }) else {
+            return
+        }
+        noteTagList.remove(at: index)
+        DataManager.shared.delete(models: [tag]) { error in
+            if let error = error {
+                print(error)
+            } else {
+                self.asyncUpdateCache(type: .noteTag)
+            }
+        }
+    }
+    
     public func deleteNote(_ note: NoteModel) {
         guard let index = noteList.firstIndex(where: { $0.id == note.id }) else {
             return

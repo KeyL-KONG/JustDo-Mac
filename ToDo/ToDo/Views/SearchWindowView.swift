@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchWindowView: View {
     
     enum SearchType: String {
+        case all
         case event
         case task
         case read
@@ -17,8 +18,12 @@ struct SearchWindowView: View {
         case principle
         case note
         
+        static let types: [SearchType] = [.all, .note, .event, .read, .think, .principle, .task]
+        
         var section: ToDoSection {
             switch self {
+            case .all:
+                return .all
             case .event:
                 return .all
             case .task:
@@ -36,6 +41,8 @@ struct SearchWindowView: View {
         
         var titleColor: Color {
             switch self {
+            case .all:
+                return .blue
             case .event:
                 return Color.init(hex: "85c1e9")
             case .task:
@@ -84,7 +91,14 @@ struct SearchWindowView: View {
     @Binding var selectionId: String
     @State var searchText: String = ""
     @State var searchItems: [SearchItem] = []
+    @State var searchType: String = ""
+    var searchTypeList: [SearchType] {
+        SearchType.types
+    }
     
+    var currentSearchType: SearchType {
+        return SearchType(rawValue: searchType) ?? .all
+    }
     
     var searchTextItems: [SearchItem] {
         if searchText.isEmpty { return [] }
@@ -99,6 +113,15 @@ struct SearchWindowView: View {
                 TextField("搜索", text: $searchText)
                     .font(.title2)
                     .textFieldStyle(.plain)
+                
+                Spacer()
+                if searchText.count > 0 {
+                    Picker("", selection: $searchType) {
+                        ForEach(searchTypeList, id: \.self) { type in
+                            Text(type.rawValue).tag(type.rawValue)
+                        }
+                    }.frame(width: 90)
+                }
             }
             .padding(.top, 20)
             .padding(.horizontal, 10)
@@ -121,14 +144,15 @@ struct SearchWindowView: View {
             
             Spacer()
         }
-//        .onChange(of: selectionId, { oldValue, newValue in
-//            if selectionId.count > 0 {
-//                showSearchWindowView = false
-//            }
-//        })
+        .onChange(of: searchType, { oldValue, newValue in
+            if oldValue.count > 0, newValue.count > 0 {
+                buildSearchItems()
+            }
+        })
         .frame(minWidth: 800, minHeight: 400)
         .cornerRadius(15)
         .onAppear {
+            self.searchType = SearchType.all.rawValue
             buildSearchItems()
         }
     }
@@ -197,24 +221,41 @@ extension SearchWindowView {
         
         var searchItems = [SearchItem]()
         
-        searchItems += noteItems.compactMap({ note in
-            return SearchItem(type: .note, id: note.id, content: [note.title, note.content], time: note.updateAt ?? .now)
-        })
-        searchItems += eventList.compactMap { event in
-            return SearchItem(type: .event, id: event.id, content: [event.title, event.mark, event.reviewText], time: event.updateAt ?? .now)
+        if currentSearchType == .all || currentSearchType == .event {
+            searchItems += eventList.compactMap { event in
+                return SearchItem(type: .event, id: event.id, content: [event.title, event.mark, event.reviewText], time: event.updateAt ?? .now)
+            }
         }
-        searchItems += taskItems.compactMap({ task in
-            return SearchItem(type: .task, id: task.id, content: [task.content], time: task.updateAt ?? .now)
-        })
-        searchItems += readItems.compactMap({ read in
-            return SearchItem(type: .read, id: read.id, content: [read.title, read.note], time: read.updateAt ?? .now)
-        })
-        searchItems += thinkItems.compactMap({ item in
-            return SearchItem(type: .think, id: item.id, content: [item.content], time: item.updateAt ?? .now)
-        })
-        searchItems += principleItems.compactMap({ principle in
-            return SearchItem(type: .principle, id: principle.id, content: [principle.content], time: principle.updateAt ?? .now)
-        })
+        
+        if currentSearchType == .all || currentSearchType == .note {
+            searchItems += noteItems.compactMap({ note in
+                return SearchItem(type: .note, id: note.id, content: [note.title, note.content], time: note.updateAt ?? .now)
+            })
+        }
+        
+        if currentSearchType == .all || currentSearchType == .task {
+            searchItems += taskItems.compactMap({ task in
+                return SearchItem(type: .task, id: task.id, content: [task.content], time: task.updateAt ?? .now)
+            })
+        }
+        
+        if currentSearchType == .all || currentSearchType == .read {
+            searchItems += readItems.compactMap({ read in
+                return SearchItem(type: .read, id: read.id, content: [read.title, read.note], time: read.updateAt ?? .now)
+            })
+        }
+        
+        if currentSearchType == .all || currentSearchType == .think {
+            searchItems += thinkItems.compactMap({ item in
+                return SearchItem(type: .think, id: item.id, content: [item.content], time: item.updateAt ?? .now)
+            })
+        }
+        
+        if currentSearchType == .all || currentSearchType == .principle {
+            searchItems += principleItems.compactMap({ principle in
+                return SearchItem(type: .principle, id: principle.id, content: [principle.content], time: principle.updateAt ?? .now)
+            })
+        }
         
         // 添加去重逻辑
         var uniqueItems = [String: SearchItem]()

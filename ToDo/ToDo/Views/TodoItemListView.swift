@@ -217,12 +217,22 @@ struct TodoItemListView: View {
                     }
             }
             else {
-                List(items, id: \.self.id, selection: $selectItemID) { item in
-                    if selection == .recent {
-                        itemRowView(item: item, showDeadline: true)
+                ScrollViewReader { proxy in
+                    List(items, id: \.self.id, selection: $selectItemID) { item in
+                        if selection == .recent {
+                            itemRowView(item: item, showDeadline: true)
+                                .id(item.id) // 添加 ID 标识
+                        }
+                        else {
+                            itemRowView(item: item, showDeadline: false)
+                                .id(item.id) // 添加 ID 标识
+                        }
                     }
-                    else {
-                        itemRowView(item: item, showDeadline: false)
+                    .onAppear {
+                        // 滚动到选中项
+                        if !selectItemID.isEmpty {
+                            proxy.scrollTo(selectItemID, anchor: .center)
+                        }
                     }
                 }
             }

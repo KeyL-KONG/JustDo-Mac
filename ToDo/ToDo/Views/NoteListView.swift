@@ -15,22 +15,32 @@ struct NoteListView: View {
     @State var noteList: [NoteModel] = []
     
     var body: some View {
-        VStack {
-            List(selection: $selectItemID) {
-                ForEach(noteList, id: \.self.id) { note in
-                    noteItemView(note).id(note.id)
-                        .contextMenu {
-                            Button {
-                                modelData.deleteNote(note)
-                            } label: {
-                                Text("删除").foregroundStyle(.red)
+        //ScrollViewReader { proxy in
+            VStack {
+                List(selection: $selectItemID) {
+                    ForEach(noteList, id: \.self.id) { note in
+                        noteItemView(note).id(note.id)
+                            .contextMenu {
+                                Button {
+                                    modelData.deleteNote(note)
+                                } label: {
+                                    Text("删除").foregroundStyle(.red)
+                                }
                             }
-                        }
+                    }
                 }
-            }
+            //}
+//            .onAppear(perform: {
+//                updateNotes()
+//                if selectItemID.count > 0 {
+//                    DispatchQueue.main.async {
+//                        proxy.scrollTo(selectItemID, anchor: .center)
+//                    }
+//                }
+            //})
+            .padding()
         }
-        .padding()
-        .onReceive(modelData.$noteList, perform: { _ in
+        .onChange(of: modelData.updateNoteIndex, { oldValue, newValue in
             updateNotes()
         })
         .onAppear {
@@ -43,6 +53,15 @@ struct NoteListView: View {
         HStack {
             Text(item.title)
             Spacer()
+            if item.tags.count > 0 {
+                ForEach(item.tags, id: \.self) { tagId in
+                    if let noteTag = modelData.noteTagList.first(where: {
+                        $0.id == tagId
+                    }) {
+                        tagView(title: noteTag.content, color: .blue)
+                    }
+                }
+            }
             if let updateTime = item.updateAt {
                 Text(updateTime.simpleDateStr).foregroundStyle(.gray)
             }
@@ -56,6 +75,15 @@ struct NoteListView: View {
         if !self.noteList.contains(where: { $0.id == selectItemID }) {
             selectItemID = self.noteList.first?.id ?? ""
         }
+    }
+    
+    func tagView(title: String, color: Color) -> some View {
+        Text(title)
+            .foregroundColor(.white)
+            .font(.system(size: 10))
+            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .background(color)
+            .clipShape(Capsule())
     }
     
 }
