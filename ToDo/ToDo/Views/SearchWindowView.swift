@@ -17,6 +17,23 @@ struct SearchWindowView: View {
         case principle
         case note
         
+        var section: ToDoSection {
+            switch self {
+            case .event:
+                return .all
+            case .task:
+                return .all
+            case .read:
+                return .all
+            case .think:
+                return .all
+            case .principle:
+                return .principle
+            case .note:
+                return .note
+            }
+        }
+        
         var titleColor: Color {
             switch self {
             case .event:
@@ -63,6 +80,7 @@ struct SearchWindowView: View {
     @EnvironmentObject var modelData: ModelData
     
     @Binding var showSearchWindowView: Bool
+    @Binding var section: ToDoSection
     @Binding var selectionId: String
     @State var searchText: String = ""
     @State var searchItems: [SearchItem] = []
@@ -85,9 +103,16 @@ struct SearchWindowView: View {
             .padding(.top, 20)
             .padding(.horizontal, 10)
             
-            List(selection: $selectionId) {
+            List {
                 ForEach(searchTextItems, id: \.self.id) { item in
                     searchItemView(item: item).tag(item.id)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            print("search select id: \(item.id)")
+                            selectionId = item.id
+                            updateSection(selectionId: item.id)
+                            showSearchWindowView = false
+                        }
                 }
             }
             .padding(.top, 20)
@@ -96,16 +121,23 @@ struct SearchWindowView: View {
             
             Spacer()
         }
-        .onChange(of: selectionId, { oldValue, newValue in
-            if selectionId.count > 0 {
-                showSearchWindowView = false
-            }
-        })
+//        .onChange(of: selectionId, { oldValue, newValue in
+//            if selectionId.count > 0 {
+//                showSearchWindowView = false
+//            }
+//        })
         .frame(minWidth: 800, minHeight: 400)
         .cornerRadius(15)
         .onAppear {
             buildSearchItems()
         }
+    }
+    
+    func updateSection(selectionId: String) {
+        guard let item = searchItems.first(where: { $0.id == selectionId }) else {
+            return
+        }
+        self.section = item.type.section
     }
     
     func searchItemView(item: SearchItem) -> some View {

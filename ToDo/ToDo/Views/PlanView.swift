@@ -88,6 +88,9 @@ struct PlanView: View {
         .onAppear {
             currentDate = modelData.planCacheTime ?? .now
             updateSummaryContent()
+            if self.mostImportranceItems.count > 0 {
+                self.selectItemID = self.mostImportranceItems.first?.id ?? self.selectItemID
+            }
         }
         .onDisappear {
             modelData.planCacheTime = currentDate

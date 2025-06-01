@@ -212,6 +212,9 @@ struct TodoItemListView: View {
                 todayView()
             } else if selection == .principle {
                 principleView()
+                    .onAppear {
+                        self.selectItemID = self.principleItems.first?.id ?? self.selectItemID
+                    }
             }
             else {
                 List(items, id: \.self.id, selection: $selectItemID) { item in
@@ -374,13 +377,6 @@ struct TodoItemListView: View {
                 updateWeekData()
             }
         })
-//        .onReceive(modelData.$taskTimeItems, perform: { _ in
-//            if selection == .today {
-//                updateTodayItems()
-//            } else if selection == .calendar {
-//                updateWeekData()
-//            }
-//        })
         .onChange(of: eventDisplayMode, { oldValue, newValue in
             updateWeekData()
         })

@@ -440,6 +440,10 @@ extension TodoItemListView {
     
     func updateTodayItems() {
         self.todayItems = fetchTodayItems()
+        
+        if self.selectItemID.isEmpty {
+            self.selectItemID = self.todayItems.first?.id ?? ""
+        }
     }
     
     func fetchTodayItems() -> [EventItem] {

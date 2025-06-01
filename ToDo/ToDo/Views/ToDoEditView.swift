@@ -527,22 +527,25 @@ struct ToDoEditView: View {
                 }
                 
                 Section {
-                    VStack {
-                        if isEditingMark {
-                            TextEditor(text: $mark)
-                                .font(.system(size: 14))
-                                .padding(10)
-                                .scrollContentBackground(.hidden)
-                                .background(Color.init(hex: "#e8f6f3"))
-                                .frame(minHeight: 120)
-                                .cornerRadius(8)
-                        } else {
-                            MarkdownWebView(mark, itemId: (selectItem?.id ?? ""))
+                    let disableMark = !isEditingMark && mark.isEmpty
+                    if !disableMark {
+                        VStack {
+                            if isEditingMark {
+                                TextEditor(text: $mark)
+                                    .font(.system(size: 14))
+                                    .padding(10)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.init(hex: "#e8f6f3"))
+                                    .frame(minHeight: 120)
+                                    .cornerRadius(8)
+                            } else if mark.count > 0 {
+                                MarkdownWebView(mark, itemId: (selectItem?.id ?? ""))
+                            }
                         }
+                        .padding()
+                        .background(isEditingMark ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+                        .cornerRadius(10)
                     }
-                    .padding()
-                    .background(isEditingMark ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
-                    .cornerRadius(10)
                 } header: {
                     HStack {
                         Text("备注")

@@ -30,11 +30,16 @@ struct ToDoApp: App {
     @State private var eventContent = ""
     @State private var pendingItem: (item: EventItem, playTime: Date)?
     @State private var showSearchWindow: Bool = false
+    @State var selection: ToDoSection = .today {
+        didSet {
+            print("select section: \(selection)")
+        }
+    }
     
     // 新增窗口场景
     var body: some Scene {
         WindowGroup {
-            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel, selectItemID: $selectedID))
+            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel, selection: $selection, selectItemID: $selectedID))
                 .environmentObject(modelData)
                 .onAppear {
                     print("main view appear")
@@ -42,7 +47,7 @@ struct ToDoApp: App {
                     modelData.loadFromServer()
                 }
                 .sheet(isPresented: $showSearchWindow, content: {
-                    SearchWindowView(showSearchWindowView: $showSearchWindow, selectionId: $selectedID).environmentObject(modelData)
+                    SearchWindowView(showSearchWindowView: $showSearchWindow, section: $selection, selectionId: $selectedID).environmentObject(modelData)
                 })
                 .alert("编辑事件内容", isPresented: $showStopAlert) {
                     TextField("请输入内容...", text: $eventContent)

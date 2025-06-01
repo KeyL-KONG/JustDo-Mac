@@ -53,6 +53,9 @@ struct NoteListView: View {
         self.noteList = modelData.noteList.sorted(by: {
             ($0.updateAt?.timeIntervalSince1970 ?? 0) > ($1.updateAt?.timeIntervalSince1970 ?? 0)
         })
+        if !self.noteList.contains(where: { $0.id == selectItemID }) {
+            selectItemID = self.noteList.first?.id ?? ""
+        }
     }
     
 }
