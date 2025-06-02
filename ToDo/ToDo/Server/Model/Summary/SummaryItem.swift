@@ -21,6 +21,15 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         return TimeTab(rawValue: time) ?? .day
     }
     
+    var simpleTitle: String {
+        let title = content.replacingOccurrences(of: "\n", with: " ")
+        if title.count > 30 {
+            return title.prefix(30) + " ..."
+        } else {
+            return title
+        }
+    }
+    
     // 修改初始化方法
     init(generateId: String, summaryId: String, content: String, improve: String, 
          time: String = "", summaryDate: Date? = nil) {

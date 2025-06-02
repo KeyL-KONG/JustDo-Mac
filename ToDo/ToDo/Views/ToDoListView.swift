@@ -120,6 +120,10 @@ struct ToDoListView: View, Equatable {
                 NoteListView(selectItemID: $selectItemID)
                     .environmentObject(modelData)
             }
+            else if selection == .think {
+                ThinkListView(selectItemID: $selectItemID)
+                    .environmentObject(modelData)
+            }
             else {
                 TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
                     selectItemID = item.id

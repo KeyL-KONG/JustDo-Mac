@@ -66,6 +66,7 @@ struct NoteListView: View {
                 Text(updateTime.simpleDateStr).foregroundStyle(.gray)
             }
         }
+        .padding(.vertical, 5)
     }
     
     func updateNotes() {
@@ -80,8 +81,8 @@ struct NoteListView: View {
     func tagView(title: String, color: Color) -> some View {
         Text(title)
             .foregroundColor(.white)
-            .font(.system(size: 10))
-            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .font(.system(size: 11))
+            .padding(EdgeInsets.init(top: 2, leading: 4, bottom: 2, trailing: 4))
             .background(color)
             .clipShape(Capsule())
     }

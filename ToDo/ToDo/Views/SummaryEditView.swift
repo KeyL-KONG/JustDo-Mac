@@ -12,7 +12,7 @@ struct SummaryEditView: View {
     @EnvironmentObject var modelData: ModelData
     var summaryItem: SummaryItem
     @State var summaryContent: String = ""
-    @State var selectedTag: String = ""
+    @State var summaryTags: [String] = []
     
     @State var isEditing: Bool = true
     
@@ -23,36 +23,60 @@ struct SummaryEditView: View {
     var body: some View {
         VStack {
             List {
-                Section {
-                    if isEditing {
-                        TextEditor(text: $summaryContent)
-                            .font(.system(size: 14))
-                            .padding(10)
-                            .scrollContentBackground(.hidden)
-                            .background(Color.init(hex: "#e8f6f3"))
-                            .frame(minHeight: 120, maxHeight: 500)
-                            .cornerRadius(8)
-                    } else {
-                        MarkdownWebView(summaryContent, itemId: summaryItem.id)
-                            .background(Color.init(hex: "#d6eaf8"))
-                            .cornerRadius(8)
-                            .padding(10)
-                            .frame(minHeight: 120, maxHeight: 500)
-                    
+                Section(header: Text("标签")) {
+                    HStack {
+                        if isEditing {
+                            RemovableTagListView(showCloseButton: true, tags:summaryTags, addTagEvent: { tag in
+                                self.summaryTags.append(tag)
+                                self.saveTag(tag)
+                            }, removeTagEvent: { tag in
+                                self.summaryTags.removeAll { $0 == tag }
+                            }, selectTagEvent: { tags in
+                                self.summaryTags += tags
+                            }).environmentObject(modelData)
+                        } else if summaryTags.count > 0 {
+                            RemovableTagListView(showCloseButton: false, tags: summaryTags)
+                                .environmentObject(modelData)
+                        }
+                        Spacer()
                     }
                 }
                 
-                Section(header: Text("设置")) {
-                    VStack {
-                        HStack {
-                            
+                Section(header: Text("内容")) {
+                    HStack {
+                        if isEditing {
+                            TextEditor(text: $summaryContent)
+                                .font(.system(size: 14))
+                                .padding(10)
+                                .background(Color.init(hex: "#e8f6f3"))
+                                .scrollContentBackground(.hidden)
+                                .cornerRadius(8)
+                        } else {
+                            MarkdownWebView(summaryContent, itemId: summaryItem.id)
+                                .padding(10)
+                                .cornerRadius(8)
                         }
-                    }
+                    }.background((isEditing ? Color.init(hex: "#e8f6f3") : Color.init(hex: "#d6eaf8")))
+                        .padding(5)
+                        
                 }
+                
+//                Section(header: Text("设置")) {
+//                    VStack {
+//                        HStack {
+//                            
+//                        }
+//                    }
+//                }
             }
         }.onAppear {
             summaryContent = summaryItem.content
             isEditing = summaryContent.isEmpty
+            summaryTags = summaryItem.tags.compactMap({ tagId in
+                modelData.noteTagList.first {
+                    $0.id == tagId
+                }?.content
+            })
         }
         .toolbar(content: {
             Spacer()
@@ -68,7 +92,17 @@ struct SummaryEditView: View {
     
     func saveSummaryItem() {
         summaryItem.content = summaryContent
-        modelData.saveSummaryItem(summaryItem)
+        summaryItem.tags = summaryTags.compactMap({ tagContent in
+            modelData.noteTagList.first {
+                $0.content == tagContent
+            }?.id
+        })
+        modelData.updateSummaryItem(summaryItem)
     }
     
+    func saveTag(_ tag: String) {
+        let tagModel = TagModel()
+        tagModel.content = tag
+        modelData.updateTagNote(tagModel)
+    }
 }

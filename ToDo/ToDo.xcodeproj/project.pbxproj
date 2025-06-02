@@ -53,6 +53,7 @@
 		097AE2C82DC9011A0096059B /* EditTielineTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2C72DC901130096059B /* EditTielineTaskView.swift */; };
 		097AE2CA2DC903CB0096059B /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2C92DC903CB0096059B /* CustomAlertView.swift */; };
 		097AE2CC2DC9041B0096059B /* View-CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2CB2DC9041B0096059B /* View-CustomAlert.swift */; };
+		09AAC5382DED845F0091FA4A /* ThinkListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5372DED84590091FA4A /* ThinkListView.swift */; };
 		09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */; };
 		09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714602D85D318009DB18E /* TimeLineRowView.swift */; };
 		09D714632D865F34009DB18E /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D714622D865F2F009DB18E /* StateManager.swift */; };
@@ -149,6 +150,7 @@
 		097AE2C72DC901130096059B /* EditTielineTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTielineTaskView.swift; sourceTree = "<group>"; };
 		097AE2C92DC903CB0096059B /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
 		097AE2CB2DC9041B0096059B /* View-CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-CustomAlert.swift"; sourceTree = "<group>"; };
+		09AAC5372DED84590091FA4A /* ThinkListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkListView.swift; sourceTree = "<group>"; };
 		09D7145E2D85CC6A009DB18E /* TaskTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTimeItem.swift; sourceTree = "<group>"; };
 		09D714602D85D318009DB18E /* TimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineRowView.swift; sourceTree = "<group>"; };
 		09D714622D865F2F009DB18E /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 		09F80C142C66F62700650366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				09AAC5372DED84590091FA4A /* ThinkListView.swift */,
 				092546232DE7669700D324DB /* NoteDetailView.swift */,
 				092546182DE7611B00D324DB /* NoteListView.swift */,
 				2B10E8F82DE48FC8007B88AC /* SearchWindowView.swift */,
@@ -645,6 +648,7 @@
 				2B10E8F92DE48FD2007B88AC /* SearchWindowView.swift in Sources */,
 				097AE2C12DC481210096059B /* ModelData+Cache.swift in Sources */,
 				0925460F2DE1711200D324DB /* Dictionary+Extensions.swift in Sources */,
+				09AAC5382DED845F0091FA4A /* ThinkListView.swift in Sources */,
 				093E79082D23A010006E5120 /* ReviewView.swift in Sources */,
 				09F80C0E2C665A5B00650366 /* Int+Extensions.swift in Sources */,
 				09F80C1E2C670BB300650366 /* ToDoEditView.swift in Sources */,

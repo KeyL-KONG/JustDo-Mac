@@ -38,7 +38,11 @@ class ModelData: ObservableObject {
     }
     @Published var noteTagList: [TagModel] = []
     
-    @Published var summaryItemList: [SummaryItem] = []
+    @Published var summaryItemList: [SummaryItem] = [] {
+        didSet {
+            updateSummaryItemIndex += 1
+        }
+    }
     @Published var summaryModelList: [SummaryModel] = []
     @Published var summaryTagList: [SummaryTag] = []
     @Published var taskTimeItems: [TaskTimeItem] = [] {
@@ -58,6 +62,7 @@ class ModelData: ObservableObject {
     @Published var updateItemIndex = 0
     @Published var updateTimeIndex = 0
     @Published var updateNoteIndex = 0
+    @Published var updateSummaryItemIndex = 0
     
     
     // Cache
