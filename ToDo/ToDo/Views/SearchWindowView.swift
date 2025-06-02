@@ -29,7 +29,7 @@ struct SearchWindowView: View {
             case .task:
                 return .all
             case .read:
-                return .all
+                return .read
             case .think:
                 return .think
             case .principle:

@@ -24,8 +24,9 @@ struct MacEditReadItemView: View {
     @State var contentText: String = ""
     @FocusState private var focusedField: FocusedField?
     
-    @State var selectTag: String = ""
+    @State var readTags: [String] = []
     @State var rating: Double = 0.0
+    @State var isEditTag: Bool = false
     
     @State var updateCallback: () -> ()
     
@@ -46,42 +47,39 @@ struct MacEditReadItemView: View {
                         .focused($focusedField, equals: .title)
                 }
                 
-                Section("标签") {
-    
-                    Picker("", selection: $selectTag) {
-                        ForEach(modelData.readTagList.map({$0.type}), id: \.self) { title in
-                            Text(title).tag(title)
+                Section(header: HStack(content: {
+                    Text("标签")
+                    Spacer()
+                    Button {
+                        if self.isEditTag {
+                            saveReadItem()
                         }
+                        self.isEditTag = !self.isEditTag
+                    } label: {
+                        let title = isEditTag ? "保存" : "编辑"
+                        Text(title)
                     }
 
+                })) {
+                    if isEditTag {
+                        RemovableTagListView(showCloseButton: true, tags:readTags, addTagEvent: { tag in
+                            self.readTags.append(tag)
+                            self.saveTag(tag)
+                        }, removeTagEvent: { tag in
+                            self.readTags.removeAll { $0 == tag }
+                        }, selectTagEvent: { tags in
+                            self.readTags += tags
+                        }).environmentObject(modelData)
+                    } else if readTags.count > 0 {
+                        RemovableTagListView(showCloseButton: false, tags: readTags)
+                            .environmentObject(modelData)
+                    }
+                    
                 }
                 
                 Section("评价") {
                     RatingView(maxRating: 5, rating: $rating).previewLayout(.sizeThatFits)
                 }
-                
-//                if finishTimes.count > 0 {
-//                    Section("记录") {
-//                        ForEach(finishTimes, id: \.self) { item in
-//                            HStack {
-//                                Text("已读")
-//                                Spacer()
-//                                Text(item.time.simpleDateStr)
-//                            }
-//                            .contextMenu {
-//                                Button(role: .destructive) {
-//                                    if let removeIndex = readItem.finishTimes.firstIndex(where: { $0.timeIntervalSince1970 == item.time.timeIntervalSince1970
-//                                    }) {
-//                                        readItem.finishTimes.remove(at: removeIndex)
-//                                        modelData.updateModel(readItem)
-//                                    }
-//                                } label: {
-//                                    Text("删除").foregroundColor(.red)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
                 
                 Section("笔记") {
                     
@@ -107,6 +105,16 @@ struct MacEditReadItemView: View {
                         )
                     
                 }
+                
+                if let url = URL(string: readItem.url) {
+                    Section("内容") {
+                        ScrollView {
+                            WebView(url: url)
+                                .frame(minHeight: 500)
+                        }
+                    }
+                }
+                
             }
             .listStyle(.plain)
         }
@@ -115,8 +123,13 @@ struct MacEditReadItemView: View {
             titleText = readItem.title
             contentText = readItem.note
             focusedField = .content
-            selectTag = readItem.tag
+            readTags = readItem.tags.compactMap({ tagId in
+                modelData.noteTagList.first {
+                    $0.id == tagId
+                }?.content
+            })
             rating = readItem.rate
+            isEditTag = readItem.tags.isEmpty
             
             // 添加通知监听
             NotificationCenter.default.addObserver(
@@ -156,9 +169,19 @@ struct MacEditReadItemView: View {
         readItem.url = urlText
         readItem.title = titleText
         readItem.note = contentText
-        readItem.tag = selectTag
+        readItem.tags = readTags.compactMap({ tagContent in
+            modelData.noteTagList.first {
+                $0.content == tagContent
+            }?.id
+        })
         readItem.rate = rating
         modelData.updateReadModel(readItem)
+    }
+    
+    func saveTag(_ tag: String) {
+        let tagModel = TagModel()
+        tagModel.content = tag
+        modelData.updateTagNote(tagModel)
     }
     
 }

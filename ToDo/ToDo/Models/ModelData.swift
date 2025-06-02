@@ -29,7 +29,11 @@ class ModelData: ObservableObject {
         }
     }
     
-    @Published var readList: [ReadModel] = []
+    @Published var readList: [ReadModel] = [] {
+        didSet {
+            updateReadItemIndex += 1
+        }
+    }
     @Published var readTagList: [ReadTag] = []
     @Published var noteList: [NoteModel] = [] {
         didSet {
@@ -63,6 +67,7 @@ class ModelData: ObservableObject {
     @Published var updateTimeIndex = 0
     @Published var updateNoteIndex = 0
     @Published var updateSummaryItemIndex = 0
+    @Published var updateReadItemIndex = 0
     
     
     // Cache

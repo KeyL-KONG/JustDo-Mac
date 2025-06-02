@@ -206,7 +206,7 @@ public struct MarkdownWebView: PlatformViewRepresentable {
             }
         }
         
-        @objc func addSelectedTextToNote(_ sender: NSMenuItem) {
+        @objc override func addSelectedTextToNote(_ sender: NSMenuItem) {
             evaluateJavaScript("window.getSelection().toString()") { [weak self] result, error in
                 if let selectedText = result as? String, !selectedText.isEmpty {
                     DispatchQueue.main.async {

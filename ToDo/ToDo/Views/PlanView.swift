@@ -503,10 +503,16 @@ extension PlanView {
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
         .onTapGesture {
-            if let url = URL(string: "readlist://\(item.id)") {
-                NSWorkspace.shared.open(url)
+            self.selectItemID = item.id
+        }
+        .background {
+            if item.id == selectItemID {
+                ZStack {
+                    Rectangle()
+                        .fill(Color.init(hex: "dc7633"))
+                        .cornerRadius(8)
+                }
             }
-            
         }
     }
     

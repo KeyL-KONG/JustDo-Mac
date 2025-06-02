@@ -14,11 +14,12 @@ class ReadModel: BaseModel, Identifiable, Codable {
     var url: String = ""
     var note: String = ""
     var tag: String = ""
+    var tags: [String] = []
     var rate: Double = 0
     var intervals: [LQDateInterval] = []
     var finishTimes: [Date] = []
     
-    required init() {
+    required init() { 
         super.init()
     }
     
@@ -47,6 +48,7 @@ class ReadModel: BaseModel, Identifiable, Codable {
             self.intervals = intervals
         }
         finishTimes = try container.decodeIfPresent([Date].self, forKey: .finishTimes) ?? []
+        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
     }
     
     func encode(to encoder: Encoder) throws {
@@ -63,6 +65,7 @@ class ReadModel: BaseModel, Identifiable, Codable {
             try container.encode(dates, forKey: .intervals)
         }
         try container.encode(finishTimes, forKey: .finishTimes)
+        try container.encode(tags, forKey: .tags)
     }
     
     override func fillModel(with cloudObj: LCObject) {
@@ -83,6 +86,9 @@ class ReadModel: BaseModel, Identifiable, Codable {
         if let finishTimes = cloudObj.get(ReadModelKeys.finishTimes.rawValue)?.arrayValue as? [Date] {
             self.finishTimes = finishTimes
         }
+        if let tags = cloudObj.get(ReadModelKeys.tags.rawValue)?.arrayValue as? [String] {
+            self.tags = tags
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -101,6 +107,7 @@ class ReadModel: BaseModel, Identifiable, Codable {
             try cloudObj.set(ReadModelKeys.intervals.rawValue, value: dates.lcArray)
         }
         try cloudObj.set(ReadModelKeys.finishTimes.rawValue, value: finishTimes.lcArray)
+        try cloudObj.set(ReadModelKeys.tags.rawValue, value: tags.lcArray)
     }
     
 }
@@ -115,6 +122,7 @@ extension ReadModel {
         case rate
         case intervals
         case finishTimes
+        case tags
     }
     
     var readTimes: Int {
