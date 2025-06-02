@@ -31,7 +31,7 @@ struct SearchWindowView: View {
             case .read:
                 return .all
             case .think:
-                return .all
+                return .think
             case .principle:
                 return .principle
             case .note:

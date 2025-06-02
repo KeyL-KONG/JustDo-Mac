@@ -34,7 +34,9 @@ struct ThinkListView: View {
         })
         .onAppear {
             updateThinkList()
-            self.selectItemID = thinkList.first?.id ?? selectItemID
+            if !self.thinkList.contains(where: { $0.id == selectItemID }) {
+                self.selectItemID = thinkList.first?.id ?? selectItemID
+            }
         }
     }
     
