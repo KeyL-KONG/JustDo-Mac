@@ -97,7 +97,15 @@ struct ToDoApp: App {
             AddItemView()
                 .environmentObject(modelData)
         } label: {
-            Text("Tips").font(.largeTitle)
+            Image(systemName: "lightbulb.max").font(.largeTitle)
+        }
+        .menuBarExtraStyle(.window)
+        
+        MenuBarExtra {
+            NoteQuickView()
+                .environmentObject(modelData)
+        } label: {
+            Image(systemName: "pencil").font(.largeTitle)
         }
         .menuBarExtraStyle(.window)
 

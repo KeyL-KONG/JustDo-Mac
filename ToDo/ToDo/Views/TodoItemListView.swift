@@ -55,6 +55,7 @@ struct TodoItemListView: View {
     @State var isUnplanExpanded = false
     @State var isSummaryExpanded = false
     @State var isPrincipleExpanded = false
+    @State var isNoteExpand = false
     @State var isAllExpanded = false
     @State var isSummaryEdit: Bool = false
     

@@ -34,7 +34,7 @@ struct AddItemView: View {
                         )
                     
                     if newItemText.isEmpty {
-                        Text("在这里快速添加新的感想")
+                        Text("在这里快速添加新的想法")
                             .foregroundColor(Color(.placeholderTextColor))
                             .padding(.top, 1)
                             .padding(.leading, 5)

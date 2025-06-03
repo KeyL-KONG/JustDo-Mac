@@ -62,6 +62,13 @@ extension TodoItemListView {
         }
     }
     
+    var noteList: [NoteModel] {
+        modelData.noteList.filter { item in
+            guard let createDate = item.createTime else { return false }
+            return createDate.isInSameDay(as: selectDate)
+        }
+    }
+    
     func todayView() -> some View {
         VStack {
             if toggleToRefreshTodayView {
@@ -181,6 +188,30 @@ extension TodoItemListView {
                 if isUnplanExpanded {
                     ForEach(unplanItems, id: \.self.id) { item in
                         itemRowView(item: item, date: selectDate, showDeadline: false)
+                    }
+                }
+            }
+            
+            Section(header:
+                HStack {
+                Text("Note (\(noteList.count))")
+                    Spacer()
+                Button(action: { isNoteExpand.toggle() }) {
+                        Image(systemName: isUnplanExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isNoteExpand {
+                    ForEach(noteList, id: \.self.id) { item in
+                        noteItemView(item: item).id(item.id)
+                            .contextMenu {
+                                Button {
+                                    modelData.deleteNote(item)
+                                } label: {
+                                    Text("delete").foregroundStyle(.red)
+                                }
+
+                            }
                     }
                 }
             }
@@ -345,6 +376,13 @@ extension TodoItemListView {
     func summaryItemView(item: SummaryItem) -> some View {
         HStack {
             Text(item.content)
+        }
+    }
+    
+    func noteItemView(item: NoteModel) -> some View {
+        HStack {
+            Text(item.title)
+            Spacer()
         }
     }
     
