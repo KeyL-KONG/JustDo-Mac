@@ -202,7 +202,7 @@ extension NoteDetailView {
                 if let error = error {
                     print("upload data failed: \(error)")
                 } else if let url = url {
-                    self.noteContent += url.formatImageUrl
+                    self.noteContent = self.noteContent + url.formatImageUrl
                     self.toggleToRefresh.toggle()
                     print("upload data success: \(url.formatImageUrl)")
                 }

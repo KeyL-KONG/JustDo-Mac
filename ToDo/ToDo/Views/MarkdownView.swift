@@ -12,12 +12,18 @@ struct MarkdownView: View {
     @EnvironmentObject var modelData: ModelData
     @State var isEditingMark: Bool = false
     @State var mark: String = ""
+    @State var toggleToRefresh: Bool = false
     
     @State var item: EventItem
     
     var body: some View {
         ScrollView {
             VStack {
+                if toggleToRefresh {
+                    Text("")
+                } else {
+                    Text("")
+                }
                 if isEditingMark {
                     HStack {
                         TextEditor(text: $mark)
@@ -47,6 +53,7 @@ struct MarkdownView: View {
         .onAppear {
             mark = item.mark
             isEditingMark = true
+            addObservers()
         }
         .onDisappear(perform: {
             saveItem()
@@ -71,4 +78,49 @@ struct MarkdownView: View {
         modelData.updateItem(item)
     }
     
+}
+
+extension MarkdownView {
+    private func addObservers() {
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "v" {
+                checkPasteboardChanged()
+                return nil
+            }
+            return event
+        }
+    }
+    
+    private func checkPasteboardChanged() {
+        onPasteboardChanged()
+    }
+    
+    private func onPasteboardChanged() {
+        print("on pasteboard changed")
+        guard let pastedItem = NSPasteboard.general.pasteboardItems?.first, let pasteType = pastedItem.types.first else {
+            return
+        }
+        if let imageData = pastedItem.data(forType: pasteType), let image = NSImage(data: imageData) {
+            uploadImage(image: image)
+        } else if let _ = pastedItem.data(forType: .string) {
+            NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
+        }
+    }
+    
+#if os(macOS)
+    private func uploadImage(image: NSImage) {
+        print("upload image")
+        if let data = image.toData() {
+            CloudManager.shared.upload(with: data) { url, error in
+                if let error = error {
+                    print("upload data failed: \(error)")
+                } else if let url = url {
+                    self.mark = self.mark + url.formatImageUrl
+                    self.toggleToRefresh.toggle()
+                    print("upload data success: \(url.formatImageUrl)")
+                }
+            }
+        }
+    }
+#endif
 }

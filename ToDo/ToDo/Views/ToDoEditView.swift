@@ -54,7 +54,11 @@ struct ToDoEditView: View {
     @State var isFinish: Bool = false
     @State var planTime = Date.now
     
-    @State var mark: String = ""
+    @State var mark: String = "" {
+        didSet {
+            print("mark change: \(mark)")
+        }
+    }
     @State public var setPlanTime: Bool = false
     
     @State var setFinishTime: Bool = false
@@ -113,6 +117,7 @@ struct ToDoEditView: View {
     
     @State var showAddNote: Bool = true
     @State var hasNoteItem: Bool = false
+    @State var toggleToRefresh: Bool = false
     
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
@@ -181,8 +186,13 @@ struct ToDoEditView: View {
     
     var body: some View {
         VStack {
+            if toggleToRefresh {
+                Text("")
+            } else {
+                Text("")
+            }
             List {
-                
+            
                 Section(header: HStack {
                     Text("事项类型")
                     Spacer()
@@ -707,6 +717,7 @@ struct ToDoEditView: View {
                 actionType = EventActionType.task
                 isExpandType = true
             }
+            self.addObservers()
         }
     }
     
@@ -798,3 +809,49 @@ struct ToDoEditView: View {
     
 }
 
+extension ToDoEditView {
+    
+    private func addObservers() {
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "v" {
+                checkPasteboardChanged()
+                return nil
+            }
+            return event
+        }
+    }
+    
+    private func checkPasteboardChanged() {
+        onPasteboardChanged()
+    }
+    
+    private func onPasteboardChanged() {
+        print("on pasteboard changed")
+        guard let pastedItem = NSPasteboard.general.pasteboardItems?.first, let pasteType = pastedItem.types.first else {
+            return
+        }
+        if let imageData = pastedItem.data(forType: pasteType), let image = NSImage(data: imageData) {
+            uploadImage(image: image)
+        } else if let _ = pastedItem.data(forType: .string) {
+            NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
+        }
+    }
+    
+#if os(macOS)
+    private func uploadImage(image: NSImage) {
+        print("upload image")
+        if let data = image.toData() {
+            CloudManager.shared.upload(with: data) { url, error in
+                if let error = error {
+                    print("upload data failed: \(error)")
+                } else if let url = url {
+                    self.mark = self.mark + url.formatImageUrl
+                    self.toggleToRefresh.toggle()
+                    print("upload data success: \(url.formatImageUrl)")
+                }
+            }
+        }
+    }
+#endif
+    
+}
