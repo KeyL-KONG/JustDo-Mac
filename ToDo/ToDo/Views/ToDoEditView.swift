@@ -111,6 +111,9 @@ struct ToDoEditView: View {
     @State var showPersonalAlert: Bool = false
     static var selectPersonalTag: PersonalTag?
     
+    @State var showAddNote: Bool = true
+    @State var hasNoteItem: Bool = false
+    
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
     var taskTimeItems: [TaskTimeItem] {
@@ -549,7 +552,22 @@ struct ToDoEditView: View {
                 } header: {
                     HStack {
                         Text("备注")
+                        if hasNoteItem {
+                            tagView(title: "note", color: .blue, size: 8, verPadding: 5, horPadding: 2.5)
+                        }
                         Spacer()
+                        
+                        if mark.count > 0, showAddNote {
+                            Button("转为笔记") {
+                                let note = NoteModel()
+                                note.title = titleText
+                                note.content = mark
+                                note.convertId = selectItem?.id ?? ""
+                                modelData.updateNote(note)
+                                showAddNote = false
+                                hasNoteItem = true
+                            }
+                        }
                         
                         // 新增展开按钮
                         Button {
@@ -633,7 +651,13 @@ struct ToDoEditView: View {
             modelData.removeEditStates()
             if let selectedItem = selectItem {
                 titleText = selectedItem.title
-                mark = selectedItem.mark
+                if let noteItem = modelData.noteList.first(where: { $0.convertId == selectedItem.id
+                }) {
+                    mark = noteItem.content
+                    hasNoteItem = true
+                } else {
+                    mark = selectedItem.mark
+                }
                 selectedTag = modelData.tagList.filter({ $0.id == selectedItem.tag}).first?.title ?? ""
                 importantTag = selectedItem.importance
                 intervals = selectedItem.intervals.sorted(by: { $0.end.timeIntervalSince1970 >= $1.end.timeIntervalSince1970
@@ -676,6 +700,7 @@ struct ToDoEditView: View {
                 setIsProgress = selectedItem.setProgress
                 progressValue = selectedItem.progressValue.stringValue ?? "0"
                 finishState = selectedItem.finishState.description
+                showAddNote = !modelData.noteList.contains(where: { $0.convertId == selectedItem.id })
                 startText = selectedItem.startText
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
@@ -743,6 +768,13 @@ struct ToDoEditView: View {
         selectedItem.startText = startText
         modelData.updateItem(selectedItem)
         updateEvent()
+        
+        if let noteItem = modelData.noteList.first(where: { $0.convertId == selectedItem.id
+        }) {
+            noteItem.title = noteItem.title.isEmpty ? titleText : noteItem.title
+            noteItem.content = mark
+            modelData.updateNote(noteItem)
+        }
     }
 
     // 添加环境变量
@@ -754,12 +786,12 @@ struct ToDoEditView: View {
         openWindow(id: "markdown-preview", value: selectItem)
     }
     
-    func tagView(title: String, color: Color) -> some View {
+    func tagView(title: String, color: Color, size: CGFloat = 12, verPadding: CGFloat = 10, horPadding: CGFloat = 5) -> some View {
         Text(title)
             .foregroundColor(.white)
-            .font(.system(size: 12))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .font(.system(size: size))
+            .padding(.horizontal, verPadding)
+            .padding(.vertical, horPadding)
             .background(color)
             .clipShape(Capsule())
     }

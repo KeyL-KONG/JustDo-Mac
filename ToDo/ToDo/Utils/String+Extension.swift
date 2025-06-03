@@ -9,6 +9,14 @@ import Foundation
 
 extension String {
     
+    var formatImageUrl: String {
+        var url = self
+        if !url.hasPrefix("https") {
+            url = url.replacingOccurrences(of: "http://", with: "https://")
+        }
+        return "![image](\(url))"
+    }
+    
     func toJson() -> [String: Any]? {
         guard let data = self.data(using: .utf8) else {
             return nil

@@ -208,6 +208,7 @@ struct TodoItemListView: View {
                 
             } else if selection == .project {
                 projectView()
+                    
             } else if selection == .today {
                 todayView()
             } else if selection == .principle {
@@ -414,6 +415,7 @@ struct TodoItemListView: View {
             if selection == .today {
                 updateSummaryContent()
                 updateTodayItems()
+                self.selectItemID = todayItems.first?.id ?? self.selectItemID
             } else if selection == .calendar, let currentDate = weekDates.first(where: { $0.isToday }) {
                 print("scroll date: \(currentDate)")
                 scrolledID = currentDate

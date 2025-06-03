@@ -14,14 +14,22 @@ struct NoteDetailView: View {
     @State var noteItem: NoteModel
     @EnvironmentObject var modelData: ModelData
     @State var noteTitle: String = ""
-    @State var noteContent: String = ""
+    @State var noteContent: String = "" {
+        didSet {
+            print("note content change: \(noteContent)")
+        }
+    }
     @State var noteTags: [String] = []
+    @State var toggleToRefresh: Bool = false
     
     @Environment(\.openWindow) private var openWindow
     
     var body: some View {
         ScrollView {
             VStack {
+                if toggleToRefresh {
+                    Text("")
+                }
                 HStack {
                     if isEdit {
                         RemovableTagListView(showCloseButton: true, tags:noteTags, addTagEvent: { tag in
@@ -85,12 +93,6 @@ struct NoteDetailView: View {
         }
         
         .toolbar {
-            Button("\(isEdit ? "保存" : "编辑")") {
-                self.isEdit.toggle()
-                if !self.isEdit {
-                    saveItem()
-                }
-            }
             
             if !isWindow {
                 Button("添加") {
@@ -107,6 +109,15 @@ struct NoteDetailView: View {
                 }
                 .buttonStyle(.plain)
                 .help("在新窗口预览")
+            } else {
+                Text(noteTitle)
+            }
+            
+            Button("\(isEdit ? "保存" : "编辑")") {
+                self.isEdit.toggle()
+                if !self.isEdit {
+                    saveItem()
+                }
             }
         }
         .onAppear {
@@ -117,6 +128,7 @@ struct NoteDetailView: View {
                     $0.id == tagId
                 }?.content
             })
+            self.addObservers()
         }
     }
 }
@@ -152,4 +164,52 @@ extension NoteDetailView {
         }
         modelData.deleteTag(tagModel)
     }
+}
+
+extension NoteDetailView {
+    
+    private func addObservers() {
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "v" {
+                checkPasteboardChanged()
+                return nil
+            }
+            return event
+        }
+    }
+    
+    private func checkPasteboardChanged() {
+        onPasteboardChanged()
+    }
+    
+    private func onPasteboardChanged() {
+        print("on pasteboard changed")
+        guard let pastedItem = NSPasteboard.general.pasteboardItems?.first, let pasteType = pastedItem.types.first else {
+            return
+        }
+        if let imageData = pastedItem.data(forType: pasteType), let image = NSImage(data: imageData) {
+            uploadImage(image: image)
+        } else if let _ = pastedItem.data(forType: .string) {
+            NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
+        }
+    }
+    
+#if os(macOS)
+    private func uploadImage(image: NSImage) {
+        print("upload image")
+        if let data = image.toData() {
+            CloudManager.shared.upload(with: data) { url, error in
+                if let error = error {
+                    print("upload data failed: \(error)")
+                } else if let url = url {
+                    self.noteContent += url.formatImageUrl
+                    self.toggleToRefresh.toggle()
+                    print("upload data success: \(url.formatImageUrl)")
+                }
+            }
+        }
+    }
+#endif
+    
+    
 }

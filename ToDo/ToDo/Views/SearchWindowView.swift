@@ -235,7 +235,7 @@ extension SearchWindowView {
         
         if currentSearchType == .all || currentSearchType == .task {
             searchItems += taskItems.compactMap({ task in
-                return SearchItem(type: .task, id: task.id, content: [task.content], time: task.updateAt ?? .now)
+                return SearchItem(type: .task, id: task.eventId, content: [task.content], time: task.updateAt ?? .now)
             })
         }
         
