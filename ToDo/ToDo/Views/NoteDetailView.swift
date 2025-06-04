@@ -19,8 +19,13 @@ struct NoteDetailView: View {
             print("note content change: \(noteContent)")
         }
     }
+    @State var overviewText: String = ""
+    @State var summaryText: String = ""
     @State var noteTags: [String] = []
     @State var toggleToRefresh: Bool = false
+    @State var overviewExpand: Bool = true
+    @State var noteExpand: Bool = true
+    @State var summaryExpand: Bool = true
     
     @Environment(\.openWindow) private var openWindow
     
@@ -52,39 +57,94 @@ struct NoteDetailView: View {
                     }
                 }
                 
-                if isEdit {
-                    if isWindow {
-                        HStack {
+                let notShowOverViewHeader = !isEdit && overviewText.isEmpty
+                
+                if !notShowOverViewHeader {
+                    overviewHeaderView()
+                }
+                
+                if overviewExpand {
+                    if isEdit {
+                        TextEditor(text: $overviewText)
+                            .font(.system(size: 14))
+                            .padding(10)
+                            .scrollContentBackground(.hidden)
+                            .background(Color.init(hex: "#117a65").opacity(0.1))
+                            .cornerRadius(8)
+                            .frame(minHeight: 100)
+                        
+                    } else if overviewText.count > 0 {
+                        MarkdownWebView(overviewText, itemId: noteItem.id)
+                            .padding()
+                            .background(Color.init(hex: "117a65").opacity(0.1))
+                            .cornerRadius(10)
+                    }
+                }
+                
+                
+                noteHeaderView()
+                
+                if noteExpand {
+                    if isEdit {
+                        if isWindow {
+                            HStack {
+                                TextEditor(text: $noteContent)
+                                    .font(.system(size: 14))
+                                    .padding(10)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.blue.opacity(0.1))
+                                    .cornerRadius(8)
+                                    .frame(minHeight: 400)
+                                Spacer()
+                                VStack {
+                                    MarkdownWebView(noteContent, itemId: noteItem.id)
+                                    Spacer()
+                                }
+                                .frame(minHeight: 400)
+                            }
+                            
+                        } else {
                             TextEditor(text: $noteContent)
                                 .font(.system(size: 14))
-                                .padding(10)
+                                .padding()
                                 .scrollContentBackground(.hidden)
-                                .background(Color.init(hex: "#e8f6f3"))
-                                .cornerRadius(8)
+                                .background(Color.blue.opacity(0.1))
+                                .cornerRadius(10)
                                 .frame(minHeight: 400)
-                            Spacer()
-                            VStack {
-                                MarkdownWebView(noteContent, itemId: noteItem.id)
-                                Spacer()
-                            }
-                            .frame(minHeight: 400)
                         }
                         
-                    } else {
-                        TextEditor(text: $noteContent)
-                            .font(.system(size: 14))
-                            .padding()
-                            .scrollContentBackground(.hidden)
-                            .background(Color.init(hex: "f8f9f9"))
-                            .cornerRadius(10)
-                            .frame(minHeight: 400)
                     }
-                    
-                } else if noteContent.count > 0 {
-                    MarkdownWebView(noteContent, itemId: noteItem.id)
-                        .padding()
-                        .background(Color.init(hex: "d4e6f1"))
-                        .cornerRadius(10)
+                    else if noteContent.count > 0 {
+                        MarkdownWebView(noteContent, itemId: noteItem.id)
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(10)
+                    }
+                }
+                
+                
+                let notShowSummaryHeader = !isEdit && summaryText.isEmpty
+                
+                if !notShowSummaryHeader {
+                    summaryHeaderView()
+                }
+                
+                if summaryExpand {
+                    if isEdit {
+                        TextEditor(text: $summaryText)
+                            .font(.system(size: 14))
+                            .padding(10)
+                            .scrollContentBackground(.hidden)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(8)
+                            .frame(minHeight: 100)
+                        
+                    } else if summaryText.count > 0 {
+                        MarkdownWebView(summaryText, itemId: noteItem.id)
+                            .padding()
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(10)
+                    }
                 }
                 
                 Spacer()
@@ -123,6 +183,8 @@ struct NoteDetailView: View {
         .onAppear {
             self.noteContent = noteItem.content
             self.noteTitle = noteItem.title
+            self.overviewText = noteItem.overview
+            self.summaryText = noteItem.summary
             self.noteTags = noteItem.tags.compactMap({ tagId in
                 modelData.noteTagList.first {
                     $0.id == tagId
@@ -142,6 +204,8 @@ extension NoteDetailView {
     
     func saveItem() {
         noteItem.content = noteContent
+        noteItem.overview = overviewText
+        noteItem.summary = summaryText
         noteItem.tags = noteTags.compactMap({ tagContent in
             modelData.noteTagList.first {
                 $0.content == tagContent
@@ -211,5 +275,56 @@ extension NoteDetailView {
     }
 #endif
     
+    
+}
+
+extension NoteDetailView {
+    
+    func overviewHeaderView() -> some View {
+        HStack {
+            Text("概述").bold().font(.system(size: 16))
+                .foregroundStyle(Color.init(hex: "48c9b0"))
+            Spacer()
+            
+            Button {
+                self.overviewExpand = !self.overviewExpand
+            } label: {
+                Image(systemName: overviewExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.init(hex: "48c9b0"))
+            }
+            .buttonStyle(.plain)
+        }.padding(.top, 5)
+        .padding(.horizontal, 5)
+    }
+    
+    func noteHeaderView() -> some View {
+        HStack {
+            Text("笔记").bold().font(.system(size: 16))
+                .foregroundStyle(Color.blue)
+            Spacer()
+            Button {
+                self.noteExpand = !self.noteExpand
+            } label: {
+                Image(systemName: noteExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.blue)
+            }
+            .buttonStyle(.plain)
+        }.padding(.top, 5)
+        .padding(.horizontal, 5)
+    }
+    
+    func summaryHeaderView() -> some View {
+        HStack {
+            Text("总结").bold().font(.system(size: 16))
+                .foregroundStyle(Color.orange)
+            Spacer()
+            
+            Button {
+                self.summaryExpand = !self.summaryExpand
+            } label: {
+                Image(systemName: summaryExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.orange)
+            }
+            .buttonStyle(.plain)
+        }.padding(.top, 5)
+        .padding(.horizontal, 5)
+    }
     
 }

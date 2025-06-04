@@ -14,6 +14,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
     var title: String = ""
     var content: String = ""
     var tags: [String] = []
+    var summary: String = ""
+    var overview: String = ""
     
     required init() {
         super.init()
@@ -26,6 +28,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         tags = try container.decode([String].self, forKey: .tags)
         content = try container.decode(String.self, forKey: .content)
         convertId = try container.decode(String.self, forKey: .convertId)
+        summary = try container.decode(String.self, forKey: .summary)
+        overview = try container.decode(String.self, forKey: .overview)
     }
     
     init(content: String) {
@@ -39,6 +43,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try container.encode(title, forKey: .title)
         try container.encode(content, forKey: .content)
         try container.encode(convertId, forKey: .convertId)
+        try container.encode(summary, forKey: .summary)
+        try container.encode(overview, forKey: .overview)
     }
     
     override class func modelClassName() -> String {
@@ -57,6 +63,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
             self.tags = tags
         }
         convertId = cloudObj.get(NoteModelKeys.convertId.rawValue)?.stringValue ?? ""
+        summary = cloudObj.get(NoteModelKeys.summary.rawValue)?.stringValue ?? ""
+        overview = cloudObj.get(NoteModelKeys.overview.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -65,6 +73,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try cloudObj.set(NoteModelKeys.content.rawValue, value: content.lcString)
         try cloudObj.set(NoteModelKeys.tags.rawValue, value: tags.lcArray)
         try cloudObj.set(NoteModelKeys.convertId.rawValue, value: convertId.lcString)
+        try cloudObj.set(NoteModelKeys.overview.rawValue, value: overview.lcString)
+        try cloudObj.set(NoteModelKeys.summary.rawValue, value: summary.lcString)
     }
     
 }
@@ -77,7 +87,8 @@ extension NoteModel {
         case content = "content"
         case tags = "tags"
         case convertId
-        
+        case overview
+        case summary
     }
     
 }
