@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct NoteDetailView: View {
     
@@ -26,6 +29,11 @@ struct NoteDetailView: View {
     @State var overviewExpand: Bool = true
     @State var noteExpand: Bool = true
     @State var summaryExpand: Bool = true
+    @State var cursorPosition: Int = 0 {
+        didSet {
+            print("cursor pos: \(cursorPosition)")
+        }
+    }
     
     @Environment(\.openWindow) private var openWindow
     
@@ -33,6 +41,8 @@ struct NoteDetailView: View {
         ScrollView {
             VStack {
                 if toggleToRefresh {
+                    Text("")
+                } else {
                     Text("")
                 }
                 HStack {
@@ -88,7 +98,9 @@ struct NoteDetailView: View {
                     if isEdit {
                         if isWindow {
                             HStack {
-                                TextEditor(text: $noteContent)
+                                CustomTextEditor(text: $noteContent, cursorPosition: $cursorPosition) { pos in
+                                    self.cursorPosition = pos
+                                }
                                     .font(.system(size: 14))
                                     .padding(10)
                                     .scrollContentBackground(.hidden)
@@ -104,7 +116,7 @@ struct NoteDetailView: View {
                             }
                             
                         } else {
-                            TextEditor(text: $noteContent)
+                            CustomTextEditor(text: $noteContent, cursorPosition: $cursorPosition)
                                 .font(.system(size: 14))
                                 .padding()
                                 .scrollContentBackground(.hidden)
@@ -266,16 +278,20 @@ extension NoteDetailView {
                 if let error = error {
                     print("upload data failed: \(error)")
                 } else if let url = url {
-                    self.noteContent = self.noteContent + url.formatImageUrl
-                    self.toggleToRefresh.toggle()
-                    print("upload data success: \(url.formatImageUrl)")
+                    // 新增光标位置处理
+                    let insertionText = url.formatImageUrl
+                    let currentContent = self.noteContent
+                    print("insert text: \(insertionText), pos: \(self.cursorPosition)")
+                    let updateContent = currentContent.insert(insertionText, at: self.cursorPosition)
+                    DispatchQueue.main.async {
+                        self.noteContent = updateContent
+                        self.toggleToRefresh.toggle()
+                    }
                 }
             }
         }
     }
 #endif
-    
-    
 }
 
 extension NoteDetailView {

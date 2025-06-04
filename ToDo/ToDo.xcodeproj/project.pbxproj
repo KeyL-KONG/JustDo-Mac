@@ -102,6 +102,7 @@
 		09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF8CD62C6A4B7800A74F55 /* TodoItemListView+Project.swift */; };
 		2B10E8F92DE48FD2007B88AC /* SearchWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B10E8F82DE48FC8007B88AC /* SearchWindowView.swift */; };
 		2B15F7572DEEF57C000F0AC8 /* Image+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B15F7562DEEF573000F0AC8 /* Image+Extensions.swift */; };
+		2B5800212DF070F400BB4DDB /* CustomTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */; };
 		2BBE50382DEF2A8000D89777 /* NoteQuickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBE50372DEF2A7A00D89777 /* NoteQuickView.swift */; };
 		2BC54C642DDF54AB00894C6E /* MacEditReadItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */; };
 		5D46435523368AEAFF9A3BF0 /* Pods_ToDo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */; };
@@ -206,6 +207,7 @@
 		27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B10E8F82DE48FC8007B88AC /* SearchWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchWindowView.swift; sourceTree = "<group>"; };
 		2B15F7562DEEF573000F0AC8 /* Image+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Extensions.swift"; sourceTree = "<group>"; };
+		2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextEditor.swift; sourceTree = "<group>"; };
 		2BBE50372DEF2A7A00D89777 /* NoteQuickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteQuickView.swift; sourceTree = "<group>"; };
 		2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacEditReadItemView.swift; sourceTree = "<group>"; };
 		D3B5A7BD036DC5D0B04CA9A2 /* Pods-ToDo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo.release.xcconfig"; path = "Target Support Files/Pods-ToDo/Pods-ToDo.release.xcconfig"; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 		09F80C092C665A5B00650366 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */,
 				2B15F7562DEEF573000F0AC8 /* Image+Extensions.swift */,
 				0925460E2DE1710900D324DB /* Dictionary+Extensions.swift */,
 				0925460C2DE1703800D324DB /* String+Extension.swift */,
@@ -701,6 +704,7 @@
 				09F80C182C66F7F700650366 /* ToDoListView.swift in Sources */,
 				09F80BEC2C665A3100650366 /* EventItem.swift in Sources */,
 				09F80C032C665A3F00650366 /* EventModel.swift in Sources */,
+				2B5800212DF070F400BB4DDB /* CustomTextEditor.swift in Sources */,
 				09F80C112C665A5B00650366 /* Date+Extensions.swift in Sources */,
 				09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */,
 				09F80C022C665A3F00650366 /* ItemTag.swift in Sources */,

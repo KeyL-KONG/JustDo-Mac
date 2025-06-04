@@ -53,3 +53,47 @@ extension String {
         return String(self[..<cutoffIndex])
     }
 }
+
+
+extension String {
+    /// 在指定位置插入字符串
+    /// - Parameters:
+    ///   - text: 要插入的文本
+    ///   - position: 插入位置（基于字符索引）
+    ///   - useUTF16Offset: 是否使用 UTF-16 偏移量（默认为字符索引）
+    func insert(_ text: String, at position: Int, useUTF16Offset: Bool = false) -> String {
+        // 处理边界情况
+        if position <= 0 {
+            return text + self
+        }
+        
+        let maxPosition = useUTF16Offset ? self.utf16.count : self.count
+        if position >= maxPosition {
+            return self + text
+        }
+        
+        // 根据选择的索引类型计算位置
+        let index: String.Index
+        if useUTF16Offset {
+            // 使用 UTF-16 偏移量
+            guard let utf16Index = self.utf16.index(
+                self.utf16.startIndex,
+                offsetBy: position,
+                limitedBy: self.utf16.endIndex
+            ) else {
+                return self + text
+            }
+            
+            index = String.Index(utf16Index, within: self) ?? self.endIndex
+        } else {
+            // 使用字符索引
+            index = self.index(self.startIndex, offsetBy: position)
+        }
+        
+        // 执行插入
+        var result = self
+        result.insert(contentsOf: text, at: index)
+        return result
+    }
+    
+}

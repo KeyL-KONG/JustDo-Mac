@@ -118,6 +118,7 @@ struct ToDoEditView: View {
     @State var showAddNote: Bool = true
     @State var hasNoteItem: Bool = false
     @State var toggleToRefresh: Bool = false
+    @State var cursorPosition: Int = 0
     
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
@@ -544,7 +545,9 @@ struct ToDoEditView: View {
                     if !disableMark {
                         VStack {
                             if isEditingMark {
-                                TextEditor(text: $mark)
+                                CustomTextEditor(text: $mark, cursorPosition: $cursorPosition) { pos in
+                                    self.cursorPosition = pos
+                                }
                                     .font(.system(size: 14))
                                     .padding(10)
                                     .scrollContentBackground(.hidden)
@@ -794,7 +797,12 @@ struct ToDoEditView: View {
     // 修改按钮响应方法
     private func showPreviewWindow() {
         guard let selectItem else { return }
-        openWindow(id: "markdown-preview", value: selectItem)
+        if let noteItem = modelData.noteList.first(where: { $0.convertId == selectItem.id
+        }) {
+            openWindow(id: CommonDefine.noteWindow, value: noteItem)
+        } else {
+            openWindow(id: "markdown-preview", value: selectItem)
+        }
     }
     
     func tagView(title: String, color: Color, size: CGFloat = 12, verPadding: CGFloat = 10, horPadding: CGFloat = 5) -> some View {
@@ -845,9 +853,14 @@ extension ToDoEditView {
                 if let error = error {
                     print("upload data failed: \(error)")
                 } else if let url = url {
-                    self.mark = self.mark + url.formatImageUrl
-                    self.toggleToRefresh.toggle()
-                    print("upload data success: \(url.formatImageUrl)")
+                    let insertionText = url.formatImageUrl
+                    let currentContent = self.mark
+                    print("insert text: \(insertionText), pos: \(self.cursorPosition)")
+                    let updateContent = currentContent.insert(insertionText, at: self.cursorPosition)
+                    DispatchQueue.main.async {
+                        self.mark = updateContent
+                        self.toggleToRefresh.toggle()
+                    }
                 }
             }
         }
