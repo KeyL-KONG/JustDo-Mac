@@ -36,6 +36,7 @@ struct RatingView: View {
     let starRounding: StarRounding
     let size: CGFloat
     let spacing: CGFloat
+    let enable: Bool
     
     private let fullStarImage: Image = Image(systemName: "star.fill")
     private let halfStarImage: Image = Image(systemName: "star.lefthalf.fill")
@@ -43,13 +44,17 @@ struct RatingView: View {
     
     @State private var selectedStar: Int?
     
-    init(maxRating: Int, rating: Binding<Double>, starColor: Color = .blue, starRounding: StarRounding = .floorToFullStar, size: CGFloat = 20, spacing: CGFloat = 5) {
+    var onRateChange: ((Double) -> Void)?
+    
+    init(maxRating: Int, rating: Binding<Double>, starColor: Color = .blue, starRounding: StarRounding = .floorToFullStar, size: CGFloat = 20, spacing: CGFloat = 5, enable: Bool = true, onRateChange: ((Double) -> Void)? = nil) {
         self.maxRating = maxRating
         self.rating = rating
         self.starColor = starColor
         self.starRounding = starRounding
         self.size = size
         self.spacing = spacing
+        self.enable = enable
+        self.onRateChange = onRateChange
     }
     
     var body: some View {
@@ -58,9 +63,12 @@ struct RatingView: View {
                 starImageView(index: index)
                     .foregroundColor(starColor)
                     .onTapGesture {
-                        rating.wrappedValue = Double(index)
+                        guard enable else { return }
+                        let val = Double(index)
+                        rating.wrappedValue = val
                         withAnimation(.easeInOut(duration: 0.5)) {
                             selectedStar = index
+                            self.onRateChange?(val)
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             selectedStar = nil

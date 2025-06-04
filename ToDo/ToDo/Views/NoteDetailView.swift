@@ -35,6 +35,8 @@ struct NoteDetailView: View {
         }
     }
     
+    @State var noteRate: Double = 0
+    
     @Environment(\.openWindow) private var openWindow
     
     var body: some View {
@@ -59,6 +61,10 @@ struct NoteDetailView: View {
                             .environmentObject(modelData)
                     }
                     Spacer()
+                    
+                    RatingView(maxRating: 5, rating: $noteRate, onRateChange: { rate in
+                        self.saveItem()
+                    })
                 }
                 
                 if isEdit {
@@ -197,6 +203,7 @@ struct NoteDetailView: View {
             self.noteTitle = noteItem.title
             self.overviewText = noteItem.overview
             self.summaryText = noteItem.summary
+            self.noteRate = Double(noteItem.rate)
             self.noteTags = noteItem.tags.compactMap({ tagId in
                 modelData.noteTagList.first {
                     $0.id == tagId
@@ -218,6 +225,7 @@ extension NoteDetailView {
         noteItem.content = noteContent
         noteItem.overview = overviewText
         noteItem.summary = summaryText
+        noteItem.rate = Int(noteRate)
         noteItem.tags = noteTags.compactMap({ tagContent in
             modelData.noteTagList.first {
                 $0.content == tagContent

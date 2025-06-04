@@ -16,6 +16,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
     var tags: [String] = []
     var summary: String = ""
     var overview: String = ""
+    var rate: Int = 0
     
     required init() {
         super.init()
@@ -30,6 +31,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         convertId = try container.decode(String.self, forKey: .convertId)
         summary = try container.decode(String.self, forKey: .summary)
         overview = try container.decode(String.self, forKey: .overview)
+        rate = try container.decode(Int.self, forKey: .rate)
     }
     
     init(content: String) {
@@ -45,6 +47,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try container.encode(convertId, forKey: .convertId)
         try container.encode(summary, forKey: .summary)
         try container.encode(overview, forKey: .overview)
+        try container.encode(rate, forKey: .rate)
     }
     
     override class func modelClassName() -> String {
@@ -65,6 +68,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         convertId = cloudObj.get(NoteModelKeys.convertId.rawValue)?.stringValue ?? ""
         summary = cloudObj.get(NoteModelKeys.summary.rawValue)?.stringValue ?? ""
         overview = cloudObj.get(NoteModelKeys.overview.rawValue)?.stringValue ?? ""
+        rate = cloudObj.get(NoteModelKeys.rate.rawValue)?.intValue ?? 0
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -75,6 +79,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try cloudObj.set(NoteModelKeys.convertId.rawValue, value: convertId.lcString)
         try cloudObj.set(NoteModelKeys.overview.rawValue, value: overview.lcString)
         try cloudObj.set(NoteModelKeys.summary.rawValue, value: summary.lcString)
+        try cloudObj.set(NoteModelKeys.rate.rawValue, value: rate.lcNumber)
     }
     
 }
@@ -89,6 +94,7 @@ extension NoteModel {
         case convertId
         case overview
         case summary
+        case rate
     }
     
 }

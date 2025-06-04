@@ -62,8 +62,13 @@ struct NoteListView: View {
                     }
                 }
             }
+            
+            if item.rate > 0 {
+                RatingView(maxRating: 5, rating: .constant(Double(item.rate)), size: 10, spacing: 2, enable: false)
+            }
+            
             if let updateTime = item.updateAt {
-                Text(updateTime.simpleDateStr).foregroundStyle(.gray)
+                Text(updateTime.simpleDateStr).foregroundStyle(.gray).frame(width: 80)
             }
         }
         .padding(.vertical, 5)
