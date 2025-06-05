@@ -225,6 +225,18 @@ extension Date {
         return Calendar.current.isDateInToday(self)
     }
     
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+
+    var endOfDay: Date {
+        let start = Calendar.current.startOfDay(for: self)
+        guard let end = Calendar.current.date(byAdding: .day, value: 1, to: start) else {
+            return self
+        }
+        return end.addingTimeInterval(-0.001) // 精确到毫秒
+    }
+
     var startOfWeek: Date {
         var gregorian = Calendar(identifier: .gregorian)
         gregorian.firstWeekday = 2

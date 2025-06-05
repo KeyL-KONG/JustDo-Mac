@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (5.9.0)
+  - AlertToast (1.3.9)
   - GRDB.swift (6.15.1):
     - GRDB.swift/standard (= 6.15.1)
   - GRDB.swift/standard (6.15.1)
@@ -14,21 +15,24 @@ PODS:
   - SwiftProtobuf (1.25.2)
 
 DEPENDENCIES:
+  - AlertToast
   - LeanCloud
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - AlertToast
     - GRDB.swift
     - LeanCloud
     - SwiftProtobuf
 
 SPEC CHECKSUMS:
   Alamofire: 02b772c9910e8eba1a079227c32fbd9e46c90a24
+  AlertToast: e8db15da727beff75500bcf33a78cd617f408fa1
   GRDB.swift: a6b7e9900aa300d0cbf1f1c5f47b8f32ae51e30c
   LeanCloud: 808532530fae85682b1747bf248bb3dc64a37f13
   SwiftProtobuf: 407a385e97fd206c4fbe880cc84123989167e0d1
 
-PODFILE CHECKSUM: 86df0c96571271f64e1d5bb6866e9717d33ff42c
+PODFILE CHECKSUM: ec02d7f697b22b4b9058487ed99d802d2ba45411
 
 COCOAPODS: 1.12.0

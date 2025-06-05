@@ -73,6 +73,18 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
     }
     var setPlanTime: Bool = false
+    
+    var setDealineTime: Bool = false
+    private var _deadlineTime: Date? = nil
+    var deadlineTime: Date? {
+        get {
+            return setDealineTime ? _deadlineTime : nil
+        }
+        set {
+            _deadlineTime = newValue
+        }
+    }
+    
     var isPlay: Bool = false
     var playTime: Date? = nil
     var intervals: [LQDateInterval] = []
@@ -137,6 +149,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.finishTime = try container.decodeIfPresent(Date.self, forKey: .finishTime)
         self.playTime = try container.decodeIfPresent(Date.self, forKey: .playTime)
         self.planTime = try container.decodeIfPresent(Date.self, forKey: .planTime)
+        self.setDealineTime = try container.decodeIfPresent(Bool.self, forKey: .setDealineTime) ?? false
+        self.deadlineTime = try container.decodeIfPresent(Date.self, forKey: .deadlineTime)
         
         self.tag = try container.decode(String.self, forKey: .tag)
         self.eventType = EventValueType(rawValue: try container.decode(Int.self, forKey: .eventType)) ?? .num
@@ -209,6 +223,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
         if let playTime {
             try container.encode(playTime, forKey: .playTime)
+        }
+        try container.encode(setDealineTime, forKey: .setDealineTime)
+        if let deadlineTime {
+            try container.encode(deadlineTime, forKey: .deadlineTime)
         }
         try container.encode(actionType.rawValue, forKey: .actionType)
         try container.encode(fatherId, forKey: .fatherId)
@@ -292,6 +310,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         isFinish = (cloudObj.get(EventModelKeys.isFinish.rawValue) as? LCBool)?.value ?? false
         finishTime = cloudObj.get(EventModelKeys.finishTime.rawValue)?.dateValue
         planTime = cloudObj.get(EventModelKeys.planTime.rawValue)?.dateValue
+        setDealineTime = cloudObj.get(EventModelKeys.setDealineTime.rawValue)?.boolValue ?? false
+        deadlineTime = cloudObj.get(EventModelKeys.deadlineTime.rawValue)?.dateValue
         difficultText = cloudObj.get(EventModelKeys.difficultText.rawValue)?.stringValue ?? ""
         isPlay = cloudObj.get(EventModelKeys.isPlay.rawValue)?.boolValue ?? false
         if let dates = cloudObj.get(EventModelKeys.intervals.rawValue)?.arrayValue as? [Date] {
@@ -360,6 +380,10 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
         if let planTime = planTime {
             try cloudObj.set(EventModelKeys.planTime.rawValue, value: planTime.lcDate)
+        }
+        try cloudObj.set(EventModelKeys.setDealineTime.rawValue, value: setDealineTime.lcBool)
+        if let deadlineTime = self.deadlineTime {
+            try cloudObj.set(EventModelKeys.deadlineTime.rawValue, value: deadlineTime.lcDate)
         }
         try cloudObj.set(EventModelKeys.finishRating.rawValue, value: finishRating.lcNumber)
         try cloudObj.set(EventModelKeys.difficultRating.rawValue, value: difficultRating.lcNumber)
@@ -479,6 +503,8 @@ extension EventModel {
         case isKeyEvent
         case setProgress
         case progressValue
+        case setDealineTime
+        case deadlineTime
     }
     
 }

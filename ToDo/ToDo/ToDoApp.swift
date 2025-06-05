@@ -110,7 +110,7 @@ struct ToDoApp: App {
         .menuBarExtraStyle(.window)
 
         
-        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
+        MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.timeStr : "none")") {
             TaskSaveView(timerModel: timerModel)
                 .environmentObject(modelData)
         }

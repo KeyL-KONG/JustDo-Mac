@@ -14,7 +14,7 @@ struct CustomTextEditor: NSViewRepresentable {
     @Binding var text: String
     @Binding var cursorPosition: Int {
         didSet {
-            print("custom cursor pos: \(cursorPosition)")
+            print("custom cursor pos: \(cursorPosition) \(self)")
             self.onCursorPositionChanged?(cursorPosition)
         }
     }
@@ -53,7 +53,7 @@ struct CustomTextEditor: NSViewRepresentable {
         // 设置光标位置 - 使用 NSRange
         let currentRange = textView.selectedRange()
         if currentRange.location != cursorPosition {
-            textView.setSelectedRange(NSRange(location: cursorPosition, length: 0))
+            //textView.setSelectedRange(NSRange(location: cursorPosition, length: 0))
         }
     }
     
@@ -73,10 +73,11 @@ struct CustomTextEditor: NSViewRepresentable {
             guard let textView = notification.object as? NSTextView else { return }
             
             let selectedRange = textView.selectedRange()
-            parent.cursorPosition = selectedRange.location
+            print("select range len: \(selectedRange.location), parent: \(parent), cursor: \(parent.cursorPosition)")
+            //parent.cursorPosition = selectedRange.location
             
             // 如果有回调，执行回调
-            parent.onCursorPositionChanged?(selectedRange.location)
+            //parent.onCursorPositionChanged?(selectedRange.location)
         }
     }
 }

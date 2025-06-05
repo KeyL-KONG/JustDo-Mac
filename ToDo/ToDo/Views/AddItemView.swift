@@ -168,9 +168,11 @@ struct TaskSaveView: View {
     
     func addTaskTimeItem() {
         if let item = timerModel.timingItem, let playTime = item.playTime {
+            let timeInterval = TimeInterval(timerModel.timeSeconds)
             timerModel.stopTimer()
             
-            let taskItem = TaskTimeItem(startTime: playTime, endTime: .now, content: taskContent)
+            let endTime = playTime.addingTimeInterval(timeInterval)
+            let taskItem = TaskTimeItem(startTime: playTime, endTime: endTime, content: taskContent)
             taskItem.eventId = item.id
             modelData.updateTimeItem(taskItem)
             

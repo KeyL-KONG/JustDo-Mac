@@ -61,6 +61,9 @@ struct ToDoEditView: View {
     }
     @State public var setPlanTime: Bool = false
     
+    @State var setDeadlineTime: Bool = false
+    @State var dealineTime: Date = .now
+    
     @State var setFinishTime: Bool = false
     @State var finishTime: Date = .now
     
@@ -486,7 +489,20 @@ struct ToDoEditView: View {
                         }.labelsHidden()
                         
                         DatePicker(selection: $planTime, displayedComponents: .date) {
-                            Text("设置为计划时间")
+                            let title = actionType == .task ? "设置为计划时间" : "设置为开始时间"
+                            Text(title)
+                        }
+                    }
+                    
+                    if let selectItem, selectItem.actionType != .task, setPlanTime {
+                        HStack {
+                            Toggle(isOn: $setDeadlineTime) {
+                                Text("")
+                            }.labelsHidden()
+                            
+                            DatePicker(selection: $dealineTime, displayedComponents: .date) {
+                                Text("设置为截止时间")
+                            }
                         }
                     }
                     
@@ -697,6 +713,8 @@ struct ToDoEditView: View {
                 if selectedItem.mark.count > 0 {
                     self.isEdit = false
                 }
+                setDeadlineTime = selectedItem.setDealineTime
+                dealineTime = selectedItem.deadlineTime ?? .now
                 isCollect = selectedItem.isCollect
                 isQuick = selectedItem.quickEvent
                 isExpandType = selectedItem.tag.isEmpty
@@ -780,6 +798,8 @@ struct ToDoEditView: View {
         selectedItem.progressValue = Int(progressValue) ?? 0
         selectedItem.finishState = FinishState.state(with: finishState)
         selectedItem.startText = startText
+        selectedItem.setDealineTime = setDeadlineTime
+        selectedItem.deadlineTime = dealineTime
         modelData.updateItem(selectedItem)
         updateEvent()
         

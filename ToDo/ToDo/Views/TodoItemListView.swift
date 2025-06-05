@@ -50,6 +50,7 @@ struct TodoItemListView: View {
     @State var isCollectExpanded = false
     @State var isQuickExpanded = false
     @State var isTodayExpanded = true
+    @State var isProjectExpanded = true
     @State var isDeadlineExpanded = true
     @State var isExpiredExpanded = false
     @State var isUnplanExpanded = false
@@ -65,6 +66,7 @@ struct TodoItemListView: View {
     @State var selectedTag: String = "所有标签"
     
     @State var todayItems: [EventItem] = []
+    @State var projectItems: [EventItem] = []
     @State var toggleToRefreshTodayView: Bool = false
     
     @State var unFinishWeekItems: [Date: [EventItem]] = [:]
@@ -115,10 +117,18 @@ struct TodoItemListView: View {
     var recentItems: [EventItem] {
         let todayItems = self.todayItems
         return items.filter { event in
-            guard let planTime = event.planTime else {
-                return false
+            if event.actionType == .task {
+                guard let planTime = event.planTime else {
+                    return false
+                }
+                return !event.isFinish && planTime >= .now && !planTime.isInToday && planTime.daysBetweenDates(date: .now) <= 7 && !todayItems.contains(event)
+            } else {
+                guard let dealine = event.deadlineTime else {
+                    return false
+                }
+                return !event.isFinish && event.setDealineTime && !dealine.isToday && dealine.daysBetweenDates(date: .now) <= 7 && !projectItems.contains(event)
             }
-            return !event.isFinish && planTime >= .now && !planTime.isInToday && planTime.daysBetweenDates(date: .now) <= 7 && !todayItems.contains(event)
+            
         }.sorted { first, second in
             let firstDays = first.planTime?.daysBetweenDates(date: .now) ?? 0
             let secondDays = second.planTime?.daysBetweenDates(date: .now) ?? 0

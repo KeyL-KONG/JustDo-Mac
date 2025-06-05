@@ -112,6 +112,22 @@ extension TodoItemListView {
             
             Section(header:
                 HStack {
+                    Text("当前项目")
+                    Spacer()
+                Button(action: { isProjectExpanded.toggle() }) {
+                        Image(systemName: isProjectExpanded ? "chevron.down" : "chevron.right")
+                    }
+                }
+            ) {
+                if isProjectExpanded {
+                    ForEach(projectItems, id: \.self.id) { item in
+                        itemRowView(item: item, date: selectDate, showDeadline: false)
+                    }
+                }
+            }
+            
+            Section(header:
+                HStack {
                     Text("收藏事项")
                     Spacer()
                 Button(action: { isCollectExpanded.toggle() }) {
@@ -478,9 +494,18 @@ extension TodoItemListView {
     
     func updateTodayItems() {
         self.todayItems = fetchTodayItems()
+        self.projectItems = fetchProjectItems()
         
         if self.selectItemID.isEmpty {
             self.selectItemID = self.todayItems.first?.id ?? ""
+        }
+    }
+    
+    func fetchProjectItems() -> [EventItem] {
+        return items.filter { event in
+            guard let planTime = event.planTime, let deadTime = event.deadlineTime else { return false }
+            let result = event.actionType == .project && event.setPlanTime && event.setDealineTime && planTime <= currentDate.endOfDay && deadTime >= currentDate.startOfDay
+            return result
         }
     }
     
@@ -488,7 +513,12 @@ extension TodoItemListView {
         print("today items")
         let taskTimeItems = modelData.taskTimeItems.filter { !$0.isPlan }
         return items.filter { event in
-            return (event.planTime?.isInSameDay(as: selectDate) ?? false) || taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
+//            if event.actionType == .project, event.setPlanTime, event.setDealineTime {
+//                if let planTime = event.planTime, let deadTime = event.deadlineTime, planTime >= currentDate.startOfDay, deadTime <= currentDate.endOfDay  {
+//                    return true
+//                }
+//            }
+            return (event.planTime?.isInSameDay(as: selectDate) ?? false && event.actionType == .task) || taskTimeItems.contains(where: { $0.eventId == event.id && $0.startTime.isInSameDay(as: selectDate) }) || (event.isFinish && (event.finishTime?.isInSameDay(as: selectDate)) == true)
         }.sorted { event1, event2 in
             if event1.setPlanTime != event2.setPlanTime {
                 return event1.setPlanTime ? true : false

@@ -9,6 +9,7 @@ target 'ToDo' do
 
   # Pods for ToDo
   pod 'LeanCloud'
+  pod 'AlertToast'
 end
 
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AlertToast
 #if os(macOS)
 import AppKit
 #endif
@@ -37,7 +38,12 @@ struct NoteDetailView: View {
     
     @State var noteRate: Double = 0
     
+    static var isUploadingImage: Bool = false
+    
     @Environment(\.openWindow) private var openWindow
+    
+    @State var showImageToast: Bool = false
+    @State var imageResultText: String = ""
     
     var body: some View {
         ScrollView {
@@ -105,7 +111,7 @@ struct NoteDetailView: View {
                         if isWindow {
                             HStack {
                                 CustomTextEditor(text: $noteContent, cursorPosition: $cursorPosition) { pos in
-                                    self.cursorPosition = pos
+                                    //self.cursorPosition = pos
                                 }
                                     .font(.system(size: 14))
                                     .padding(10)
@@ -169,7 +175,9 @@ struct NoteDetailView: View {
                 
             }
         }
-        
+        .toast(isPresenting: $showImageToast, alert: {
+            AlertToast(displayMode: .hud, type: .regular, title: self.imageResultText)
+        })
         .toolbar {
             
             if !isWindow {
@@ -281,20 +289,31 @@ extension NoteDetailView {
 #if os(macOS)
     private func uploadImage(image: NSImage) {
         print("upload image")
+        if Self.isUploadingImage {
+            return
+        }
         if let data = image.toData() {
+            Self.isUploadingImage = true
             CloudManager.shared.upload(with: data) { url, error in
+                Self.isUploadingImage = false
                 if let error = error {
                     print("upload data failed: \(error)")
+                    self.imageResultText = "upload fail"
+                    self.showImageToast.toggle()
                 } else if let url = url {
                     // 新增光标位置处理
                     let insertionText = url.formatImageUrl
                     let currentContent = self.noteContent
                     print("insert text: \(insertionText), pos: \(self.cursorPosition)")
                     let updateContent = currentContent.insert(insertionText, at: self.cursorPosition)
-                    DispatchQueue.main.async {
-                        self.noteContent = updateContent
-                        self.toggleToRefresh.toggle()
-                    }
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(insertionText, forType: .string)
+                    self.imageResultText = "upload success"
+                    self.showImageToast.toggle()
+//                    DispatchQueue.main.async {
+//                        self.noteContent = updateContent
+//                        self.toggleToRefresh.toggle()
+//                    }
                 }
             }
         }
