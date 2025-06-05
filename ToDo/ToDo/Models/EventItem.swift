@@ -329,6 +329,21 @@ enum TimeTab: String, Identifiable {
         }
     }
     
+    var timeTitle: String {
+        switch self {
+        case .day:
+            return "日"
+        case .week:
+            return "周"
+        case .month:
+            return "月"
+        case .year:
+            return "年"
+        case .all:
+            return "所有"
+        }
+    }
+    
     case day = "day"
     case week = "week"
     case month = "month"

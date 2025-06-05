@@ -16,6 +16,11 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
     var eventIds: [String] = []
     var timeInterval: Int = 0
     var totalInterval: Int = 0
+    var timeType: String = ""
+    
+    var timeTab: TimeTab {
+        return TimeTab(rawValue: timeType) ?? .week
+    }
     
     var percentValue: CGFloat {
         guard timeInterval > 0, totalInterval > 0 else {
@@ -32,6 +37,7 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
         case tagId
         case timeInterval
         case totalInterval
+        case timeType
     }
     
     required init() {
@@ -48,6 +54,7 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
         tagId = try container.decodeIfPresent(String.self, forKey: .tagId) ?? ""
         timeInterval = try container.decodeIfPresent(Int.self, forKey: .timeInterval) ?? 0
         totalInterval = try container.decodeIfPresent(Int.self, forKey: .totalInterval) ?? 0
+        timeType = try container.decodeIfPresent(String.self, forKey: .timeType) ?? ""
     }
     
     init(startTime: Date, endTime: Date, content: String) {
@@ -66,6 +73,7 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
         try container.encode(tagId, forKey: .tagId)
         try container.encode(timeInterval, forKey: .timeInterval)
         try container.encode(totalInterval, forKey: .totalInterval)
+        try container.encode(timeType, forKey: .timeType)
     }
     
     override class func modelClassName() -> String {
@@ -85,6 +93,7 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
         tagId = cloudObj.get(PlanTimeItemKeys.tagId.rawValue)?.stringValue ?? ""
         timeInterval = cloudObj.get(PlanTimeItemKeys.timeInterval.rawValue)?.intValue ?? 0
         totalInterval = cloudObj.get(PlanTimeItemKeys.totalInterval.rawValue)?.intValue ?? 0
+        timeType = cloudObj.get(PlanTimeItemKeys.timeType.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -96,10 +105,11 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
         try cloudObj.set(PlanTimeItemKeys.tagId.rawValue, value: tagId.lcString)
         try cloudObj.set(PlanTimeItemKeys.timeInterval.rawValue, value: timeInterval.lcNumber)
         try cloudObj.set(PlanTimeItemKeys.totalInterval.rawValue, value: totalInterval.lcNumber)
+        try cloudObj.set(PlanTimeItemKeys.timeType.rawValue, value: timeType.lcString)
     }
     
     private enum CodingKeys: String, CodingKey {
-        case startTime, endTime, content, eventIds, tagId,timeInterval, totalInterval
+        case startTime, endTime, content, eventIds, tagId,timeInterval, totalInterval, timeType
     }
     
 }

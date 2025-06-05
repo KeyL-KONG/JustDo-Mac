@@ -14,6 +14,7 @@ struct PlanView: View {
     @State var mostImportranceItems: [EventItem] = []
     @State var planTimeItems: [PlanTimeItem] = []
     @Binding var selectItemID: String
+    @State var timeTab: TimeTab = .week
     
     @State var tagTotalTimes: [String: Int] = [:]
     @State var sortedTagList: [ItemTag] = []
@@ -39,7 +40,7 @@ struct PlanView: View {
     var currentSummaryItem: SummaryItem? {
         modelData.summaryItemList.first { item in
             guard let summaryTime = item.summaryDate else { return false }
-            return summaryTime.isInSameWeek(as: currentDate) && item.timeTab == .week
+            return summaryTime.isSameTime(timeTab: timeTab, date: currentDate) && item.timeTab == timeTab
         }
     }
     
@@ -165,7 +166,7 @@ extension PlanView {
     
     func summaryHeaderView() -> some View {
         HStack(spacing: 10) {
-            Text("本周总结").bold().font(.system(size: 16))
+            Text("本\(timeTab.timeTitle)总结").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "117a65"))
             
             Spacer()
@@ -295,7 +296,7 @@ extension PlanView {
     
     func eventListHeaderView() -> some View {
         HStack {
-            Text("本周事项").bold().font(.system(size: 16))
+            Text("本\(timeTab.timeTitle)事项").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "884ea0"))
             let count = eventList.count
             let finishCount = eventList.filter { $0.event.isFinish }.count
@@ -412,7 +413,7 @@ extension PlanView {
             
             let planEventList = eventList.filter { event in
                 guard event.planTime != nil else { return false }
-                return timeItems.filter { $0.eventId == event.id && $0.startTime.isInSameWeek(as: currentDate)}.count > 0
+                return timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
             }.compactMap { event in
                 let interval = event.timeTasks(with: .week, tasks: timeItems, selectDate: currentDate).compactMap { $0.interval }.reduce(0, +)
                 let personalItem = personalEventList.first(where: { $0.item.id == event.id })
@@ -451,7 +452,7 @@ extension PlanView {
     
     func readItemHeaderView() -> some View {
         HStack {
-            Text("本周阅读").bold().font(.system(size: 16))
+            Text("本\(timeTab.timeTitle)阅读").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "dc7633"))
             let count = readItems.count
             if count > 0 {
@@ -522,7 +523,7 @@ extension PlanView {
             guard let createTime = item.createTime else {
                 return false
             }
-            return createTime.isInSameWeek(as: currentDate)
+            return createTime.isSameTime(timeTab: timeTab, date: currentDate)
         }
     }
     
@@ -533,7 +534,7 @@ extension PlanView {
     
     func summaryItemHeaderView() -> some View {
         HStack {
-            Text("本周思考").bold().font(.system(size: 16))
+            Text("本\(timeTab.timeTitle)思考").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "f5b041"))
             Spacer()
         }.padding(.top, 20)
@@ -587,7 +588,7 @@ extension PlanView {
             guard let createTime = item.createTime else {
                 return false
             }
-            return currentDate.isInSameWeek(as: createTime) && item.summaryDate == nil
+            return currentDate.isSameTime(timeTab: timeTab, date: createTime) && item.summaryDate == nil
         }).sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
         })
     }
@@ -718,7 +719,7 @@ extension PlanView {
                     guard let event = itemList.first(where: { $0.id == time.eventId }) else {
                         return false
                     }
-                    let result = event.tag == tag.id && time.startTime.isInSameWeek(as: currentDate)
+                    let result = event.tag == tag.id && time.startTime.isSameTime(timeTab: timeTab, date: currentDate)
                     if result && !eventList.contains(event) {
                         eventList.append(event)
                     }
@@ -829,7 +830,7 @@ extension PlanView {
     
     func updatePlanItems() {
         self.planTimeItems = modelData.planTimeItems.filter({ item in
-            item.startTime.isInSameWeek(as: currentDate)
+            item.startTime.isSameTime(timeTab: timeTab, date: currentDate) && item.timeTab == timeTab
         })
     }
     
@@ -930,7 +931,7 @@ extension PlanView {
             guard let planTime = event.planTime else {
                 return false
             }
-            return planTime.isInSameWeek(as: currentDate) && event.isKeyEvent
+            return planTime.isSameTime(timeTab: timeTab, date: currentDate) && event.isKeyEvent
         }).sorted(by: {
             ($0.createTime?.timeIntervalSince1970 ?? 0) >= ($1.createTime?.timeIntervalSince1970 ?? 0)
         }).prefix(3))
