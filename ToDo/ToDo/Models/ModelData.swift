@@ -517,8 +517,8 @@ extension ModelData {
 
 // MARK: state
 extension ModelData {
-    func isEditing(id: String) -> Bool {
-        return editStates[id] ?? false
+    func isEditing(id: String, def: Bool = false) -> Bool {
+        return editStates[id] ?? def
     }
     
     func markEdit(id: String, edit: Bool) {

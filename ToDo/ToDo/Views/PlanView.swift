@@ -33,9 +33,10 @@ struct PlanView: View {
     
     @State var isEventListExpand: Bool = false
     @State var isReadListExpand: Bool = false
-    @State var isSummaryExpand: Bool = false
+    @State var isSummaryExpand: Bool = true
     @State var isSummaryEdit: Bool = false
     @State var summaryContent: String = ""
+    @State var summaryTimeExpand: Bool = false
     
     private static var stopItem: EventItem? = nil
     @State private var showStopAlert: Bool = false
@@ -99,7 +100,7 @@ struct PlanView: View {
         .onChange(of: modelData.taskTimeItems, { oldValue, newValue in
             updateTagSummaryTime()
         })
-        .onChange(of: modelData.summaryItemList) { _, _ in
+        .onChange(of: modelData.updateSummaryItemIndex) { _, _ in
             updateSummaryItems()
             updateSummaryContent()
         }
@@ -216,6 +217,7 @@ extension PlanView {
                             self.summaryContent =  self.summaryContent.truncateAfter(substring: "\n## 事项\n")
                         }
                         self.summaryContent += content
+                        self.updateSummaryItem()
                     }
                 } label: {
                     Text("同步").foregroundStyle(Color.init(hex: "117a65"))
@@ -281,7 +283,7 @@ extension PlanView {
     func updateSummaryItem() {
         let item = currentSummaryItem ?? SummaryItem()
         item.summaryDate = currentDate
-        item.time = TimeTab.week.rawValue
+        item.time = timeTab.rawValue
         item.content = summaryContent
         modelData.updateSummaryItem(item)
     }
@@ -296,15 +298,33 @@ extension PlanView {
         let summaryItems = self.summaryItems
         let readList = self.readItems
         let selectDate = self.currentDate
+        let tagList = self.sortedTagList
+        let tagItemList = self.tagItemList
+        let eventTotalTime = self.eventTotalTime
+        let summaryTagContens = self.currentSummaryItem?.summaryTags ?? [:]
         DispatchQueue.global().async {
             var content = ""
             content = "\n## 事项\n"
-            items.forEach { item in
-                let finishText = !item.event.isFinish && item.event.planTime != nil ? "[ ]" : "[x]"
-                let timeText = item.interval > 0 ? "(\(item.interval.simpleTimeStr))" : ""
-                content += "- \(finishText) \(item.event.title) \(timeText) \n"
+            sortedTagList.forEach { tag in
+                if let items = tagItemList[tag.id], items.count > 0 {
+                    content += "\n### \(tag.title)\n"
+                    
+                    items.forEach { item in
+                        let finishText = !item.isFinish && item.planTime != nil ? "[ ]" : "[x]"
+                        content += "- \(finishText) \(item.title)"
+                        if let time = eventTotalTime[item.id] {
+                            content += " (\(time.simpleTimeStr)) "
+                        }
+                        content += "\n"
+                    }
+                    
+                    if let summaryContent = summaryTagContens[tag.id], summaryContent.count > 0 {
+                        content += "```\n\(summaryContent)\n```\n"
+                    }
+                }
             }
             
+        
             if summaryItems.count > 0 {
                 content += "\n## 思考\n"
                 summaryItems.forEach { item in
@@ -525,7 +545,7 @@ extension PlanView {
                 
                 return timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
             }.compactMap { event in
-                let interval = event.timeTasks(with: .week, tasks: timeItems, selectDate: currentDate).compactMap { $0.interval }.reduce(0, +)
+                let interval = event.timeTasks(with: timeTab, tasks: timeItems, selectDate: currentDate).compactMap { $0.interval }.reduce(0, +)
                 let personalItem = personalEventList.first(where: { $0.item.id == event.id })
                 return PlanEventItem(event: event, interval: interval, personalItem: personalItem)
             }.sorted {
@@ -691,6 +711,13 @@ extension PlanView {
                 }
             }
         }
+        .contextMenu {
+            Button {
+                modelData.deleteSummaryItem(item)
+            } label: {
+                Text("删除").foregroundStyle(.red)
+            }
+        }
     }
     
     func updateSummaryItems() {
@@ -714,6 +741,17 @@ extension PlanView {
             Text("统计时间").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "48c9b0"))
             Spacer()
+            
+            Button {
+                self.summaryTimeExpand = !self.summaryTimeExpand
+                
+                sortedTagList.forEach { tag in
+                    self.updateExpandState(with: tag, state: summaryTimeExpand)
+                }
+            } label: {
+                Image(systemName: summaryTimeExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.init(hex: "117a65"))
+            }
+            .buttonStyle(.plain)
         }.padding(.top, 20)
         .padding(.horizontal, 20)
     }
@@ -754,10 +792,64 @@ extension PlanView {
             .onTapGesture {
                 updateExpandState(with: tag)
             }
+            .contextMenu {
+                if let tagContent = currentSummaryItem?.summaryTags[tag.id] {
+                    
+                } else {
+                    Button {
+                        let item = self.currentSummaryItem ?? SummaryItem()
+                        item.summaryTags[tag.id] = ""
+                        item.summaryDate = .now
+                        item.time = timeTab.rawValue
+                        modelData.updateSummaryItem(item)
+                    } label: {
+                        Text("总结\(tag.title)内容").foregroundStyle(tag.titleColor)
+                    }
+                }
+            }
             
             summaryTagItemListView(tag: tag)
                 .fixedSize(horizontal: false, vertical: true)
                 .opacity(isExpand ? 1 : 0)
+            
+            if isExpand {
+                if let item = currentSummaryItem, let tagContent = item.summaryTags[tag.id] {
+                    let key = cacheKey + tag.id
+                    let isEdit = modelData.isEditing(id: key, def: tagContent.isEmpty)
+                    HStack {
+                        ZStack {
+                            if isEdit {
+                                TextEditor(text: Binding(get: {
+                                    item.summaryTags[tag.id] ?? ""
+                                }, set: { value in
+                                    item.summaryTags[tag.id] = value
+                                }))
+                                    .font(.system(size: 12))
+                                    .scrollContentBackground(.hidden)
+                                    .scrollIndicators(.hidden)
+                                    .frame(minHeight: 80)
+                            } else {
+                                MarkdownWebView(item.summaryTags[tag.id] ?? "")
+                                    .frame(minHeight: 50)
+                            }
+                        }
+                        .overlay(alignment: .bottomTrailing) {
+                            let title = isEdit ? "保存" : "编辑"
+                            Button(title) {
+                                if isEdit {
+                                    modelData.updateSummaryItem(item)
+                                }
+                                modelData.markEdit(id: key, edit: !isEdit)
+                            }
+                        }
+                            
+                    }
+                    .padding()
+                    .background(tag.titleColor.opacity(0.3))
+                    .cornerRadius(8)
+                }
+            }
+            
         }
         .contentShape(Rectangle())
         .padding(.vertical, 5)
@@ -804,11 +896,11 @@ extension PlanView {
         return tagExpandState[tag.id] ?? false
     }
     
-    func updateExpandState(with tag: ItemTag) {
+    func updateExpandState(with tag: ItemTag, state: Bool? = nil) {
         if let expand = tagExpandState[tag.id] {
-            tagExpandState[tag.id] = !expand
+            tagExpandState[tag.id] = state ?? !expand
         } else {
-            tagExpandState[tag.id] = false
+            tagExpandState[tag.id] = state ?? false
         }
     }
     

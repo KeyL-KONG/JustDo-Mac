@@ -16,6 +16,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     var tags: [String] = []
     var time: String = ""
     var summaryDate: Date? // 新增可选日期属性
+    var summaryTags: [String: String] = [:]
     
     var timeTab: TimeTab {
         return TimeTab(rawValue: time) ?? .day
@@ -61,6 +62,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         self.tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
         self.time = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
         self.summaryDate = try container.decodeIfPresent(Date.self, forKey: .summaryDate)
+        self.summaryTags = try container.decodeIfPresent([String: String].self, forKey: .summaryTags) ?? [:]
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -73,6 +75,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         if let summaryDate {
             try container.encode(summaryDate, forKey: .summaryDate)
         }
+        try container.encode(self.summaryTags, forKey: .summaryTags)
     }
     
     override func fillModel(with cloudObj: LCObject) {
@@ -85,6 +88,9 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         self.time = cloudObj.get(SummaryItemKeys.time.rawValue)?.stringValue ?? ""
         if let summaryDate = cloudObj.get(SummaryItemKeys.summaryDate.rawValue)?.dateValue {
             self.summaryDate = summaryDate
+        }
+        if let summaryTags = cloudObj.get(SummaryItemKeys.summaryTags.rawValue)?.dictionaryValue as? [String: String] {
+            self.summaryTags = summaryTags
         }
     }
     
@@ -99,6 +105,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         if let date = summaryDate {
             try cloudObj.set(SummaryItemKeys.summaryDate.rawValue, value: date.lcDate)
         }
+        try cloudObj.set(SummaryItemKeys.summaryTags.rawValue, value: summaryTags.lcDictionary)
     }
     
     enum SummaryItemKeys: String, CodingKey {
@@ -109,6 +116,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         case tags
         case time // 新增时间字段
         case summaryDate
+        case summaryTags
     }
     
 }
