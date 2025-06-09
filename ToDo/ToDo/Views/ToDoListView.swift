@@ -30,6 +30,7 @@ struct ToDoListView: View, Equatable {
     @State private var toggleRefresh: Bool = false
     @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
+    @State var planDate: Date = .now
     
     static var newTimelineInterval: LQDateInterval? = nil
     static let newTimelineItemId = "newTimelineItemId"
@@ -114,7 +115,7 @@ struct ToDoListView: View, Equatable {
                 PersonalTagView(selectItemID: $selectItemID).environmentObject(modelData)
             }
             else if selection == .plan {
-                PlanView(selectItemID: $selectItemID).environmentObject(modelData)
+                PlanView(timerModel: timerModel, selectItemID: $selectItemID, currentDate: $planDate).environmentObject(modelData)
             }
             else if selection == .note {
                 NoteListView(selectItemID: $selectItemID)

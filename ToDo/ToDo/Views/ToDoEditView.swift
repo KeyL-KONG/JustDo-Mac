@@ -54,11 +54,7 @@ struct ToDoEditView: View {
     @State var isFinish: Bool = false
     @State var planTime = Date.now
     
-    @State var mark: String = "" {
-        didSet {
-            print("mark change: \(mark)")
-        }
-    }
+    @State var mark: String = ""
     @State public var setPlanTime: Bool = false
     
     @State var setDeadlineTime: Bool = false

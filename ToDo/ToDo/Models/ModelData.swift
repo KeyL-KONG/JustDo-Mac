@@ -9,6 +9,12 @@ import SwiftUI
 
  typealias EventItem = EventModel
 
+struct PlanEventItem {
+    let event: EventItem
+    let interval: Int
+    let personalItem: PersonalEventItem?
+}
+
 class ModelData: ObservableObject {
     @Published var editStates: [String: Bool] = [:]
     @Published var itemList: [EventItem] = [] {
@@ -76,6 +82,12 @@ class ModelData: ObservableObject {
     
     var planCacheTime: Date?
     
+    var cacheTodayMostImportanceItems: [String: [EventItem]] = [:]
+    var cacheTodayEventList: [String: [PlanEventItem]] = [:]
+    var cacheTodayTagList: [String: [ItemTag]] = [:]
+    var cacheTodayTagTotalTimes: [String: [String: Int]] = [:]
+    var cacheTodayEventTotalTimes: [String: [String: Int]] = [:]
+    var cacheTodayTagItemList: [String: [String: [EventItem]]] = [:]
     
     let cache = CacheManager()
     

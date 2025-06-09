@@ -34,7 +34,7 @@ struct ProgressBar: View {
                 .frame(width: progressValue, height: 20)
                 .foregroundStyle(progressColor)
             
-            Text("\(percentValue)%").foregroundStyle(.white).offset(x: 10)
+            Text("\(percentValue)%").foregroundStyle(.white).offset(x: 10).multilineTextAlignment(.trailing)
         }
     }
 }

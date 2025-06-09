@@ -314,6 +314,21 @@ enum TimeTab: String, Identifiable {
         }
     }
     
+    var totalTimeMins: Int {
+        switch self {
+        case .day:
+            return 24 * 60
+        case .week:
+            return 24 * 60 * 7
+        case .month: // 待优化为对应日期的总时间
+            return 24 * 60 * 30
+        case .year:
+            return 24 * 60 * 365
+        case .all:
+            return 1
+        }
+    }
+    
     var title: String {
         switch self {
         case .day:

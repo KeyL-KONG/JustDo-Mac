@@ -10,6 +10,7 @@ import SwiftUI
 struct PlanView: View {
     
     @EnvironmentObject var modelData: ModelData
+    @ObservedObject var timerModel: TimerModel
     
     @State var mostImportranceItems: [EventItem] = []
     @State var planTimeItems: [PlanTimeItem] = []
@@ -18,7 +19,6 @@ struct PlanView: View {
     
     @State var tagTotalTimes: [String: Int] = [:]
     @State var sortedTagList: [ItemTag] = []
-    @State var totalTimeMins: Int = 0
     @State var tagExpandState: [String: Bool] = [:]
     @State var tagItemList: [String: [EventItem]] = [:]
     @State var eventTotalTime = [String: Int]()
@@ -29,13 +29,17 @@ struct PlanView: View {
     
     @State var eventList: [PlanEventItem] = []
     
-    @State var currentDate: Date = .now
+    @Binding var currentDate: Date
     
     @State var isEventListExpand: Bool = false
     @State var isReadListExpand: Bool = false
     @State var isSummaryExpand: Bool = false
     @State var isSummaryEdit: Bool = false
     @State var summaryContent: String = ""
+    
+    private static var stopItem: EventItem? = nil
+    @State private var showStopAlert: Bool = false
+    @State private var eventContent: String = ""
     
     var currentSummaryItem: SummaryItem? {
         modelData.summaryItemList.first { item in
@@ -52,20 +56,29 @@ struct PlanView: View {
                     mostImportanceView()
                 }
                 
-                planHeaderView()
-                planItemsView()
+                let notShowPlan = timeTab == .day && planTimeItems.isEmpty
+                if !notShowPlan {
+                    planHeaderView()
+                    planItemsView()
+                }
+                
+                if eventList.count > 0 {
+                    eventListHeaderView()
+                    eventListView()
+                }
                 
                 summaryTimeHeaderView()
                 summaryTagTimeItems()
                 
-                eventListHeaderView()
-                eventListView()
+                if summaryItems.count > 0 {
+                    summaryItemHeaderView()
+                    summaryItemsView()
+                }
                 
-                summaryItemHeaderView()
-                summaryItemsView()
-                
-                readItemHeaderView()
-                readItemListView()
+                if readItems.count > 0 {
+                    readItemHeaderView()
+                    readItemListView()
+                }
                 
                 summaryHeaderView()
                 if self.isSummaryExpand {
@@ -78,10 +91,14 @@ struct PlanView: View {
         .onChange(of: currentDate) { old, new in
             updateData()
             updateSummaryContent()
+            updateSelectDefaultItem()
         }
         .onChange(of: modelData.readList) { _, _ in
             updateReadItems()
         }
+        .onChange(of: modelData.taskTimeItems, { oldValue, newValue in
+            updateTagSummaryTime()
+        })
         .onChange(of: modelData.summaryItemList) { _, _ in
             updateSummaryItems()
             updateSummaryContent()
@@ -96,15 +113,29 @@ struct PlanView: View {
         .onDisappear {
             modelData.planCacheTime = currentDate
         }
-        .onReceive(modelData.$itemList) { _ in
+        .onChange(of: modelData.updateItemIndex, { _, _ in
             updateMostImportanceItems()
             updateEventList()
-        }
+        })
         .onReceive(modelData.$planTimeItems, perform: { _ in
             updatePlanItems()
         })
         .onReceive(modelData.$updateItemIndex) { _ in
             updateMostImportanceItems()
+        }
+        .alert("编辑事件内容", isPresented: $showStopAlert) {
+            TextField("请输入内容...", text: $eventContent)
+            Button("取消", role: .cancel) {
+                
+            }
+            Button("确定") {
+                if let stopItem = Self.stopItem {
+                    handleStopEvent(item: stopItem)
+                    self.eventContent = ""
+                }
+            }
+        } message: {
+            Text("")
         }
         .toolbar {
             HStack {
@@ -124,6 +155,13 @@ struct PlanView: View {
                 
                 Spacer()
             }
+        }
+    }
+    
+    func updateSelectDefaultItem() {
+        if self.planTimeItems.contains(where: {  $0.id != selectItemID
+        }) {
+            selectItemID = self.planTimeItems.first?.id ?? self.selectItemID
         }
     }
     
@@ -304,6 +342,24 @@ extension PlanView {
             Text(numText).foregroundStyle(.gray)
             
             Spacer()
+            
+            if timeTab == .day {
+                Button {
+                    let event = EventItem()
+                    event.actionType = .task
+                    event.planTime = .now
+                    event.setPlanTime = true
+                    event.title = "新建任务"
+                    modelData.updateItem(event) {
+                        self.selectItemID = event.id
+                    }
+                } label: {
+                    Image(systemName: "plus").foregroundStyle(Color.init(hex: "884ea0")).bold()
+                }
+                .buttonStyle(.plain)
+            }
+            
+            
             if count > 5 {
                 Button {
                     self.isEventListExpand = !self.isEventListExpand
@@ -352,6 +408,10 @@ extension PlanView {
             
             Spacer()
             
+            if item.event.isPlay {
+                Text("进行中").foregroundStyle(.blue)
+            }
+            
             if let personalItem = item.personalItem {
                 let color = personalItem.num > 0 ? personalItem.tag.goodColor : personalItem.tag.badColor
                 let title = "\(personalItem.tag.tag) \(personalItem.num.symbolStr)"
@@ -378,6 +438,41 @@ extension PlanView {
         .onTapGesture {
             self.selectItemID = item.event.id
         }
+        .contextMenu {
+            if item.event.actionType != .tag {
+                if item.event.isPlay {
+                    Button {
+                        Self.stopItem = item.event
+                        showStopAlert.toggle()
+                    } label: {
+                        Text("stop").foregroundStyle(.yellow)
+                    }
+                    
+                    Button {
+                        timerModel.stopTimer()
+                        item.event.isPlay = false
+                        modelData.updateItem(item.event)
+                    } label: {
+                        Text("cancel").foregroundStyle(.gray)
+                    }
+                } else {
+                    Button {
+                        if timerModel.startTimer(item: item.event) {
+                            item.event.isPlay = true
+                            item.event.playTime = .now
+                            modelData.updateItem(item.event)
+                        }
+                    } label: {
+                        Text("start").foregroundStyle(.green)
+                    }
+                }
+            }
+            Button {
+                modelData.deleteItem(item.event)
+            } label: {
+                Text("删除").foregroundStyle(.red)
+            }
+        }
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
         .background {
@@ -391,13 +486,21 @@ extension PlanView {
         }
     }
     
-    struct PlanEventItem {
-        let event: EventItem
-        let interval: Int
-        let personalItem: PersonalEventItem?
+    func handleStopEvent(item: EventItem) {
+        guard let playTime = item.playTime else {
+            return
+        }
+        let taskItem = TaskTimeItem(startTime: playTime, endTime: .now, content: eventContent)
+        taskItem.eventId = item.id
+        modelData.updateTimeItem(taskItem)
+
+        item.isPlay = false
+        modelData.updateItem(item)
     }
     
     func updateEventList() {
+        self.eventList = self.modelData.cacheTodayEventList[cacheKey] ?? []
+        let cacheKey = self.cacheKey
         let timeItems = modelData.taskTimeItems
         let eventList = modelData.itemList
         let currentDate = self.currentDate
@@ -413,6 +516,13 @@ extension PlanView {
             
             let planEventList = eventList.filter { event in
                 guard event.planTime != nil else { return false }
+                if timeTab == .day {
+                    if event.actionType == .task {
+                        return event.planTime?.isInSameDay(as: currentDate) ?? false
+                    }
+                    return timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
+                }
+                
                 return timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
             }.compactMap { event in
                 let interval = event.timeTasks(with: .week, tasks: timeItems, selectDate: currentDate).compactMap { $0.interval }.reduce(0, +)
@@ -426,6 +536,7 @@ extension PlanView {
             }
             DispatchQueue.main.async {
                 self.eventList = planEventList
+                self.modelData.cacheTodayEventList[cacheKey] = planEventList
             }
         }
         
@@ -632,8 +743,8 @@ extension PlanView {
             HStack {
                 Text(tag.title).foregroundStyle(tag.titleColor).bold()
                 Spacer()
-                if let time = tagTotalTimes[tag.id], totalTimeMins > 0 {
-                    ProgressBar(percent: (CGFloat(time) / CGFloat(totalTimeMins)), progressColor: tag.titleColor, showBgView: false, maxWidth: 400)
+                if let time = tagTotalTimes[tag.id], time > 0 {
+                    ProgressBar(percent: (CGFloat(time) / CGFloat(timeTab.totalTimeMins)), progressColor: tag.titleColor, showBgView: false, maxWidth: 400)
                     Text((time * 60).simpleTimeStr).foregroundStyle(tag.titleColor).frame(width: 60)
                 }
                 
@@ -703,6 +814,12 @@ extension PlanView {
     
     func updateTagSummaryTime() {
         print("update tag time items")
+        let cacheKey = self.cacheKey
+        self.tagTotalTimes = modelData.cacheTodayTagTotalTimes[cacheKey] ?? [:]
+        self.eventTotalTime = modelData.cacheTodayEventTotalTimes[cacheKey] ?? [:]
+        self.tagItemList = modelData.cacheTodayTagItemList[cacheKey] ?? [:]
+        self.sortedTagList = modelData.cacheTodayTagList[cacheKey] ?? []
+        
         let tagList = modelData.tagList
         let timeItems = modelData.taskTimeItems
         let itemList = modelData.itemList
@@ -719,7 +836,7 @@ extension PlanView {
                     guard let event = itemList.first(where: { $0.id == time.eventId }) else {
                         return false
                     }
-                    let result = event.tag == tag.id && time.startTime.isSameTime(timeTab: timeTab, date: currentDate)
+                    let result = event.tag == tag.id && time.endTime.isSameTime(timeTab: timeTab, date: currentDate)
                     if result && !eventList.contains(event) {
                         eventList.append(event)
                     }
@@ -745,7 +862,6 @@ extension PlanView {
                 self.tagTotalTimes = tagTotalTimes
                 self.eventTotalTime = eventTotalTime
                 self.tagItemList = tagEventList
-                self.totalTimeMins = totalTimes
                 self.sortedTagList = tagList.filter({ tag in
                     (tagTotalTimes[tag.id] ?? 0) > 0
                 }).sorted(by: { first, second in
@@ -755,6 +871,10 @@ extension PlanView {
                     return firstTime > secondTime
                 })
 
+                self.modelData.cacheTodayTagTotalTimes[cacheKey] = self.tagTotalTimes
+                self.modelData.cacheTodayEventTotalTimes[cacheKey] = self.eventTotalTime
+                self.modelData.cacheTodayTagItemList[cacheKey] = self.tagItemList
+                self.modelData.cacheTodayTagList[cacheKey] = self.sortedTagList
             }
         }
     }
@@ -925,16 +1045,38 @@ extension PlanView {
         }
     }
     
+    var cacheKey: String {
+        return self.timeTab.rawValue + "_" + self.currentDate.simpleDayMonthAndYear
+    }
+    
     func updateMostImportanceItems() {
+        let cacheKey = self.cacheKey
+        self.mostImportranceItems = modelData.cacheTodayMostImportanceItems[cacheKey] ?? []
+        
         let startTime = Date()
-        mostImportranceItems = Array(modelData.itemList.filter({ event in
-            guard let planTime = event.planTime else {
-                return false
+        let timeTab = self.timeTab
+        let currentDate = self.currentDate
+        let itemList = modelData.itemList
+        DispatchQueue.global().async {
+            let items = itemList.filter({ event in
+                guard let planTime = event.planTime, let deadlineTime = event.deadlineTime else {
+                    return false
+                }
+                if timeTab == .day {
+                    return event.isKeyEvent && planTime.startOfDay <= currentDate && deadlineTime.endOfDay >= currentDate
+                }
+                return planTime.isSameTime(timeTab: timeTab, date: currentDate) && event.isKeyEvent
+            }).sorted(by: {
+                ($0.createTime?.timeIntervalSince1970 ?? 0) >= ($1.createTime?.timeIntervalSince1970 ?? 0)
+            })
+            
+            DispatchQueue.main.async {
+                self.mostImportranceItems = items
+                self.modelData.cacheTodayMostImportanceItems[cacheKey] = items
             }
-            return planTime.isSameTime(timeTab: timeTab, date: currentDate) && event.isKeyEvent
-        }).sorted(by: {
-            ($0.createTime?.timeIntervalSince1970 ?? 0) >= ($1.createTime?.timeIntervalSince1970 ?? 0)
-        }).prefix(3))
+        }
+        
+        
         print("update importance items duration: \((Date().timeIntervalSince1970 - startTime.timeIntervalSince1970) * 1000)ms")
     }
     

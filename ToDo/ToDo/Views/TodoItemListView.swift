@@ -222,6 +222,7 @@ struct TodoItemListView: View {
                     
             } else if selection == .today {
                 todayView()
+                
             } else if selection == .principle {
                 principleView()
                     .onAppear {

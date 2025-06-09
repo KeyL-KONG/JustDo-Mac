@@ -75,7 +75,9 @@ extension TodoItemListView {
                 Text("")
             }
             DayHeaderView()
-            todayListView()
+            PlanView(timerModel: timerModel, selectItemID: $selectItemID, timeTab: .day, currentDate: $selectDate).environmentObject(modelData)
+            
+            //todayListView()
         }
         .onAppear {
             if weekSlider.isEmpty {
@@ -493,12 +495,12 @@ extension TodoItemListView {
 extension TodoItemListView {
     
     func updateTodayItems() {
-        self.todayItems = fetchTodayItems()
-        self.projectItems = fetchProjectItems()
-        
-        if self.selectItemID.isEmpty {
-            self.selectItemID = self.todayItems.first?.id ?? ""
-        }
+//        self.todayItems = fetchTodayItems()
+//        self.projectItems = fetchProjectItems()
+//        
+//        if self.selectItemID.isEmpty {
+//            self.selectItemID = self.todayItems.first?.id ?? ""
+//        }
     }
     
     func fetchProjectItems() -> [EventItem] {
@@ -510,7 +512,6 @@ extension TodoItemListView {
     }
     
     func fetchTodayItems() -> [EventItem] {
-        print("today items")
         let taskTimeItems = modelData.taskTimeItems.filter { !$0.isPlan }
         return items.filter { event in
 //            if event.actionType == .project, event.setPlanTime, event.setDealineTime {

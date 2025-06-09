@@ -121,6 +121,10 @@ extension Date {
         format("yyyy-MM")
     }
     
+    var simpleDayMonthAndYear: String {
+        format("yyyy-MM-dd")
+    }
+    
     var simpleDayAndMonth: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd EEEE"

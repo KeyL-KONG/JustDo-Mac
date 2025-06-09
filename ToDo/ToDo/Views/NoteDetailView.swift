@@ -18,11 +18,7 @@ struct NoteDetailView: View {
     @State var noteItem: NoteModel
     @EnvironmentObject var modelData: ModelData
     @State var noteTitle: String = ""
-    @State var noteContent: String = "" {
-        didSet {
-            print("note content change: \(noteContent)")
-        }
-    }
+    @State var noteContent: String = ""
     @State var overviewText: String = ""
     @State var summaryText: String = ""
     @State var noteTags: [String] = []
