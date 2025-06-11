@@ -40,6 +40,9 @@ struct NoteDetailView: View {
     
     @State var showImageToast: Bool = false
     @State var imageResultText: String = ""
+    @State var expandSummaryView: Bool = false
+    
+    @State var headingNodes: [HeadingNode] = []
     
     var body: some View {
         ScrollView {
@@ -92,10 +95,12 @@ struct NoteDetailView: View {
                             .frame(minHeight: 100)
                         
                     } else if overviewText.count > 0 {
+                    
                         MarkdownWebView(overviewText, itemId: noteItem.id)
                             .padding()
                             .background(Color.init(hex: "117a65").opacity(0.1))
                             .cornerRadius(10)
+                
                     }
                 }
                 
@@ -139,6 +144,13 @@ struct NoteDetailView: View {
                             .padding()
                             .background(Color.blue.opacity(0.1))
                             .cornerRadius(10)
+                            .overlay(alignment: .topTrailing) {
+                                if expandSummaryView {
+                                    catalogView()
+                                } else {
+                                    expandButtonView()
+                                }
+                            }
                     }
                 }
                 
@@ -202,19 +214,29 @@ struct NoteDetailView: View {
                 }
             }
         }
+        .onChange(of: modelData.updateNoteId, { oldValue, newValue in
+            if newValue == noteItem.id {
+                updateNoteData()
+            }
+        })
         .onAppear {
-            self.noteContent = noteItem.content
-            self.noteTitle = noteItem.title
-            self.overviewText = noteItem.overview
-            self.summaryText = noteItem.summary
-            self.noteRate = Double(noteItem.rate)
-            self.noteTags = noteItem.tags.compactMap({ tagId in
-                modelData.noteTagList.first {
-                    $0.id == tagId
-                }?.content
-            })
+            self.updateNoteData()
             self.addObservers()
         }
+    }
+    
+    
+    func updateNoteData() {
+        self.noteContent = noteItem.content
+        self.noteTitle = noteItem.title
+        self.overviewText = noteItem.overview
+        self.summaryText = noteItem.summary
+        self.noteRate = Double(noteItem.rate)
+        self.noteTags = noteItem.tags.compactMap({ tagId in
+            modelData.noteTagList.first {
+                $0.id == tagId
+            }?.content
+        })
     }
 }
 
@@ -364,6 +386,70 @@ extension NoteDetailView {
             .buttonStyle(.plain)
         }.padding(.top, 5)
         .padding(.horizontal, 5)
+    }
+    
+}
+
+extension NoteDetailView {
+    
+    func expandButtonView() -> some View {
+        Button {
+            self.updateHeadNodes()
+            self.expandSummaryView = !self.expandSummaryView
+        } label: {
+            let imageName = self.expandSummaryView ? "arrow.right.circle.fill" : "arrow.backward.circle.fill"
+            Image(systemName: imageName).font(.system(size: 16))
+        }
+        .buttonStyle(.plain)
+        .padding()
+    }
+    
+    func summaryView() -> some View {
+        HStack(alignment: .top) {
+            List {
+                ForEach(headingNodes, id: \.self) { node  in
+                    Text(node.title)
+                }
+            }
+            .cornerRadius(8)
+            
+            Spacer()
+            
+            Button {
+                self.expandSummaryView = !self.expandSummaryView
+            } label: {
+                let imageName = self.expandSummaryView ? "arrow.right.circle.fill" : "arrow.backward.circle.fill"
+                Image(systemName: imageName).font(.system(size: 16))
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: 200)
+        .padding()
+    }
+    
+    func catalogView() -> some View {
+        List {
+            ForEach(headingNodes, id: \.self) { node  in
+                Text(node.title)
+            }
+        }
+        .cornerRadius(8)
+        .frame(maxWidth: 200)
+        .padding()
+        .overlay(alignment: .topTrailing) {
+            Button {
+                self.expandSummaryView = !self.expandSummaryView
+            } label: {
+                let imageName = self.expandSummaryView ? "arrow.right.circle.fill" : "arrow.backward.circle.fill"
+                Image(systemName: imageName).font(.system(size: 16))
+            }
+            .buttonStyle(.plain)
+            .offset(x: -20, y: 20)
+        }
+    }
+    
+    func updateHeadNodes() {
+        self.headingNodes = MarkdownParser.parse(markdown: noteContent)
     }
     
 }

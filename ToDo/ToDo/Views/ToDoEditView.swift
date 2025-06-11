@@ -651,6 +651,16 @@ struct ToDoEditView: View {
                 }
             }
         }
+        .onChange(of: modelData.updateNoteId, { _, noteId in
+            if let selectItem, let note = modelData.noteList.first(where: { $0.id == noteId }), selectItem.id == note.convertId {
+                updateEventData()
+            }
+        })
+        .onChange(of: modelData.updateEventId, { _, eventId in
+            if let selectItem, selectItem.id == eventId {
+                updateEventData()
+            }
+        })
         .onChange(of: modelData.toggleToRefresh, { oldValue, newValue in
             if let selectItem, let item = modelData.itemList.first(where: { $0.id == selectItem.id
             }) {
@@ -675,60 +685,7 @@ struct ToDoEditView: View {
             print("edit view appear")
             modelData.removeEditStates()
             if let selectedItem = selectItem {
-                titleText = selectedItem.title
-                if let noteItem = modelData.noteList.first(where: { $0.convertId == selectedItem.id
-                }) {
-                    mark = noteItem.content
-                    hasNoteItem = true
-                } else {
-                    mark = selectedItem.mark
-                }
-                selectedTag = modelData.tagList.filter({ $0.id == selectedItem.tag}).first?.title ?? ""
-                importantTag = selectedItem.importance
-                intervals = selectedItem.intervals.sorted(by: { $0.end.timeIntervalSince1970 >= $1.end.timeIntervalSince1970
-                })
-                eventType = selectedItem.eventType
-                if let planTime = selectedItem.planTime {
-                    self.planTime = planTime
-                    setPlanTime = true
-                }
-//                if let finishTime = selectedItem.finishTime {
-//                    self.finishTime = finishTime
-//                    setFinishTime = true
-//                }
-                isFinish = selectedItem.isFinish
-                finishTime = selectedItem.finishTime ?? .now
-                selectReward = modelData.rewardList.filter({ $0.id == selectedItem.rewardId }).first?.title ?? "无"
-                selectProject = modelData.itemList.filter { $0.id == selectedItem.projectId}.first?.title ?? "无"
-                if let fatherItem = modelData.itemList.filter({ $0.id == selectedItem.fatherId}).first {
-                    selectFather = fatherItem.childrenIds.count > 0 ? "\(fatherItem.title) (\(fatherItem.childrenIds.count))" : "\(fatherItem.title)"
-                } else {
-                    selectFather = "无"
-                }
-                actionType = selectedItem.actionType
-                if selectedItem.mark.count > 0 {
-                    self.isEdit = false
-                }
-                setDeadlineTime = selectedItem.setDealineTime
-                dealineTime = selectedItem.deadlineTime ?? .now
-                isCollect = selectedItem.isCollect
-                isQuick = selectedItem.quickEvent
-                isExpandType = selectedItem.tag.isEmpty
-                isArchive = selectedItem.isArchive
-                isTempInsert = selectedItem.isTempInsert
-                needReview = selectedItem.needReview
-                setKeyEvent = selectedItem.isKeyEvent
-                finishReview = selectedItem.finishReview
-                reviewDate = selectedItem.reviewDate ?? .now 
-                reviewText = selectedItem.reviewText
-                setFixedEvent = selectedItem.isFixedEvent
-                fixedStartTime = selectedItem.fixedStartTime ?? .now
-                fixedEndTime = selectedItem.fixedEndTime ?? .now
-                setIsProgress = selectedItem.setProgress
-                progressValue = selectedItem.progressValue.stringValue ?? "0"
-                finishState = selectedItem.finishState.description
-                showAddNote = !modelData.noteList.contains(where: { $0.convertId == selectedItem.id })
-                startText = selectedItem.startText
+                updateEventData()
             } else {
                 selectedTag = modelData.tagList.first?.title ?? ""
                 actionType = EventActionType.task
@@ -738,6 +695,64 @@ struct ToDoEditView: View {
         }
     }
     
+    func updateEventData() {
+        guard let selectedItem = self.selectItem else { return }
+        titleText = selectedItem.title
+        if let noteItem = modelData.noteList.first(where: { $0.convertId == selectedItem.id
+        }) {
+            mark = noteItem.content
+            hasNoteItem = true
+        } else {
+            mark = selectedItem.mark
+        }
+        selectedTag = modelData.tagList.filter({ $0.id == selectedItem.tag}).first?.title ?? ""
+        importantTag = selectedItem.importance
+        intervals = selectedItem.intervals.sorted(by: { $0.end.timeIntervalSince1970 >= $1.end.timeIntervalSince1970
+        })
+        eventType = selectedItem.eventType
+        if let planTime = selectedItem.planTime {
+            self.planTime = planTime
+            setPlanTime = true
+        }
+//                if let finishTime = selectedItem.finishTime {
+//                    self.finishTime = finishTime
+//                    setFinishTime = true
+//                }
+        isFinish = selectedItem.isFinish
+        finishTime = selectedItem.finishTime ?? .now
+        selectReward = modelData.rewardList.filter({ $0.id == selectedItem.rewardId }).first?.title ?? "无"
+        selectProject = modelData.itemList.filter { $0.id == selectedItem.projectId}.first?.title ?? "无"
+        if let fatherItem = modelData.itemList.filter({ $0.id == selectedItem.fatherId}).first {
+            selectFather = fatherItem.childrenIds.count > 0 ? "\(fatherItem.title) (\(fatherItem.childrenIds.count))" : "\(fatherItem.title)"
+        } else {
+            selectFather = "无"
+        }
+        actionType = selectedItem.actionType
+        if selectedItem.mark.count > 0 {
+            self.isEdit = false
+        }
+        setDeadlineTime = selectedItem.setDealineTime
+        dealineTime = selectedItem.deadlineTime ?? .now
+        isCollect = selectedItem.isCollect
+        isQuick = selectedItem.quickEvent
+        isExpandType = selectedItem.tag.isEmpty
+        isArchive = selectedItem.isArchive
+        isTempInsert = selectedItem.isTempInsert
+        needReview = selectedItem.needReview
+        setKeyEvent = selectedItem.isKeyEvent
+        finishReview = selectedItem.finishReview
+        reviewDate = selectedItem.reviewDate ?? .now
+        reviewText = selectedItem.reviewText
+        setFixedEvent = selectedItem.isFixedEvent
+        fixedStartTime = selectedItem.fixedStartTime ?? .now
+        fixedEndTime = selectedItem.fixedEndTime ?? .now
+        setIsProgress = selectedItem.setProgress
+        progressValue = selectedItem.progressValue.stringValue ?? "0"
+        finishState = selectedItem.finishState.description
+        showAddNote = !modelData.noteList.contains(where: { $0.convertId == selectedItem.id })
+        startText = selectedItem.startText
+        
+    }
     
     func saveTask() {
         guard let selectedItem = selectItem else {
