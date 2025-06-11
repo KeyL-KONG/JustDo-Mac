@@ -7,6 +7,7 @@ struct TimeLineRowView: View {
     @Binding var isEditing: Bool
     @State var onlyStarTime: Bool = false
     @State var setRepeat: Bool = false
+    @State var itemContent: String = ""
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -54,6 +55,7 @@ struct TimeLineRowView: View {
                     
                     Button("完成") {
                         isEditing = false
+                        item.content = itemContent
                         modelData.updateTimeItem(item)
                     }.foregroundStyle(.blue)
                 } else {
@@ -83,15 +85,15 @@ struct TimeLineRowView: View {
             
             
             if isEditing {
-                TextEditor(text: $item.content)
+                TextEditor(text: $itemContent)
                     .font(.system(size: 14))
                     .padding(10)
                     .scrollContentBackground(.hidden)
                     .background(Color.init(hex: "#e8f6f3"))
                     .frame(minHeight: 120)
                     .cornerRadius(8)
-            } else {
-                MarkdownWebView(item.content, itemId: item.id)
+            } else if itemContent.count > 0 {
+                MarkdownWebView(itemContent, itemId: item.id)
             }
             
         }
@@ -102,6 +104,7 @@ struct TimeLineRowView: View {
             updateItem()
         })
         .onAppear {
+            itemContent = item.content
             setRepeat = item.isRepeat
         }
     }

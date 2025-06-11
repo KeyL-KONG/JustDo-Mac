@@ -49,6 +49,10 @@ struct PlanView: View {
         }
     }
     
+    var summaryTagTotalTime: Int {
+        tagTotalTimes.values.reduce(0, +)
+    }
+    
     var body: some View {
         ScrollView(showsIndicators: true) { // 添加垂直滚动容器
             VStack(spacing: 0) {
@@ -740,6 +744,11 @@ extension PlanView {
         HStack {
             Text("统计时间").bold().font(.system(size: 16))
                 .foregroundStyle(Color.init(hex: "48c9b0"))
+            
+            if summaryTagTotalTime > 0 {
+                let percent = Int((Double(summaryTagTotalTime) / Double(timeTab.totalTimeMins)) * 100)
+                Text("\(percent)%").foregroundStyle(Color.init(hex: "48c9b0"))
+            }
             Spacer()
             
             Button {
@@ -1133,6 +1142,41 @@ extension PlanView {
                         .fill(Color.init(hex: "a9cce3"))
                         .cornerRadius(8)
                 }
+            }
+        }
+        .contextMenu {
+            if item.actionType != .tag {
+                if item.isPlay {
+                    Button {
+                        Self.stopItem = item
+                        showStopAlert.toggle()
+                    } label: {
+                        Text("stop").foregroundStyle(.yellow)
+                    }
+                    
+                    Button {
+                        timerModel.stopTimer()
+                        item.isPlay = false
+                        modelData.updateItem(item)
+                    } label: {
+                        Text("cancel").foregroundStyle(.gray)
+                    }
+                } else {
+                    Button {
+                        if timerModel.startTimer(item: item) {
+                            item.isPlay = true
+                            item.playTime = .now
+                            modelData.updateItem(item)
+                        }
+                    } label: {
+                        Text("start").foregroundStyle(.green)
+                    }
+                }
+            }
+            Button {
+                modelData.deleteItem(item)
+            } label: {
+                Text("删除").foregroundStyle(.red)
             }
         }
     }
