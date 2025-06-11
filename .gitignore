@@ -20,14 +20,14 @@ Pods/                   # ← 忽略所有 Pods 内容
 
 # 但保留这两个重要文件!
 !Podfile                # ← 强制保留 Podfile
-!Podfile.lock           # ← 强制保留锁定文件
+#!Podfile.lock           # ← 强制保留锁定文件
 
 # CocoaPods 辅助文件 (可选忽略)
-Pods/*.xcconfig
-Pods/Target Support Files/
+Pods/
 pod_target_manifest.lock
 Manifest.lock
 Podfile.lock.lock
+Podfile.lock
 
 # Carthage
 Carthage/Build/
