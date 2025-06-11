@@ -36,6 +36,7 @@ extension ModelData {
         } else {
             self.noteList.append(note)
         }
+        updateNoteId = note.id
         DataManager.shared.save(with: NoteModel.modelClassName(), models: [note]) { error in
             if let error {
                 print(error)

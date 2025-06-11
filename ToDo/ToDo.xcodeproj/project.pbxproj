@@ -105,6 +105,7 @@
 		2B5800212DF070F400BB4DDB /* CustomTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */; };
 		2BBE50382DEF2A8000D89777 /* NoteQuickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBE50372DEF2A7A00D89777 /* NoteQuickView.swift */; };
 		2BC54C642DDF54AB00894C6E /* MacEditReadItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */; };
+		2BEE62722DF988840030B77F /* MarkdownParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEE62712DF9887B0030B77F /* MarkdownParser.swift */; };
 		5D46435523368AEAFF9A3BF0 /* Pods_ToDo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27812DCD9E4DA99EEF0A4431 /* Pods_ToDo.framework */; };
 /* End PBXBuildFile section */
 
@@ -210,6 +211,7 @@
 		2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextEditor.swift; sourceTree = "<group>"; };
 		2BBE50372DEF2A7A00D89777 /* NoteQuickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteQuickView.swift; sourceTree = "<group>"; };
 		2BC54C632DDF54AB00894C6E /* MacEditReadItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacEditReadItemView.swift; sourceTree = "<group>"; };
+		2BEE62712DF9887B0030B77F /* MarkdownParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownParser.swift; sourceTree = "<group>"; };
 		D3B5A7BD036DC5D0B04CA9A2 /* Pods-ToDo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo.release.xcconfig"; path = "Target Support Files/Pods-ToDo/Pods-ToDo.release.xcconfig"; sourceTree = "<group>"; };
 		F09232FCA5EA1DB299605B8E /* Pods-ToDo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo.debug.xcconfig"; path = "Target Support Files/Pods-ToDo/Pods-ToDo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -443,6 +445,7 @@
 		09F80C092C665A5B00650366 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2BEE62712DF9887B0030B77F /* MarkdownParser.swift */,
 				2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */,
 				2B15F7562DEEF573000F0AC8 /* Image+Extensions.swift */,
 				0925460E2DE1710900D324DB /* Dictionary+Extensions.swift */,
@@ -653,6 +656,7 @@
 				092545F02DD8666300D324DB /* PlanItemEditView.swift in Sources */,
 				097AE2CC2DC9041B0096059B /* View-CustomAlert.swift in Sources */,
 				09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */,
+				2BEE62722DF988840030B77F /* MarkdownParser.swift in Sources */,
 				093E78FA2D238533006E5120 /* ReadTag.swift in Sources */,
 				09AAC5522DEDDC9A0091FA4A /* ReadListView.swift in Sources */,
 				093E78FB2D238533006E5120 /* ReadModel.swift in Sources */,

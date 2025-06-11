@@ -69,6 +69,8 @@ class ModelData: ObservableObject {
     
     @Published var toggleToRefresh: Bool = false
     
+    @Published var updateNoteId: String = ""
+    @Published var updateEventId: String = ""
     @Published var updateItemIndex = 0
     @Published var updateTimeIndex = 0
     @Published var updateNoteIndex = 0
@@ -177,6 +179,7 @@ class ModelData: ObservableObject {
         } else {
             itemList.append(item)
         }
+        updateEventId = item.id
         saveToServer(items: [item]) { error in
             if let error {
                 print(error)

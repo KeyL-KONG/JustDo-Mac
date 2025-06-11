@@ -75,7 +75,7 @@ extension TodoItemListView {
                 Text("")
             }
             DayHeaderView()
-            PlanView(timerModel: timerModel, selectItemID: $selectItemID, timeTab: .day, currentDate: $selectDate).environmentObject(modelData)
+            PlanView(timerModel: timerModel, selectItemID: $selectItemID, timeTab: .day, currentDate: $selectDate, selectionMode: $selectionMode).environmentObject(modelData)
             
             //todayListView()
         }

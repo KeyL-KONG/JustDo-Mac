@@ -25,11 +25,15 @@ struct PlanView: View {
     
     @State var summaryItems: [SummaryItem] = []
     
+    @State var noteItems: [NoteModel] = []
+    
     @State var readItems: [ReadModel] = []
     
     @State var eventList: [PlanEventItem] = []
     
     @Binding var currentDate: Date
+    
+    @Binding var selectionMode: TodoMode
     
     @State var isEventListExpand: Bool = false
     @State var isReadListExpand: Bool = false
@@ -72,12 +76,19 @@ struct PlanView: View {
                     eventListView()
                 }
                 
-                summaryTimeHeaderView()
-                summaryTagTimeItems()
+                if selectionMode != .work {
+                    summaryTimeHeaderView()
+                    summaryTagTimeItems()
+                }
                 
                 if summaryItems.count > 0 {
                     summaryItemHeaderView()
                     summaryItemsView()
+                }
+                
+                if noteItems.count > 0 {
+                    noteItemHeaderView()
+                    noteItemsView()
                 }
                 
                 if readItems.count > 0 {
@@ -86,13 +97,17 @@ struct PlanView: View {
                 }
                 
                 summaryHeaderView()
-                if self.isSummaryExpand {
+                if self.isSummaryExpand, selectionMode != .work {
                     summaryDetailView()
                 }
                 
                 Spacer()
             }
         }
+        .onChange(of: selectionMode, { oldValue, newValue in
+            updateData()
+            updateSelectDefaultItem()
+        })
         .onChange(of: currentDate) { old, new in
             updateData()
             updateSummaryContent()
@@ -127,6 +142,9 @@ struct PlanView: View {
         })
         .onReceive(modelData.$updateItemIndex) { _ in
             updateMostImportanceItems()
+        }
+        .onReceive(modelData.$updateNoteIndex) { _ in
+            updateNoteItems()
         }
         .alert("编辑事件内容", isPresented: $showStopAlert) {
             TextField("请输入内容...", text: $eventContent)
@@ -195,6 +213,8 @@ struct PlanView: View {
         print("summaryItems: \((Date().timeIntervalSince1970 - start5.timeIntervalSince1970) * 1000)ms")
         
         updateEventList()
+        
+        updateNoteItems()
         
         let start6 = Date()
         updateReadItems()
@@ -526,7 +546,12 @@ extension PlanView {
         self.eventList = self.modelData.cacheTodayEventList[cacheKey] ?? []
         let cacheKey = self.cacheKey
         let timeItems = modelData.taskTimeItems
-        let eventList = modelData.itemList
+        let eventList = selectionMode == .synthesis ? modelData.itemList : modelData.itemList.filter ({ event in
+            guard let tag = modelData.tagList.first(where: { $0.id == event.tag }) else {
+                return false
+            }
+            return tag.title == "工作"
+        })
         let currentDate = self.currentDate
         let personalTagList = modelData.personalTagList
         
@@ -662,6 +687,77 @@ extension PlanView {
         }
     }
     
+}
+
+// MARK: note view
+extension PlanView {
+    
+    func noteItemHeaderView() -> some View {
+        HStack {
+            Text("本\(timeTab.timeTitle)笔记").bold().font(.system(size: 16))
+                .foregroundStyle(Color.init(hex: "f5b041"))
+            Spacer()
+        }.padding(.top, 20)
+        .padding(.horizontal, 20)
+    }
+    
+    func noteItemsView() -> some View {
+        VStack(alignment: .leading) {
+            ForEach(noteItems, id: \.self) { item in
+                noteItemView(item: item)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 20)
+        .background {
+            ZStack {
+                Rectangle()
+                    .fill(Color.init(hex: "f5b041").opacity(0.1))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 10)
+            }
+        }
+    }
+    
+    func noteItemView(item: NoteModel) -> some View {
+        HStack {
+            Text(item.title)
+            Spacer()
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            self.selectItemID = item.id
+        }
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background {
+            if item.id == selectItemID {
+                ZStack {
+                    Rectangle()
+                        .fill(Color.init(hex: "f5b041"))
+                        .cornerRadius(8)
+                }
+            }
+        }
+        .contextMenu {
+            Button {
+                modelData.deleteNote(item)
+            } label: {
+                Text("删除").foregroundStyle(.red)
+            }
+        }
+    }
+    
+    func updateNoteItems() {
+        noteItems = modelData.noteList.filter({ note in
+            guard let createTime = note.createTime else {
+                return false
+            }
+            return currentDate.isSameTime(timeTab: timeTab, date: createTime)
+        }).sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
+        })
+    }
 }
 
 // MARK: Summary Think View
@@ -1192,7 +1288,12 @@ extension PlanView {
         let startTime = Date()
         let timeTab = self.timeTab
         let currentDate = self.currentDate
-        let itemList = modelData.itemList
+        let itemList = selectionMode == .synthesis ? modelData.itemList : modelData.itemList.filter({ event in
+            guard let tag = modelData.tagList.first(where: { $0.id == event.tag }) else {
+                return false
+            }
+            return tag.title == "工作"
+        })
         DispatchQueue.global().async {
             let items = itemList.filter({ event in
                 guard let planTime = event.planTime, let deadlineTime = event.deadlineTime else {
