@@ -12,22 +12,25 @@ typealias PlatformViewRepresentable = UIViewRepresentable
 public struct MarkdownWebView: PlatformViewRepresentable {
     let markdownContent: String
     let itemId: String
+    var scrollText: String
     let customStylesheet: String?
     let linkActivationHandler: ((URL) -> Void)?
     let renderedContentHandler: ((String) -> Void)?
     
-    public init(_ markdownContent: String, itemId: String = "", customStylesheet: String? = nil) {
+    public init(_ markdownContent: String, itemId: String = "", scrollText: String = "", customStylesheet: String? = nil) {
         self.markdownContent = markdownContent
         self.itemId = itemId
+        self.scrollText = scrollText
         self.customStylesheet = customStylesheet
         self.linkActivationHandler = nil
         self.renderedContentHandler = nil
     }
     
-    internal init(_ markdownContent: String, itemId: String = "", customStylesheet: String?, linkActivationHandler: ((URL) -> Void)?, renderedContentHandler: ((String) -> Void)?) {
+    internal init(_ markdownContent: String, itemId: String = "", scrollText: String = "", customStylesheet: String?, linkActivationHandler: ((URL) -> Void)?, renderedContentHandler: ((String) -> Void)?) {
         self.markdownContent = markdownContent
         self.customStylesheet = customStylesheet
         self.itemId = itemId
+        self.scrollText = scrollText
         self.linkActivationHandler = linkActivationHandler
         self.renderedContentHandler = renderedContentHandler
     }
@@ -44,6 +47,9 @@ public struct MarkdownWebView: PlatformViewRepresentable {
         platformView.itemId = itemId
         guard !platformView.isLoading else { return } /// This function might be called when the page is still loading, at which time `window.proxy` is not available yet.
         platformView.updateMarkdownContent(self.markdownContent)
+//        if scrollText.isEmpty {
+//            platformView.scrollTo(text: scrollText)
+//        }
     }
     
     #if os(macOS)
@@ -226,6 +232,24 @@ public struct MarkdownWebView: PlatformViewRepresentable {
             guard let markdownContentBase64Encoded = markdownContent.data(using: .utf8)?.base64EncodedString() else { return }
             
             self.callAsyncJavaScript("window.updateWithMarkdownContentBase64Encoded(`\(markdownContentBase64Encoded)`)", in: nil, in: .page, completionHandler: nil)
+        }
+        
+        func scrollTo(text: String) {
+            let sanitizedText = text
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+                .replacingOccurrences(of: "\"", with: "\\\"")
+            
+            let script = """
+            const elements = document.getElementsByTagName('*');
+            for (let el of elements) {
+                if (el.textContent.includes('\(sanitizedText)')) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    break;
+                }
+            }
+            """
+            evaluateJavaScript(script, completionHandler: nil)
         }
     }
 }

@@ -91,15 +91,18 @@ struct PlanView: View {
                     noteItemsView()
                 }
                 
-                if readItems.count > 0 {
+                if readItems.count > 0, selectionMode == .synthesis {
                     readItemHeaderView()
                     readItemListView()
                 }
                 
-                summaryHeaderView()
-                if self.isSummaryExpand, selectionMode != .work {
-                    summaryDetailView()
+                if selectionMode == .synthesis {
+                    summaryHeaderView()
+                    if self.isSummaryExpand, selectionMode != .work {
+                        summaryDetailView()
+                    }
                 }
+                
                 
                 Spacer()
             }
@@ -566,10 +569,15 @@ extension PlanView {
             let planEventList = eventList.filter { event in
                 guard event.planTime != nil else { return false }
                 if timeTab == .day {
+                    var timeResult = false
                     if event.actionType == .task {
-                        return event.planTime?.isInSameDay(as: currentDate) ?? false
+                        timeResult = event.planTime?.isInSameDay(as: currentDate) ?? false
+                    } else if event.actionType == .project {
+                        if let startTime = event.planTime?.startOfDay, let deadlineTime = event.deadlineTime?.endOfDay {
+                            timeResult = startTime >= currentDate && currentDate <= deadlineTime
+                        }
                     }
-                    return timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
+                    return timeResult || timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
                 }
                 
                 return timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0
