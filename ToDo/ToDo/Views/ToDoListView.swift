@@ -172,7 +172,7 @@ struct ToDoListView: View, Equatable {
             }
             else if let eventItem = modelData.itemList.first(where: { $0.id == selectItemID
             }) {
-                ToDoEditView(selectItem: eventItem, selectionChange: { selectId in
+                ToDoEditView(selectItemID: $selectItemID, selectItem: eventItem, selectionChange: { selectId in
                     self.selectItemID = selectId
                 }, updateEvent: {
                     
@@ -197,7 +197,7 @@ struct ToDoListView: View, Equatable {
                     .environmentObject(modelData).id(selectItemID)
             } else if let principleItem = modelData.principleItems.first(where: { $0.id == selectItemID
             }) {
-                ToDoEditPrincipleView(selectItem: principleItem) { selectId in
+                ToDoEditPrincipleView(selectItemID: $selectItemID, selectItem: principleItem) { selectId in
                     selectItemID = selectId
                 }
                 .environmentObject(modelData)

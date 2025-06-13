@@ -11,6 +11,7 @@ import LeanCloud
 struct ToDoEditView: View {
     
     @EnvironmentObject var modelData: ModelData
+    @Binding var selectItemID: String
     @State var selectItem: EventItem?
     var selectionChange: ((String) -> ())
     var updateEvent: (() -> ())
@@ -503,7 +504,7 @@ struct ToDoEditView: View {
                     }
                     
                         ForEach(taskPlanTimeItems) { item in
-                            TimeLineRowView(
+                            TimeLineRowView(selectItemID: $selectItemID,
                                 item: item,
                                 isEditing: Binding(
                                     get: { return modelData.isEditing(id: item.id) },
@@ -629,7 +630,7 @@ struct ToDoEditView: View {
                     }
                 ) {
                     ForEach(taskTimeItems) { item in
-                        TimeLineRowView(
+                        TimeLineRowView(selectItemID: $selectItemID,
                             item: item,
                             isEditing: Binding(
                                 get: { return modelData.isEditing(id: item.id) },

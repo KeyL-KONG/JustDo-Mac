@@ -567,7 +567,6 @@ extension PlanView {
             }
             
             let planEventList = eventList.filter { event in
-                guard event.planTime != nil else { return false }
                 if timeTab == .day {
                     var timeResult = false
                     if event.actionType == .task {

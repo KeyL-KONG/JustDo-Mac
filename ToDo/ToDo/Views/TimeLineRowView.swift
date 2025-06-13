@@ -2,12 +2,13 @@ import SwiftUI
 
 struct TimeLineRowView: View {
     @EnvironmentObject var modelData: ModelData
-    
+    @Binding var selectItemID: String
     @State var item: TaskTimeItem
     @Binding var isEditing: Bool
     @State var onlyStarTime: Bool = false
     @State var setRepeat: Bool = false
     @State var itemContent: String = ""
+    @State var showEventConvertWindow: Bool = false
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -51,6 +52,28 @@ struct TimeLineRowView: View {
                             Text("❌").font(.system(size: 11))
                         }
                         Spacer()
+                    }
+                    
+//                    Button("转换") {
+//                        showEventConvertWindow.toggle()
+//                    }
+                    
+                    Button("转换为子任务") {
+                        guard let event = modelData.itemList.first(where: { $0.id == item.eventId
+                        }) else { return }
+                        let newEvent = EventItem()
+                        newEvent.actionType = .task
+                        newEvent.mark = item.content
+                        newEvent.tag = event.tag
+                        newEvent.fatherId = event.id
+                        newEvent.setPlanTime = true
+                        newEvent.planTime = item.startTime
+                        newEvent.isFinish = true
+                        modelData.updateItem(newEvent) {
+                            item.eventId = newEvent.id
+                            modelData.updateTimeItem(item)
+                            selectItemID = newEvent.id
+                        }
                     }
                     
                     Button("完成") {
@@ -107,6 +130,9 @@ struct TimeLineRowView: View {
             itemContent = item.content
             setRepeat = item.isRepeat
         }
+        .sheet(isPresented: $showEventConvertWindow) {
+            EventConvertWindowView(showWindow: $showEventConvertWindow, item: item).environmentObject(modelData)
+        }
     }
     
     func updateItem() {
@@ -114,8 +140,4 @@ struct TimeLineRowView: View {
         modelData.updateTimeItem(item)
     }
     
-}
-
-#Preview {
-    TimeLineRowView(item: TaskTimeItem(startTime: .now, endTime: .now, content: "测试内容"), isEditing: .constant(true))
 }
