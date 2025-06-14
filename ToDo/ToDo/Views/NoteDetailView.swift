@@ -43,6 +43,8 @@ struct NoteDetailView: View {
     @State var expandSummaryView: Bool = false
     
     @State var headingNodes: [HeadingNode] = []
+    @State var selectCatalogId: String = ""
+    @State var scrollText: String = ""
     
     var body: some View {
         ScrollView {
@@ -140,7 +142,7 @@ struct NoteDetailView: View {
                         
                     }
                     else if noteContent.count > 0 {
-                        MarkdownWebView(noteContent, itemId: noteItem.id)
+                        MarkdownWebView(noteContent, itemId: noteItem.id, scrollText: scrollText)
                             .padding()
                             .background(Color.blue.opacity(0.1))
                             .cornerRadius(10)
@@ -323,15 +325,10 @@ extension NoteDetailView {
                     let insertionText = url.formatImageUrl
                     let currentContent = self.noteContent
                     print("insert text: \(insertionText), pos: \(self.cursorPosition)")
-                    let updateContent = currentContent.insert(insertionText, at: self.cursorPosition)
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(insertionText, forType: .string)
                     self.imageResultText = "upload success"
                     self.showImageToast.toggle()
-//                    DispatchQueue.main.async {
-//                        self.noteContent = updateContent
-//                        self.toggleToRefresh.toggle()
-//                    }
                 }
             }
         }
@@ -404,38 +401,50 @@ extension NoteDetailView {
         .padding()
     }
     
-    func summaryView() -> some View {
-        HStack(alignment: .top) {
-            List {
-                ForEach(headingNodes, id: \.self) { node  in
+    func recursiveItemView(node: HeadingNode) -> AnyView {
+        if node.children.isEmpty {
+            return AnyView(
+                HStack(content: {
                     Text(node.title)
-                }
-            }
-            .cornerRadius(8)
-            
-            Spacer()
-            
-            Button {
-                self.expandSummaryView = !self.expandSummaryView
-            } label: {
-                let imageName = self.expandSummaryView ? "arrow.right.circle.fill" : "arrow.backward.circle.fill"
-                Image(systemName: imageName).font(.system(size: 16))
-            }
-            .buttonStyle(.plain)
+                    Spacer()
+                }).tag(node.id)
+            )
+        } else {
+            return AnyView(
+                DisclosureGroup(isExpanded: .constant(true), content: {
+                    ForEach(node.children, id: \.self) { node in
+                        if node.title.count > 0 {
+                            HStack {
+                                Text(node.title)
+                                Spacer()
+                            }.tag(node.id)
+                        }
+                    }
+                }, label: {
+                    HStack {
+                        Text(node.title)
+                        Spacer()
+                    }.tag(node.id)
+                })
+            )
         }
-        .frame(maxWidth: 200)
-        .padding()
     }
     
     func catalogView() -> some View {
-        List {
-            ForEach(headingNodes, id: \.self) { node  in
-                Text(node.title)
+        List(selection: $selectCatalogId) {
+            ForEach(headingNodes, id: \.self.id) { node  in
+                recursiveItemView(node: node)
             }
         }
         .cornerRadius(8)
         .frame(maxWidth: 200)
         .padding()
+        .onChange(of: selectCatalogId, { oldValue, newValue in
+            if let node = headingNodes.first(where: { $0.id == newValue
+            }) {
+                scrollText = node.title
+            }
+        })
         .overlay(alignment: .topTrailing) {
             Button {
                 self.expandSummaryView = !self.expandSummaryView

@@ -8,23 +8,46 @@
 import Foundation
 
 /// 标题节点数据结构
-struct HeadingNode: Hashable {
+final class HeadingNode: Hashable {
     enum Level: Int {
         case h1 = 1
         case h2 = 2
         case h3 = 3
     }
     
+    let id: String = UUID().uuidString
     let level: Level
     let title: String
-    var content: [String]  // 该标题下的原始行内容
-    var children: [HeadingNode]  // 子标题
+    var content: [String]
+    var children: [HeadingNode]
     
     init(level: Level, title: String) {
         self.level = level
         self.title = title
         self.content = []
         self.children = []
+    }
+    
+    static func == (lhs: HeadingNode, rhs: HeadingNode) -> Bool {
+        lhs.level == rhs.level &&
+        lhs.title == rhs.title &&
+        lhs.content == rhs.content &&
+        lhs.children == rhs.children
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(level)
+        hasher.combine(title)
+        hasher.combine(content)
+        hasher.combine(children)
+    }
+    
+    var description: String {
+        var desc = title
+        children.forEach { node in
+            desc += " - \(node.description) "
+        }
+        return desc
     }
 }
 
@@ -40,39 +63,38 @@ struct MarkdownParser {
         for line in lines {
             // 检测标题行（支持1-3级）
             if let heading = detectHeading(line: line) {
+                print("heading: \(heading.title), \(heading.level)")
                 let node = HeadingNode(level: heading.level, title: heading.title)
                 
                 // 处理层级关系
                 while let lastNode = stack.last, lastNode.level.rawValue >= heading.level.rawValue {
+                    print("remove stack node: \(lastNode.description)")
                     stack.removeLast()
                 }
                 
-                if stack.isEmpty {
-                    nodes.append(node)
+                // 更新父节点子列表
+                if let parent = stack.last {
+                    let newParent = parent
+                    newParent.children.append(node)
+                    stack[stack.count-1] = newParent  // 关键修复点
+                    print("update parent node: \(node.description)")
                 } else {
-                    if var lastNode = stack.last {
-                        lastNode.children.append(node)
-                    }
+                    nodes.append(node)
+                    stack.append(node)
+                    print("append node: \(node.description)")
                 }
-                
-                stack.append(node)
                 continue
             }
             
-            // 非标题内容添加到当前节点
-            if !line.trimmingCharacters(in: .whitespaces).isEmpty {
-                if let lastNode = stack.last {
-                    stack[stack.count - 1].content.append(line)
-                } else {
-                    // 文档开头的非标题内容
-                    nodes.append(HeadingNode(level: .h1, title: "Untitled"))
-                    stack.append(nodes.last!)
-                    if var lastNode = stack.last {
-                        lastNode.content.append(line)
-                    }
-                }
+            // 非标题内容处理
+            if !line.isEmpty, let last = stack.last {
+                let newLast = last
+                newLast.content.append(line)
+                stack[stack.count-1] = newLast  // 确保内容更新
             }
         }
+        
+        print("parse node: \(nodes.compactMap { $0.description })")
         
         return nodes
     }

@@ -10,6 +10,7 @@ import SwiftUI
 struct ToDoEditPrincipleView: View {
     
     @EnvironmentObject var modelData: ModelData
+    @Binding var selectItemID: String
     var selectItem: PrincipleModel
     var selectionChange: ((String) -> ())
     
@@ -48,7 +49,7 @@ struct ToDoEditPrincipleView: View {
                 
                 Section {
                     ForEach(taskTimeItems) { item in
-                        TimeLineRowView(
+                        TimeLineRowView(selectItemID: $selectItemID,
                             item: item,
                             isEditing: Binding(
                                 get: { return modelData.isEditing(id: item.id) },
