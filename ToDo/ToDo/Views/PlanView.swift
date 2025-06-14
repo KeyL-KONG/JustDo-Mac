@@ -904,7 +904,7 @@ extension PlanView {
                     Button {
                         let item = self.currentSummaryItem ?? SummaryItem()
                         item.summaryTags[tag.id] = ""
-                        item.summaryDate = .now
+                        item.summaryDate = currentDate
                         item.time = timeTab.rawValue
                         modelData.updateSummaryItem(item)
                     } label: {

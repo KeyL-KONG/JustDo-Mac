@@ -28,7 +28,7 @@ struct ToDoListView: View, Equatable {
         }
     }
     @State private var toggleRefresh: Bool = false
-    @State var selectionMode: TodoMode = .work
+    @State var selectionMode: TodoMode = .synthesis
     @State var searchText: String = ""
     @State var planDate: Date = .now
     
