@@ -120,6 +120,17 @@ struct ToDoEditView: View {
     @State var toggleToRefresh: Bool = false
     @State var cursorPosition: Int = 0
     
+    @State var showNewStateAlert: Bool = false
+    @State var newStateTitle: String = ""
+    @State var setProjectState: Bool = false
+    @State var selectProjectStateTitle: String = ""
+    var projectStatesTitleList: [String] {
+        modelData.noteTagList.filter { tag in
+            guard let selectItem, tag.projectId.count > 0 else { return false }
+            return selectItem.id == tag.projectId || selectItem.fatherId == tag.projectId || selectItem.projectId == tag.projectId
+        }.compactMap { $0.content }
+    }
+    
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
     var taskTimeItems: [TaskTimeItem] {
@@ -386,7 +397,7 @@ struct ToDoEditView: View {
                             Self.selectPersonalTag = nil
                             showPersonalAlert.toggle()
                         } label: {
-                            Text("添加关联").font(.system(size: 14))
+                            Text("添加关联")
                         }
                         
                         if personalItems.count > 0 {
@@ -400,6 +411,31 @@ struct ToDoEditView: View {
                     }
                 }
 
+                
+                if actionType == .project {
+                    Section {
+                        HStack {
+                            Toggle("设置状态", isOn: $setProjectState)
+                            Spacer()
+                            if projectStatesTitleList.count > 0 {
+                                Picker("", selection: $selectProjectStateTitle) {
+                                    ForEach(projectStatesTitleList, id: \.self) { state in
+                                        Text(state).tag(state)
+                                    }
+                                }.frame(maxWidth: 200)
+                            }
+                        }
+                    } header: {
+                        HStack {
+                            Text("设置状态")
+                            Spacer()
+                            Button("添加状态") {
+                                showNewStateAlert.toggle()
+                            }
+                        }
+                    }
+
+                }
                 
                 Section(header: HStack(content: {
                     Text("设置属性")
@@ -475,7 +511,7 @@ struct ToDoEditView: View {
                             item.isPlan = true
                             modelData.updateTimeItem(item)
                         } label: {
-                            Text("添加计划").font(.system(size: 14))
+                            Text("添加计划")
                         }
                     }
                     
@@ -682,6 +718,20 @@ struct ToDoEditView: View {
                 PersonalTagWindowView(isPresented: $showPersonalAlert, itemId: itemId, personalTag: Self.selectPersonalTag)                 .environmentObject(modelData)
             }
         })
+        .alert("新建状态", isPresented: $showNewStateAlert, actions: {
+            TextField("请输入内容...", text: $newStateTitle)
+            Button("取消", role: .cancel) {
+                
+            }
+            Button("确定") {
+                let state = TagModel()
+                state.content = newStateTitle
+                state.projectId = selectItem?.id ?? ""
+                modelData.updateTagNote(state)
+                
+                newStateTitle = ""
+            }
+        })
         .onAppear {
             print("edit view appear")
             modelData.removeEditStates()
@@ -752,7 +802,9 @@ struct ToDoEditView: View {
         finishState = selectedItem.finishState.description
         showAddNote = !modelData.noteList.contains(where: { $0.convertId == selectedItem.id })
         startText = selectedItem.startText
-        
+        setProjectState = selectedItem.setProjectState
+        selectProjectStateTitle = modelData.noteTagList.first(where: { $0.id == selectedItem.projectStateId
+        })?.content ?? ""
     }
     
     func saveTask() {
@@ -812,6 +864,9 @@ struct ToDoEditView: View {
         selectedItem.startText = startText
         selectedItem.setDealineTime = setDeadlineTime
         selectedItem.deadlineTime = dealineTime
+        selectedItem.setProjectState = setProjectState
+        selectedItem.projectStateId = modelData.noteTagList.first(where: { $0.content == selectProjectStateTitle
+        })?.id ?? ""
         modelData.updateItem(selectedItem)
         updateEvent()
         

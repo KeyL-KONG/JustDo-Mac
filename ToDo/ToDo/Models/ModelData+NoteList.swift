@@ -56,6 +56,7 @@ extension ModelData {
             if let error {
                 print(error)
             } else {
+                self.updateNoteIndex += 1
                 self.asyncUpdateCache(type: .noteTag)
             }
         }

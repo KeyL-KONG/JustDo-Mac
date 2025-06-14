@@ -567,6 +567,7 @@ extension PlanView {
             }
             
             let planEventList = eventList.filter { event in
+                guard event.setPlanTime else { return false }
                 if timeTab == .day {
                     var timeResult = false
                     if event.actionType == .task {
@@ -927,38 +928,8 @@ extension PlanView {
             if isExpand {
                 if let item = currentSummaryItem, let tagContent = item.summaryTags[tag.id] {
                     let key = cacheKey + tag.id
-                    let isEdit = modelData.isEditing(id: key, def: tagContent.isEmpty)
-                    HStack {
-                        ZStack {
-                            if isEdit {
-                                TextEditor(text: Binding(get: {
-                                    item.summaryTags[tag.id] ?? ""
-                                }, set: { value in
-                                    item.summaryTags[tag.id] = value
-                                }))
-                                    .font(.system(size: 12))
-                                    .scrollContentBackground(.hidden)
-                                    .scrollIndicators(.hidden)
-                                    .frame(minHeight: 80)
-                            } else {
-                                MarkdownWebView(item.summaryTags[tag.id] ?? "")
-                                    .frame(minHeight: 50)
-                            }
-                        }
-                        .overlay(alignment: .bottomTrailing) {
-                            let title = isEdit ? "保存" : "编辑"
-                            Button(title) {
-                                if isEdit {
-                                    modelData.updateSummaryItem(item)
-                                }
-                                modelData.markEdit(id: key, edit: !isEdit)
-                            }
-                        }
-                            
-                    }
-                    .padding()
-                    .background(tag.titleColor.opacity(0.3))
-                    .cornerRadius(8)
+                    summaryTagEditView(item: item, tagContent: tagContent, tag: tag)
+                        .tag(key)
                 }
             }
             
@@ -967,6 +938,42 @@ extension PlanView {
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
         .frame(maxHeight: (isExpand ? .none : 25), alignment: .top)
+    }
+    
+    func summaryTagEditView(item: SummaryItem, tagContent: String, tag: ItemTag) -> some View {
+        let key = cacheKey + tag.id
+        let isEdit = modelData.isEditing(id: key, def: tagContent.isEmpty)
+        return HStack {
+            ZStack {
+                if isEdit {
+                    TextEditor(text: Binding(get: {
+                        item.summaryTags[tag.id] ?? ""
+                    }, set: { value in
+                        item.summaryTags[tag.id] = value
+                    }))
+                        .font(.system(size: 12))
+                        .scrollContentBackground(.hidden)
+                        .scrollIndicators(.hidden)
+                        .frame(minHeight: 80)
+                } else {
+                    MarkdownWebView(item.summaryTags[tag.id] ?? "")
+                        .frame(minHeight: 50)
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                let title = isEdit ? "保存" : "编辑"
+                Button(title) {
+                    if isEdit {
+                        modelData.updateSummaryItem(item)
+                    }
+                    modelData.markEdit(id: key, edit: !isEdit)
+                }
+            }
+                
+        }
+        .padding()
+        .background(tag.titleColor.opacity(0.3))
+        .cornerRadius(8)
     }
     
     func summaryTagItemListView(tag: ItemTag) -> some View {

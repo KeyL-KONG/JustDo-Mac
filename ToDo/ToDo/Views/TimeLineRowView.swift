@@ -62,6 +62,7 @@ struct TimeLineRowView: View {
                         guard let event = modelData.itemList.first(where: { $0.id == item.eventId
                         }) else { return }
                         let newEvent = EventItem()
+                        newEvent.title = "新建事项"
                         newEvent.actionType = .task
                         newEvent.mark = item.content
                         newEvent.tag = event.tag

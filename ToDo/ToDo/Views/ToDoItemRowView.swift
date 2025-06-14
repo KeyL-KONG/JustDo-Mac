@@ -113,7 +113,8 @@ struct ToDoItemRowView: View {
                         lineWidth: 4
                     )
             )
-        } else {
+        }
+        else {
             HStack {
                 if item.isCollect {
                     Label("", systemImage: "star.fill")
@@ -131,6 +132,11 @@ struct ToDoItemRowView: View {
                 }
                 
                 Text(item.title)
+                
+                if let item = self.item as? EventItem, let tag = modelData.noteTagList.first(where: { $0.id == item.projectStateId && item.projectStateId.count > 0
+                }), item.setProjectState {
+                    tagView(title: tag.content, color: .blue)
+                }
                 
                 if let tag, showTag {
                     tagView(title: tag.title, color: tag.titleColor)
@@ -184,7 +190,7 @@ struct ToDoItemRowView: View {
         Text(title)
             .foregroundColor(.white)
             .font(.system(size: 8))
-            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .padding(EdgeInsets.init(top: 2, leading: 4, bottom: 2, trailing: 4))
             .background(color)
             .clipShape(Capsule())
     }

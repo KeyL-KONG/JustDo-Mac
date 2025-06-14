@@ -123,6 +123,9 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     
     var startText: String = ""
     
+    var setProjectState: Bool = false
+    var projectStateId: String = ""
+    
     // 废弃字段
     
     var finishRating: Int = 3
@@ -193,6 +196,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.finishState = FinishState(rawValue: try container.decodeIfPresent(String.self, forKey: .finishState) ?? "") ?? .normal
         self.finishText = try container.decodeIfPresent(String.self, forKey: .finishText) ?? ""
         self.startText = try container.decodeIfPresent(String.self, forKey: .startText) ?? ""
+        self.setProjectState = try container.decodeIfPresent(Bool.self, forKey: .setProjectState) ?? false
+        self.projectStateId = try container.decodeIfPresent(String.self, forKey: .projectStateId) ?? ""
     }
     
     func encode(to encoder: Encoder) throws {
@@ -256,6 +261,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(finishState.rawValue, forKey: .finishState)
         try container.encode(finishText, forKey: .finishText)
         try container.encode(startText, forKey: .startText)
+        try container.encode(setProjectState, forKey: .setProjectState)
+        try container.encode(projectStateId, forKey: .projectStateId)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -363,6 +370,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         isKeyEvent = cloudObj.get(EventModelKeys.isKeyEvent.rawValue)?.boolValue ?? false
         setProgress = cloudObj.get(EventModelKeys.setProgress.rawValue)?.boolValue ?? false
         progressValue = cloudObj.get(EventModelKeys.progressValue.rawValue)?.intValue ?? 0
+        setProjectState = cloudObj.get(EventModelKeys.setProjectState.rawValue)?.boolValue ?? false
+        projectStateId = cloudObj.get(EventModelKeys.projectStateId.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -434,6 +443,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.isKeyEvent.rawValue, value: isKeyEvent.lcBool)
         try cloudObj.set(EventModelKeys.setProgress.rawValue, value: setProgress.lcBool)
         try cloudObj.set(EventModelKeys.progressValue.rawValue, value: progressValue.lcNumber)
+        try cloudObj.set(EventModelKeys.setProjectState.rawValue, value: setProjectState.lcBool)
+        try cloudObj.set(EventModelKeys.projectStateId.rawValue, value: projectStateId.lcString)
     }
     
 }
@@ -505,6 +516,8 @@ extension EventModel {
         case progressValue
         case setDealineTime
         case deadlineTime
+        case setProjectState
+        case projectStateId
     }
     
 }

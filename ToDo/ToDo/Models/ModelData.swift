@@ -76,6 +76,7 @@ class ModelData: ObservableObject {
     @Published var updateNoteIndex = 0
     @Published var updateSummaryItemIndex = 0
     @Published var updateReadItemIndex = 0
+    @Published var updateNoteTagIndex = 0
     
     
     // Cache
