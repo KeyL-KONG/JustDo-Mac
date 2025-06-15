@@ -51,6 +51,23 @@ extension EventItem {
         }
     }
     
+    func totalTimeTask(with tab: TimeTab, tasks: [TaskTimeItem], selectDate: Date = .now) -> Int {
+        return tasks.filter { item in
+            return item.eventId == self.id && dateInTimeTab(item.startTime, tab: tab, selectDate: selectDate)
+        }.compactMap { $0.interval }.reduce(0, +)
+    }
+    
+    func totalTimeTaskIncludeSubItems(with tab: TimeTab, subItems: [EventItem], tasks: [TaskTimeItem], selectDate: Date = .now) -> Int {
+        var totalTime = totalTimeTask(with: tab, tasks: tasks, selectDate: selectDate)
+        let items = subItems.filter { event in
+            event.projectId == self.id || event.fatherId == self.id
+        }
+        if items.count > 0 {
+            totalTime += items.compactMap { $0.totalTimeTask(with: tab, tasks: tasks, selectDate: selectDate) }.reduce(0, +)
+        }
+        return totalTime
+    }
+    
     func summaryScore(with tabType: TimeTab) -> Int {
         switch eventType {
         case .num:

@@ -1244,6 +1244,12 @@ extension PlanView {
             Toggle("", isOn: .constant(item.isFinish))
             
             Text(item.title)
+            
+            let totalTime = item.totalTimeTaskIncludeSubItems(with: .all, subItems: modelData.itemList, tasks: modelData.taskTimeItems)
+            if totalTime > 0 {
+                Text(totalTime.simpleTimeStr).foregroundStyle(.gray)
+            }
+            
             Spacer()
                 
             
@@ -1295,6 +1301,11 @@ extension PlanView {
                         Text("start").foregroundStyle(.green)
                     }
                 }
+            }
+            Button {
+                self.addProjectSubItem(root: item)
+            } label: {
+                Text("新建子任务").foregroundStyle(.cyan)
             }
             Button {
                 modelData.deleteItem(item)
@@ -1351,6 +1362,18 @@ extension PlanView {
             .padding(EdgeInsets.init(top: 2, leading: 4, bottom: 2, trailing: 4))
             .background(color)
             .clipShape(Capsule())
+    }
+    
+    func addProjectSubItem(root: EventItem) {
+        let item = EventItem()
+        item.title = "新建子任务"
+        item.projectId = root.projectId
+        item.fatherId = root.id
+        item.actionType = .task
+        item.tag = root.tag
+        item.planTime = .now
+        item.setPlanTime = true
+        modelData.updateItem(item)
     }
     
 }

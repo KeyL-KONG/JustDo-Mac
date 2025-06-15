@@ -156,6 +156,14 @@ struct ToDoEditView: View {
         taskTimeItems.compactMap { $0.interval}.reduce(0, +)
     }
     
+    var subItemsTaskTotalTime: Int {
+        subItems.compactMap { $0.totalTimeTask(with: .all, tasks: modelData.taskTimeItems) }.reduce(0, +)
+    }
+    
+    var allTaskTotalTime: Int {
+        taskTotalTime + subItemsTaskTotalTime
+    }
+    
     var fatherItem: EventItem? {
         guard let selectItem, let fatherItem = modelData.itemList.first(where: {
             ($0.id == selectItem.fatherId && selectItem.fatherId.count > 0) || ($0.id == selectItem.projectId && selectItem.projectId.count > 0)
@@ -208,6 +216,10 @@ struct ToDoEditView: View {
             
                 Section(header: HStack {
                     Text("事项类型")
+                    let totalTime = allTaskTotalTime
+                    if totalTime > 0 {
+                        Text(totalTime.simpleTimeStr).foregroundStyle(.gray)
+                    }
                     Spacer()
                     
                     Button("\(isEditingStartText ? "完成" : "编辑")") {
@@ -582,6 +594,10 @@ struct ToDoEditView: View {
                 if subItems.count > 0 {
                     Section(header: HStack(content: {
                         Text("子任务(\(subItems.filter { $0.isFinish }.count)/\(subItems.count))")
+                        let totalTime = subItemsTaskTotalTime
+                        if totalTime > 0 {
+                            Text(totalTime.simpleTimeStr).foregroundStyle(.gray)
+                        }
                         Spacer()
                         Button {
                             isExpandSubItems = !isExpandSubItems
@@ -596,6 +612,11 @@ struct ToDoEditView: View {
                                     Label("", systemImage: (item.isFinish ? "checkmark.circle.fill" : "circle"))
                                     Text(item.title).foregroundStyle(.blue)
                                     Spacer()
+                                    
+                                    let totalTime = item.totalTimeTask(with: .all, tasks: modelData.taskTimeItems)
+                                    if totalTime > 0 {
+                                        Text(totalTime.simpleTimeStr).foregroundStyle(.gray)
+                                    }
                                 }
                                 .contentShape(Rectangle())
                                 .onTapGesture {
