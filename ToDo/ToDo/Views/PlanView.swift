@@ -41,6 +41,7 @@ struct PlanView: View {
     @State var isSummaryEdit: Bool = false
     @State var summaryContent: String = ""
     @State var summaryTimeExpand: Bool = false
+    @State var fixedEventExpand: Bool = false
     
     private static var stopItem: EventItem? = nil
     @State private var showStopAlert: Bool = false
@@ -56,6 +57,8 @@ struct PlanView: View {
     var summaryTagTotalTime: Int {
         tagTotalTimes.values.reduce(0, +)
     }
+    
+    @State var fixedItems: [EventItem] = []
     
     var body: some View {
         ScrollView(showsIndicators: true) { // 添加垂直滚动容器
@@ -74,6 +77,14 @@ struct PlanView: View {
                 if eventList.count > 0 {
                     eventListHeaderView()
                     eventListView()
+                }
+                
+                if timeTab == .day, fixedItems.count > 0 {
+                    fixedHeaderView()
+                    
+                    if fixedEventExpand {
+                        fixedItemsView()
+                    }
                 }
                 
                 if selectionMode != .work {
@@ -112,6 +123,7 @@ struct PlanView: View {
             updateSelectDefaultItem()
         })
         .onChange(of: currentDate) { old, new in
+            if old == new { return }
             updateData()
             updateSummaryContent()
             updateSelectDefaultItem()
@@ -128,6 +140,7 @@ struct PlanView: View {
         }
         .onAppear {
             currentDate = modelData.planCacheTime ?? .now
+            updateData()
             updateSummaryContent()
             if self.mostImportranceItems.count > 0 {
                 self.selectItemID = self.mostImportranceItems.first?.id ?? self.selectItemID
@@ -139,6 +152,7 @@ struct PlanView: View {
         .onChange(of: modelData.updateItemIndex, { _, _ in
             updateMostImportanceItems()
             updateEventList()
+            updateFixedItems()
         })
         .onReceive(modelData.$planTimeItems, perform: { _ in
             updatePlanItems()
@@ -219,11 +233,138 @@ struct PlanView: View {
         
         updateNoteItems()
         
+        updateFixedItems()
+        
         let start6 = Date()
         updateReadItems()
         print("readItems: \((Date().timeIntervalSince1970 - start6.timeIntervalSince1970) * 1000)ms")
         
         print("total duration: \((Date().timeIntervalSince1970 - totalStart.timeIntervalSince1970) * 1000)ms")
+    }
+}
+
+// MARK: fixed view
+extension PlanView {
+    
+    func fixedHeaderView() -> some View {
+        HStack {
+            Text("固定事项").bold().font(.system(size: 16))
+                .foregroundStyle(Color.init(hex: "5499c7"))
+            Spacer()
+            
+            Button {
+                self.fixedEventExpand = !self.fixedEventExpand
+            } label: {
+                Image(systemName: fixedEventExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.init(hex: "5499c7"))
+            }
+            .buttonStyle(.plain)
+        }.padding(.top, 20)
+            .padding(.horizontal, 20)
+    }
+    
+    func fixedItemsView() -> some View {
+        VStack(alignment: .leading) {
+            ForEach(fixedItems, id: \.self) { item in
+                fixedItemView(item: item)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 20)
+        .background {
+            ZStack {
+                Rectangle()
+                    .fill(Color.init(hex: "5499c7").opacity(0.1))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 10)
+            }
+        }
+    }
+    
+    func fixedItemView(item: EventItem) -> some View {
+        HStack {
+            Text(item.title)
+            Spacer()
+            
+            if item.isPlay {
+                Text("进行中").foregroundStyle(.blue)
+            }
+            
+            let tagItems = modelData.taskTimeItems.filter { $0.eventId == item.id && $0.stateTagId.count > 0 && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.compactMap { item in
+                modelData.noteTagList.first(where: { $0.id == item.stateTagId })
+            }
+            if tagItems.count > 0 {
+                ForEach(tagItems, id: \.self.id) { tag in
+                    tagView(title: tag.content, color: .blue)
+                }
+            }
+            
+            if let totalTime = eventTotalTime[item.id] {
+                Text(totalTime.simpleTimeStr).foregroundStyle(.gray)
+            }
+            
+            if let tag = modelData.tagList.first(where: { $0.id == item.tag }) {
+                tagView(title: tag.title, color: tag.titleColor)
+            }
+            
+            
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            self.selectItemID = item.id
+        }
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background {
+            if item.id == selectItemID {
+                ZStack {
+                    Rectangle()
+                        .fill(Color.init(hex: "5499c7"))
+                        .cornerRadius(8)
+                }
+            }
+        }
+        .contextMenu {
+            if item.actionType != .tag {
+                if item.isPlay {
+                    Button {
+                        Self.stopItem = item
+                        showStopAlert.toggle()
+                    } label: {
+                        Text("stop").foregroundStyle(.yellow)
+                    }
+                    
+                    Button {
+                        timerModel.stopTimer()
+                        item.isPlay = false
+                        modelData.updateItem(item)
+                    } label: {
+                        Text("cancel").foregroundStyle(.gray)
+                    }
+                } else {
+                    Button {
+                        if timerModel.startTimer(item: item) {
+                            item.isPlay = true
+                            item.playTime = .now
+                            modelData.updateItem(item)
+                        }
+                    } label: {
+                        Text("start").foregroundStyle(.green)
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateFixedItems() {
+        let eventList = selectionMode == .synthesis ? modelData.itemList : modelData.itemList.filter ({ event in
+            guard let tag = modelData.tagList.first(where: { $0.id == event.tag }) else {
+                return false
+            }
+            return tag.title == "工作"
+        })
+        
+        self.fixedItems = eventList.filter { $0.isFixedEvent }
     }
 }
 
