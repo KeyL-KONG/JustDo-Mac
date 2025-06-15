@@ -329,6 +329,8 @@ extension PlanView {
         let tagItemList = self.tagItemList
         let eventTotalTime = self.eventTotalTime
         let summaryTagContens = self.currentSummaryItem?.summaryTags ?? [:]
+        let noteTagList = modelData.noteTagList
+        let taskItems = modelData.taskTimeItems
         DispatchQueue.global().async {
             var content = ""
             content = "\n## 事项\n"
@@ -342,6 +344,7 @@ extension PlanView {
                         if let time = eventTotalTime[item.id] {
                             content += " (\(time.simpleTimeStr)) "
                         }
+                        
                         content += "\n"
                     }
                     
@@ -990,6 +993,16 @@ extension PlanView {
         HStack {
             Text(item.title)
             Spacer()
+            if timeTab == .day {
+                let tagItems = modelData.taskTimeItems.filter { $0.eventId == item.id && $0.stateTagId.count > 0 && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.compactMap { item in
+                    modelData.noteTagList.first(where: { $0.id == item.stateTagId })
+                }
+                if tagItems.count > 0 {
+                    ForEach(tagItems, id: \.self.id) { tag in
+                        tagView(title: tag.content, color: .blue)
+                    }
+                }
+            }
             if let totalTime = eventTotalTime[item.id] {
                 Text(totalTime.simpleTimeStr).foregroundStyle(tagColor)
             }
@@ -1335,7 +1348,7 @@ extension PlanView {
         Text(title)
             .foregroundColor(.white)
             .font(.system(size: 8))
-            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .padding(EdgeInsets.init(top: 2, leading: 4, bottom: 2, trailing: 4))
             .background(color)
             .clipShape(Capsule())
     }

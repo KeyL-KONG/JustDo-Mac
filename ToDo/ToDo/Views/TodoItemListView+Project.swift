@@ -154,12 +154,8 @@ extension TodoItemListView {
     func addProjectSubItem(root: EventItem) {
         let item = EventItem()
         item.title = "新建子任务"
-        if root.actionType == .task {
-            item.projectId = root.projectId
-            item.fatherId = root.id
-        } else {
-            item.projectId = root.id
-        }
+        item.projectId = root.projectId
+        item.fatherId = root.id
         item.actionType = .task
         item.tag = root.tag
         item.planTime = .now

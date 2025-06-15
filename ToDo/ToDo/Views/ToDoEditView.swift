@@ -123,6 +123,7 @@ struct ToDoEditView: View {
     @State var showNewStateAlert: Bool = false
     @State var newStateTitle: String = ""
     @State var setProjectState: Bool = false
+    @State var setQuickProjectState: Bool = false
     @State var selectProjectStateTitle: String = ""
     var projectStatesTitleList: [String] {
         modelData.noteTagList.filter { tag in
@@ -424,6 +425,22 @@ struct ToDoEditView: View {
                                     }
                                 }.frame(maxWidth: 200)
                             }
+                        }
+                        if setProjectState {
+                            HStack {
+                                Toggle("设置快捷状态", isOn: $setQuickProjectState)
+                                Spacer()
+                            }
+                        }
+                        if setQuickProjectState {
+                            ScrollView {
+                                HStack {
+                                    ForEach(projectStatesTitleList, id: \.self) { stateTitle in
+                                        projectStateItemView(title: stateTitle)
+                                    }
+                                }.padding()
+                            }
+                            
                         }
                     } header: {
                         HStack {
@@ -805,6 +822,7 @@ struct ToDoEditView: View {
         setProjectState = selectedItem.setProjectState
         selectProjectStateTitle = modelData.noteTagList.first(where: { $0.id == selectedItem.projectStateId
         })?.content ?? ""
+        setQuickProjectState = selectedItem.setQuickProjectState
     }
     
     func saveTask() {
@@ -867,6 +885,7 @@ struct ToDoEditView: View {
         selectedItem.setProjectState = setProjectState
         selectedItem.projectStateId = modelData.noteTagList.first(where: { $0.content == selectProjectStateTitle
         })?.id ?? ""
+        selectedItem.setQuickProjectState = setQuickProjectState
         modelData.updateItem(selectedItem)
         updateEvent()
         
@@ -954,4 +973,21 @@ extension ToDoEditView {
     }
 #endif
     
+}
+
+extension ToDoEditView {
+    
+    
+    func projectStateItemView(title: String) -> some View {
+        Button {
+            let item = TaskTimeItem()
+            item.eventId = selectItem?.id ?? ""
+            item.stateTagId = modelData.noteTagList.first(where: { $0.content == title
+            })?.id ?? ""
+            modelData.updateTimeItem(item)
+        } label: {
+            let content = title + " ＋"
+            Text(content).foregroundStyle(.blue)
+        }
+    }
 }

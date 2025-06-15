@@ -10,6 +10,19 @@ struct TimeLineRowView: View {
     @State var itemContent: String = ""
     @State var showEventConvertWindow: Bool = false
     
+    private static let noneStateText = "无"
+    @State var selectProjectStateTitle: String = Self.noneStateText
+    var eventItem: EventItem? {
+        return modelData.itemList.first { $0.id == item.eventId }
+    }
+    
+    var projectStatesTitleList: [String] {
+        return [Self.noneStateText] + modelData.noteTagList.filter { tag in
+            guard let eventItem = self.eventItem, tag.projectId.count > 0 else { return false }
+            return eventItem.id == tag.projectId || eventItem.fatherId == tag.projectId || eventItem.projectId == tag.projectId
+        }.compactMap { $0.content }
+    }
+    
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -33,16 +46,12 @@ struct TimeLineRowView: View {
                             .datePickerStyle(.compact)
                     } else {
                         HStack {
-                            Text("start:")
                             DatePicker("", selection: $item.startTime, displayedComponents: [.date, .hourAndMinute])
                                 .datePickerStyle(.compact)
-                        }
-                        
-                        HStack {
-                            Text("end:")
+                            Text("-")
                             DatePicker("", selection: $item.endTime, displayedComponents: [.date, .hourAndMinute])
                                 .datePickerStyle(.compact)
-                        }
+                        }.frame(maxWidth: 300)
                     }
                     
                     if item.state != .none {
@@ -54,9 +63,15 @@ struct TimeLineRowView: View {
                         Spacer()
                     }
                     
-//                    Button("转换") {
-//                        showEventConvertWindow.toggle()
-//                    }
+                    Spacer()
+                    
+                    if projectStatesTitleList.count > 1 {
+                        Picker("设置状态", selection: $selectProjectStateTitle) {
+                            ForEach(projectStatesTitleList, id: \.self) { state in
+                                Text(state).tag(state)
+                            }
+                        }.frame(maxWidth: 150)
+                    }
                     
                     Button("转换为子任务") {
                         guard let event = modelData.itemList.first(where: { $0.id == item.eventId
@@ -79,8 +94,7 @@ struct TimeLineRowView: View {
                     
                     Button("完成") {
                         isEditing = false
-                        item.content = itemContent
-                        modelData.updateTimeItem(item)
+                        updateItem()
                     }.foregroundStyle(.blue)
                 } else {
                     Text(item.startTime.simpleDateStr)
@@ -98,6 +112,10 @@ struct TimeLineRowView: View {
                         } else if item.state == .bad {
                             Text("❌").font(.system(size: 11))
                         }
+                    }
+                    
+                    if selectProjectStateTitle != Self.noneStateText {
+                        tagView(title: selectProjectStateTitle, color: .blue)
                     }
                     
                     Spacer()
@@ -130,6 +148,7 @@ struct TimeLineRowView: View {
         .onAppear {
             itemContent = item.content
             setRepeat = item.isRepeat
+            selectProjectStateTitle = modelData.noteTagList.first(where: {  $0.id == item.stateTagId && item.stateTagId.count > 0 })?.content ?? Self.noneStateText
         }
         .sheet(isPresented: $showEventConvertWindow) {
             EventConvertWindowView(showWindow: $showEventConvertWindow, item: item).environmentObject(modelData)
@@ -138,7 +157,22 @@ struct TimeLineRowView: View {
     
     func updateItem() {
         item.isRepeat = setRepeat
+        item.content = itemContent
+        if let tag = modelData.noteTagList.first(where: { $0.content == selectProjectStateTitle
+        }), selectProjectStateTitle != Self.noneStateText {
+            item.stateTagId = tag.id
+        }
         modelData.updateTimeItem(item)
+    }
+    
+    func tagView(title: String, color: Color, size: CGFloat = 12, verPadding: CGFloat = 10, horPadding: CGFloat = 5) -> some View {
+        Text(title)
+            .foregroundColor(.white)
+            .font(.system(size: size))
+            .padding(.horizontal, verPadding)
+            .padding(.vertical, horPadding)
+            .background(color)
+            .clipShape(Capsule())
     }
     
 }

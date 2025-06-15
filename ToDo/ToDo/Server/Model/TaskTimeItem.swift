@@ -15,6 +15,7 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
     var state: TaskItemResultState = .none
     var isPlan: Bool = false
     var isRepeat: Bool = false
+    var stateTagId: String = ""
     
     var interval: Int {
         Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970)
@@ -28,6 +29,7 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         case state
         case isPlan
         case isRepeat
+        case stateTagId
     }
     
     required init() {
@@ -44,6 +46,7 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         state = TaskItemResultState(rawValue: try container.decode(Int.self, forKey: .state)) ?? .none
         isPlan = try container.decodeIfPresent(Bool.self, forKey: .isPlan) ?? false
         isRepeat = try container.decodeIfPresent(Bool.self, forKey: .isRepeat) ?? false
+        stateTagId = try container.decodeIfPresent(String.self, forKey: .stateTagId) ?? ""
     }
     
     init(startTime: Date, endTime: Date, content: String) {
@@ -62,6 +65,7 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         try container.encode(state.rawValue, forKey: .state)
         try container.encode(isPlan, forKey: .isPlan)
         try container.encode(isRepeat, forKey: .isRepeat)
+        try container.encode(stateTagId, forKey: .stateTagId)
     }
     
     override class func modelClassName() -> String {
@@ -81,6 +85,7 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         state = TaskItemResultState(rawValue: (cloudObj.get(TaskTimeKeys.state.rawValue)?.intValue ?? 0)) ?? .none
         isPlan = cloudObj.get(TaskTimeKeys.isPlan.rawValue)?.boolValue ?? false
         isRepeat = cloudObj.get(TaskTimeKeys.isRepeat.rawValue)?.boolValue ?? false
+        stateTagId = cloudObj.get(TaskTimeKeys.stateTagId.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -92,10 +97,11 @@ class TaskTimeItem: BaseModel, Identifiable, Codable {
         try cloudObj.set(TaskTimeKeys.state.rawValue, value: state.rawValue.lcNumber)
         try cloudObj.set(TaskTimeKeys.isPlan.rawValue, value: isPlan)
         try cloudObj.set(TaskTimeKeys.isRepeat.rawValue, value: isRepeat)
+        try cloudObj.set(TaskTimeKeys.stateTagId.rawValue, value: stateTagId)
     }
     
     private enum CodingKeys: String, CodingKey {
-        case startTime, endTime, content, eventId, state, isPlan,isRepeat
+        case startTime, endTime, content, eventId, state, isPlan,isRepeat, stateTagId
     }
     
     
