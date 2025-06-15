@@ -300,7 +300,8 @@ extension PlanView {
             }
             
             if let totalTime = eventTotalTime[item.id] {
-                Text(totalTime.simpleTimeStr).foregroundStyle(.gray)
+                let titleColor = item.id == selectItemID ? Color.white : Color.gray
+                Text(totalTime.simpleTimeStr).foregroundStyle(titleColor)
             }
             
             if let tag = modelData.tagList.first(where: { $0.id == item.tag }) {
@@ -363,8 +364,15 @@ extension PlanView {
             }
             return tag.title == "工作"
         })
-        
-        self.fixedItems = eventList.filter { $0.isFixedEvent }
+        print("week day: \(self.currentDate.weekDay)")
+        let weekDayIndex: Int = self.currentDate.weekDay
+        self.fixedItems = eventList.filter { event in
+            guard event.isFixedEvent else { return false }
+            if event.fixedWeekDays.count >= 7 {
+                return event.fixedWeekDays[weekDayIndex] != 0
+            }
+            return false
+        }
     }
 }
 

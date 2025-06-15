@@ -205,6 +205,8 @@ struct ToDoEditView: View {
         return items
     }
     
+    @State var fixedWeekDays: [Bool] = []
+    
     var body: some View {
         VStack {
             if toggleToRefresh {
@@ -522,6 +524,23 @@ struct ToDoEditView: View {
                                     DatePicker("start:", selection: $fixedStartTime, displayedComponents: [.hourAndMinute])
                                     Spacer()
                                     DatePicker("end:", selection: $fixedEndTime, displayedComponents: [.hourAndMinute])
+                                }
+                            }
+                            
+                            if setFixedEvent {
+                                HStack {
+                                    Text("设置固定星期")
+                                    Spacer()
+                                    ForEach(fixedWeekDays.indices, id: \.self) { index in
+                                        VStack(alignment: .center) {
+                                            Text(index.weekDayStr)
+                                            Toggle("", isOn: Binding(get: {
+                                                fixedWeekDays[index]
+                                            }, set: { value in
+                                                fixedWeekDays[index] = value
+                                            }))
+                                        }.frame(minWidth: 30)
+                                    }
                                 }
                             }
                         }
@@ -844,6 +863,11 @@ struct ToDoEditView: View {
         selectProjectStateTitle = modelData.noteTagList.first(where: { $0.id == selectedItem.projectStateId
         })?.content ?? ""
         setQuickProjectState = selectedItem.setQuickProjectState
+        if selectedItem.fixedWeekDays.count == 7 {
+            self.fixedWeekDays = selectedItem.fixedWeekDays.compactMap { $0 != 0 }
+        } else {
+            self.fixedWeekDays = Array(repeating: false, count: 7)
+        }
     }
     
     func saveTask() {
@@ -907,6 +931,7 @@ struct ToDoEditView: View {
         selectedItem.projectStateId = modelData.noteTagList.first(where: { $0.content == selectProjectStateTitle
         })?.id ?? ""
         selectedItem.setQuickProjectState = setQuickProjectState
+        selectedItem.fixedWeekDays = fixedWeekDays.compactMap { $0 == true ? 1 : 0 }
         modelData.updateItem(selectedItem)
         updateEvent()
         

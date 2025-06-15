@@ -463,6 +463,13 @@ extension Date {
         return 0
     }
     
+    var weekDay: Int {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.weekday], from: self)
+        let weekDay = components.weekday ?? 6
+        return weekDay == 1 ? 6 : weekDay - 2
+    }
+    
     func daysBetweenDates2(date: Date) -> Int {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day], from: self, to: date)

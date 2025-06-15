@@ -9,6 +9,12 @@ import Foundation
 
 extension Int {
     
+    var weekDayStr: String {
+        let arr = ["一", "二", "三", "四", "五", "六", "日"]
+        let index = self % arr.count
+        return arr[index]
+    }
+    
     var timeStr: String {
         let sec = (self % 3600) % 60
         let min = (self % 3600) / 60
