@@ -22,6 +22,7 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
     case note
     case think
     case read
+    case unreview
     case list(ItemTag)
     
     var id: String {
@@ -54,6 +55,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "think"
         case .read:
             return "read"
+        case .unreview:
+            return "unreview"
         case .list(let tag):
             return tag.title
         }
@@ -89,6 +92,8 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "think"
         case .read:
             return "read"
+        case .unreview:
+            return "unreview"
         case .list(let tag):
             return tag.title
         }
@@ -124,13 +129,15 @@ enum ToDoSection: Identifiable, CaseIterable, Hashable {
             return "lightbulb.max"
         case .read:
             return "text.book.closed"
+        case .unreview:
+            return "checkmark.seal.fill"
         case .list(_):
             return "folder"
         }
     }
     
     static var allCases: [ToDoSection] {
-        return [.today, .note, .project, .plan, .calendar, .read, .think, .personalTag, .principle,  .unplan, .all]
+        return [.today, .note, .project, .plan, .calendar, .read, .think, .personalTag, .principle,  .unplan, .unreview, .all]
     }
     
 }

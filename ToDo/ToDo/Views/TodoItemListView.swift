@@ -210,6 +210,24 @@ struct TodoItemListView: View {
                     }
                 }
             }
+            else if selection == .unreview {
+                List(selection: $selectItemID) {
+                    
+                    let tags = modelData.tagList
+                    ForEach(tags, id:\.id) { tag in
+                        let items = items.filter { $0.tag == tag.id && $0.isFinish && $0.needReview && !$0.finishReview }.sorted { $0.finishTime?.timeIntervalSince1970 ?? 0 > $1.finishTime?.timeIntervalSince1970 ?? 0
+                        }
+                        if items.count > 0 {
+                            Section(header: Text(tag.title)) {
+                                ForEach(items) { item in
+                                    itemRowView(item: item, showDeadline: false)
+                                        .id(UUID())
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             else if selection == .calendar {
                 if calendarMode == .week {
                     weekView2()

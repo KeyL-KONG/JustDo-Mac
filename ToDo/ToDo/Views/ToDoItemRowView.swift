@@ -33,7 +33,7 @@ struct ToDoItemRowView: View {
             if selection == .today || selection == .calendar {
                 return item.itemTotalTime(with: modelData.itemList, taskItems: taskTimeItems, taskId: item.id, date: date)
             }
-            return item.itemTotalTime(with: modelData.itemList, taskItems: taskTimeItems, taskId: item.id)
+            return item.totalTimeTaskIncludeSubItems(with: .all, subItems: modelData.itemList, tasks: modelData.taskTimeItems, selectDate: date)
         } else if let reward = self.item as? RewardModel {
             return reward.totalTime(with: .day, intervals: reward.intervals, selectDate: date)
         } else {
@@ -132,6 +132,7 @@ struct ToDoItemRowView: View {
                 }
                 
                 Text(item.title)
+                Spacer()
                 
                 if let item = self.item as? EventItem, let tag = modelData.noteTagList.first(where: { $0.id == item.projectStateId && item.projectStateId.count > 0
                 }), item.setProjectState {
@@ -176,10 +177,12 @@ struct ToDoItemRowView: View {
                     Spacer()
                     Text("进行中").foregroundStyle(.blue)
                 } else if totalTime > 0 {
-                    Spacer()
                     Text(totalTime.simpleTimeStr).foregroundStyle(Color.init(hex: "b3b6b7"))
-                } else {
-                    Spacer()
+                    if let item = self.item as? EventItem, let finishTime = item.finishTime, selection == .unreview, item.needReview, !item.finishReview {
+                        let days = Date.now.daysBetweenDates(date: finishTime)
+                        
+                        Text("(\(days))").foregroundStyle(.red)
+                    }
                 }
                 
             }
