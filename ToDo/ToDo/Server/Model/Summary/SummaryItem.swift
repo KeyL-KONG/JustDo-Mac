@@ -14,6 +14,9 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     var content: String = ""
     var improve: String = ""
     var tags: [String] = []
+    
+    var associateIds: [String] = []
+    
     var time: String = ""
     var summaryDate: Date? // 新增可选日期属性
     var summaryTags: [String: String] = [:]
@@ -67,6 +70,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         self.time = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
         self.summaryDate = try container.decodeIfPresent(Date.self, forKey: .summaryDate)
         self.summaryTags = try container.decodeIfPresent([String: String].self, forKey: .summaryTags) ?? [:]
+        self.associateIds = try container.decodeIfPresent([String].self, forKey: .associateIds) ?? []
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -80,6 +84,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
             try container.encode(summaryDate, forKey: .summaryDate)
         }
         try container.encode(self.summaryTags, forKey: .summaryTags)
+        try container.encode(self.associateIds, forKey: .associateIds)
     }
     
     override func fillModel(with cloudObj: LCObject) {
@@ -96,6 +101,9 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         if let summaryTags = cloudObj.get(SummaryItemKeys.summaryTags.rawValue)?.dictionaryValue as? [String: String] {
             self.summaryTags = summaryTags
         }
+        if let associateIds = cloudObj.get(SummaryItemKeys.associateIds.rawValue)?.arrayValue as? [String] {
+            self.associateIds = associateIds
+        }
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -110,6 +118,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
             try cloudObj.set(SummaryItemKeys.summaryDate.rawValue, value: date.lcDate)
         }
         try cloudObj.set(SummaryItemKeys.summaryTags.rawValue, value: summaryTags.lcDictionary)
+        try cloudObj.set(SummaryItemKeys.associateIds.rawValue, value: associateIds.lcArray)
     }
     
     enum SummaryItemKeys: String, CodingKey {
@@ -121,6 +130,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         case time // 新增时间字段
         case summaryDate
         case summaryTags
+        case associateIds
     }
     
 }

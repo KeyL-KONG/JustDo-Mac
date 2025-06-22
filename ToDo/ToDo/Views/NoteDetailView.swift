@@ -225,6 +225,7 @@ struct NoteDetailView: View {
             self.updateNoteData()
             self.addObservers()
         }
+        
     }
     
     
@@ -291,6 +292,44 @@ extension NoteDetailView {
                 return nil
             }
             return event
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(CommonDefine.addNewThink),
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let content = notification.userInfo?["content"] as? String, let id = notification.userInfo?["id"] as? String {
+                let item = SummaryItem()
+                item.content = content
+                if let note = modelData.noteList.first(where: { $0.id == id
+                }), note.tags.count > 0 {
+                    item.tags = note.tags
+                }
+                item.associateIds.append(id)
+                modelData.updateSummaryItem(item)
+            }
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(CommonDefine.highlightText),
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let content = notification.userInfo?["content"] as? String, let id = notification.userInfo?["id"] as? String {
+                // 在原始内容前后添加==符号
+                let highlightedContent = "==\(content)=="
+                
+                // 替换笔记内容中的匹配文本
+                noteContent = noteContent.replacingOccurrences(
+                    of: content, 
+                    with: highlightedContent,
+                    options: .literal,
+                    range: nil
+                )
+                
+                saveItem()
+            }
         }
     }
     

@@ -124,7 +124,28 @@ public struct MarkdownWebView: PlatformViewRepresentable {
         
         /// Update the content on first finishing loading.
         public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            // TODO 添加标签逻辑
+//            (webView as! CustomWebView).callAsyncJavaScript("""
+//                                     const style = document.createElement('style');
+//                                             style.textContent = `
+//                                                 .highlight-tag {
+//                                                     position: relative;
+//                                                     background: yellow;
+//                                                     cursor: pointer;
+//                                                 }
+//                                                 .highlight-tag::after {
+//                                                     content: '🔖';
+//                                                     position: absolute;
+//                                                     bottom: 100%;
+//                                                     left: 50%;
+//                                                     transform: translateX(-50%);
+//                                                     font-size: 12px;
+//                                                 }
+//                                             `;
+//                                             document.head.append(style);
+//                                     """, in: nil, in: .page, completionHandler: nil)
             (webView as! CustomWebView).updateMarkdownContent(self.parent.markdownContent)
+
         }
         
         public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
@@ -196,6 +217,7 @@ public struct MarkdownWebView: PlatformViewRepresentable {
             
             evaluateJavaScript("window.getSelection().toString()") { result, error in
                 if let selectedText = result as? String, !selectedText.isEmpty {
+                    // task
                     if let addToNoteItem = menu.items.first(where: { $0.title == CommonDefine.addNewTask }) {
                         addToNoteItem.isHidden = false
                     } else {
@@ -206,8 +228,34 @@ public struct MarkdownWebView: PlatformViewRepresentable {
                         )
                         menu.insertItem(newItem, at: 0)
                     }
+                    
+                    // think
+                    if let addToThinkItem = menu.items.first(where: { $0.title == CommonDefine.addNewThink }) {
+                        addToThinkItem.isHidden = false
+                    } else {
+                        let newItem = NSMenuItem(
+                            title: CommonDefine.addNewThink,
+                            action: #selector(self.addSelectedTextToThink(_:)),
+                            keyEquivalent: ""
+                        )
+                        menu.insertItem(newItem, at: 0)
+                    }
+                    
+                    // highligh
+                    if let addToHighlighItem = menu.items.first(where: { $0.title == CommonDefine.highlightText }) {
+                        addToHighlighItem.isHidden = false
+                    } else {
+                        let newItem = NSMenuItem(
+                            title: CommonDefine.highlightText,
+                            action: #selector(self.addSelectedTextToHighligh(_:)),
+                            keyEquivalent: ""
+                        )
+                        menu.insertItem(newItem, at: 0)
+                    }
                 } else {
                     menu.items.first(where: { $0.title == CommonDefine.addNewTask })?.isHidden = true
+                    menu.items.first(where: { $0.title == CommonDefine.addNewThink })?.isHidden = true
+                    menu.items.first(where: { $0.title == CommonDefine.highlightText })?.isHidden = true
                 }
             }
         }
@@ -226,11 +274,38 @@ public struct MarkdownWebView: PlatformViewRepresentable {
             }
         }
         
+        @objc func addSelectedTextToThink(_ sender: NSMenuItem) {
+            evaluateJavaScript("window.getSelection().toString()") { [weak self] result, error in
+                if let selectedText = result as? String, !selectedText.isEmpty {
+                    DispatchQueue.main.async {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name(CommonDefine.addNewThink),
+                            object: nil,
+                            userInfo: ["content": selectedText, "id": (self?.itemId ?? "")]
+                        )
+                    }
+                }
+            }
+        }
+        
+        @objc func addSelectedTextToHighligh(_ sender: NSMenuItem) {
+            evaluateJavaScript("window.getSelection().toString()") { [weak self] result, error in
+                if let selectedText = result as? String, !selectedText.isEmpty {
+                    DispatchQueue.main.async {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name(CommonDefine.highlightText),
+                            object: nil,
+                            userInfo: ["content": selectedText, "id": (self?.itemId ?? "")]
+                        )
+                    }
+                }
+            }
+        }
+        
         #endif
         
         func updateMarkdownContent(_ markdownContent: String) {
             guard let markdownContentBase64Encoded = markdownContent.data(using: .utf8)?.base64EncodedString() else { return }
-            
             self.callAsyncJavaScript("window.updateWithMarkdownContentBase64Encoded(`\(markdownContentBase64Encoded)`)", in: nil, in: .page, completionHandler: nil)
         }
         
