@@ -179,6 +179,9 @@ struct MacEditReadItemView: View {
     }
     
     func saveTag(_ tag: String) {
+        if modelData.noteTagList.contains(where: { $0.content == tag }) {
+            return
+        }
         let tagModel = TagModel()
         tagModel.content = tag
         modelData.updateTagNote(tagModel)

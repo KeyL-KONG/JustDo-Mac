@@ -15,6 +15,7 @@ struct ToDoListView: View, Equatable {
     
     @EnvironmentObject var modelData: ModelData
     @State var uniqueID: String = ""
+    @State var selectDate: Date = .now
     @ObservedObject var timerModel: TimerModel
     @Binding var selection: ToDoSection {
         didSet {
@@ -130,7 +131,7 @@ struct ToDoListView: View, Equatable {
                     .environmentObject(modelData)
             }
             else {
-                TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, addItemEvent: { item in
+                TodoItemListView(selection: selection, title: selection.displayName, itemList: itemList, selectItemID: $selectItemID, selectionMode: $selectionMode, selectDate: $selectDate, addItemEvent: { item in
                     selectItemID = item.id
                 }, timerModel: timerModel).environmentObject(modelData)
                     .onChange(of: selectItemID) { oldValue, newValue in
@@ -139,7 +140,6 @@ struct ToDoListView: View, Equatable {
                             }) {
                                 self.selectItem = item
                                 toggleRefresh = !toggleRefresh
-                                print("select item: \(item.title)")
                             } else if let item = modelData.summaryItemList.first(where: { $0.id == newValue }) {
                                 self.selectItem = item
                                 toggleRefresh = !toggleRefresh
@@ -172,7 +172,7 @@ struct ToDoListView: View, Equatable {
             }
             else if let eventItem = modelData.itemList.first(where: { $0.id == selectItemID
             }) {
-                ToDoEditView(selectItemID: $selectItemID, selectItem: eventItem, selectionChange: { selectId in
+                ToDoEditView(selectItemID: $selectItemID, selectDate: $selectDate, selectItem: eventItem, selectionChange: { selectId in
                     self.selectItemID = selectId
                 }, updateEvent: {
                     

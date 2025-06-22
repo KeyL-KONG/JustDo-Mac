@@ -23,7 +23,7 @@ struct RemovableTagListView: View {
     @State private var selectTag: String = ""
     
     var defaultTags: [String] {
-        modelData.noteTagList.compactMap { $0.content }.filter { tag in
+        modelData.noteTagList.filter { $0.projectId.isEmpty }.compactMap { $0.content }.filter { tag in
             return !tags.contains { $0 == tag }
         }
     }
@@ -117,6 +117,7 @@ struct SelectTagView: View {
     var confirmEvent: (([String])->())
     var newTagEvent: (()->())
     let createTag: String = "新建"
+
     private var showTags: [String] {
         var showTags: [String] = []
         showTags += tags

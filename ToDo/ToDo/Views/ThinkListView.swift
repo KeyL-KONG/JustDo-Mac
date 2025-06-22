@@ -38,6 +38,15 @@ struct ThinkListView: View {
                 self.selectItemID = thinkList.first?.id ?? selectItemID
             }
         }
+        .toolbar {
+            Button {
+                let item = SummaryItem()
+                item.content = "新想法"
+                modelData.updateSummaryItem(item)
+            } label: {
+                Text("添加想法")
+            }
+        }
     }
     
     func thinkItemView(_ item: SummaryItem) -> some View {
@@ -64,7 +73,7 @@ struct ThinkListView: View {
 extension ThinkListView {
     
     func updateThinkList() {
-        self.thinkList = modelData.summaryItemList.sorted(by: { ($0.updateAt?.timeIntervalSince1970 ?? 0) > ($1.updateAt?.timeIntervalSince1970 ?? 0)
+        self.thinkList = modelData.summaryItemList.filter { !$0.isSummary}.sorted(by: { ($0.updateAt?.timeIntervalSince1970 ?? 0) > ($1.updateAt?.timeIntervalSince1970 ?? 0)
         })
     }
     

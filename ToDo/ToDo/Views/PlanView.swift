@@ -1107,6 +1107,7 @@ extension PlanView {
                         .scrollContentBackground(.hidden)
                         .scrollIndicators(.hidden)
                         .frame(minHeight: 80)
+                        .tag(key)
                 } else {
                     MarkdownWebView(item.summaryTags[tag.id] ?? "")
                         .frame(minHeight: 50)

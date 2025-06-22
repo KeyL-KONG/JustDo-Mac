@@ -18,6 +18,10 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     var summaryDate: Date? // 新增可选日期属性
     var summaryTags: [String: String] = [:]
     
+    var isSummary: Bool {
+        return summaryDate != nil
+    }
+    
     var timeTab: TimeTab {
         return TimeTab(rawValue: time) ?? .day
     }

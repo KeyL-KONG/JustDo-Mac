@@ -14,6 +14,7 @@ struct TodoItemListView: View {
     var itemList: [EventItem]
     @Binding var selectItemID: String
     @Binding var selectionMode: TodoMode
+    @Binding var selectDate: Date
     
     @State var taskFinishState: TaskFinishState = .unfinish
     var addItemEvent: (EventItem) -> ()
@@ -104,14 +105,6 @@ struct TodoItemListView: View {
     @State var currentWeekIndex: Int = 1
     @State var weekSlider: [[Date.WeekDay]] = []
     let maxWeekIndex: Int = 2
-    @State var selectDate: Date = .now {
-        didSet {
-            print("select date: \(selectDate)")
-//            updateTitleText()
-//            updateSelectIndexes()
-//            resetSelectTask()
-        }
-    }
     
     let recentThreshold: Int = 7
     var recentItems: [EventItem] {

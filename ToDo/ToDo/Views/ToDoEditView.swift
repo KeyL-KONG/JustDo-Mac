@@ -12,6 +12,7 @@ struct ToDoEditView: View {
     
     @EnvironmentObject var modelData: ModelData
     @Binding var selectItemID: String
+    @Binding var selectDate: Date
     @State var selectItem: EventItem?
     var selectionChange: ((String) -> ())
     var updateEvent: (() -> ())
@@ -34,14 +35,24 @@ struct ToDoEditView: View {
         return ["无"] + modelData.rewardList.filter { $0.tag == tagId }.compactMap { $0.title }
     }
     
-    @State var selectProject: String = "" {
-        didSet {
-            print("select project: \(selectProject)")
-        }
-    }
+    @State var selectProject: String = ""
     var projectListTitle: [String] {
         let tagId = modelData.tagList.filter{ $0.title == selectedTag }.first?.id ?? ""
-        return ["无"] + modelData.itemList.filter { $0.tag == tagId && $0.actionType == .project}.compactMap { $0.title }
+        return ["无"] + modelData.itemList.filter { $0.tag == tagId && $0.actionType == .project}.sorted(by: { first, second in
+            if first.isFinish != second.isFinish {
+                return first.isFinish ? false : true
+            } else if first.projectId.isEmpty, !second.projectId.isEmpty {
+                return true
+            } else if !first.projectId.isEmpty, second.projectId.isEmpty {
+                return false
+            } else if first.fatherId.isEmpty, !second.fatherId.isEmpty {
+                return true
+            } else if !first.fatherId.isEmpty, second.fatherId.isEmpty {
+                return false
+            } else {
+                return first.createTime?.timeIntervalSince1970 ?? 0 > second.createTime?.timeIntervalSince1970 ?? 0
+            }
+        }).compactMap { $0.title }
     }
     
     @State var selectFather: String = "无"
@@ -289,6 +300,7 @@ struct ToDoEditView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectionChange(fatherItem.id)
+                            modelData.cacheLastSelectItemId = selectItemID
                         }
                     }
                     
@@ -640,6 +652,7 @@ struct ToDoEditView: View {
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     selectionChange(item.id)
+                                    modelData.cacheLastSelectItemId = selectItemID
                                 }
                             }
                         }
@@ -765,7 +778,34 @@ struct ToDoEditView: View {
         .onChange(of: isFinish, { oldValue, newValue in
         })
         .toolbar(content: {
+            if let lastSelectItemID = modelData.cacheLastSelectItemId {
+                Button {
+                    modelData.cacheNextSelectItemId = selectItemID
+                    selectionChange(lastSelectItemID)
+                } label: {
+                    Label("", systemImage: "arrowshape.left")
+                }
+            }
+            
+            if let nextSelectItemID = modelData.cacheNextSelectItemId {
+                Button {
+                    modelData.cacheLastSelectItemId = selectItemID
+                    selectionChange(nextSelectItemID)
+                } label: {
+                    Label("", systemImage: "arrowshape.right")
+                }
+            }
+            
             Spacer()
+            
+            Button {
+                if let selectItem {
+                    addProjectSubItem(root: selectItem)
+                }
+            } label: {
+                Text("新建子任务").foregroundStyle(.cyan)
+            }
+            
             Button("保存") {
                 saveTask()
             }.foregroundColor(.blue)
@@ -800,6 +840,20 @@ struct ToDoEditView: View {
                 isExpandType = true
             }
             self.addObservers()
+        }
+    }
+    
+    func addProjectSubItem(root: EventItem) {
+        let item = EventItem()
+        item.title = "新建子任务"
+        item.projectId = root.projectId
+        item.fatherId = root.id
+        item.actionType = .task
+        item.tag = root.tag
+        item.planTime = .now
+        item.setPlanTime = true
+        modelData.updateItem(item) {
+            self.selectionChange(item.id)
         }
     }
     
@@ -1027,6 +1081,8 @@ extension ToDoEditView {
     func projectStateItemView(title: String) -> some View {
         Button {
             let item = TaskTimeItem()
+            item.startTime = selectDate
+            item.endTime = selectDate
             item.eventId = selectItem?.id ?? ""
             item.stateTagId = modelData.noteTagList.first(where: { $0.content == title
             })?.id ?? ""

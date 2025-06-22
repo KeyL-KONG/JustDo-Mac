@@ -106,6 +106,9 @@ class ModelData: ObservableObject {
     
     @State var cacheTodoMode: TodoMode?
     
+    var cacheLastSelectItemId: String?
+    var cacheNextSelectItemId: String?
+    
     public func notifyEventItemsUpdate() {
         self.itemList = self.itemList
     }
