@@ -28,7 +28,14 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $selection) {
-            PlanView(timerModel: timerModel, selectItemID: .constant(""), timeTab: .day, currentDate: $selectDate, selectionMode: .constant(.synthesis))
+//            PlanView(timerModel: timerModel, selectItemID: .constant(""), timeTab: .day, currentDate: $selectDate, selectionMode: .constant(.synthesis))
+//                .environmentObject(modelData)
+//                .tag(Tab.task)
+//                .tabItem {
+//                    Label("任务", systemImage: "star")
+//                }
+            
+            iOSTaskView(timerModel: timerModel)
                 .environmentObject(modelData)
                 .tag(Tab.task)
                 .tabItem {

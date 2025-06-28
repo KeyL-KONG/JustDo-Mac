@@ -158,6 +158,7 @@ extension Date {
     func format(_ format: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format
+        formatter.locale = Locale(identifier: "zh_CN")
         return formatter.string(from: self)
     }
     
@@ -520,4 +521,17 @@ extension Calendar {
         return hours
     }
     
+}
+
+extension Date {
+    
+    var monthDayAndWeek: String {
+        format("M.d E")
+    }
+
+    func daysBetween(_ date: Date) -> Int {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.day], from: date, to: self)
+        return components.day ?? 0
+    }
 }

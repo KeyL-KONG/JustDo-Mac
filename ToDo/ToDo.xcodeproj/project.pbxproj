@@ -31,6 +31,13 @@
 		092546242DE7669E00D324DB /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546232DE7669700D324DB /* NoteDetailView.swift */; };
 		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
 		0936CB382E0FA3FD0058BD04 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB372E0FA3F60058BD04 /* MainView.swift */; };
+		0936CB3B2E1021530058BD04 /* iOSTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB3A2E10214A0058BD04 /* iOSTaskView.swift */; };
+		0936CB3D2E1031EC0058BD04 /* iOSTaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB3C2E1031E60058BD04 /* iOSTaskListView.swift */; };
+		0936CB3F2E1035F80058BD04 /* ListItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB3E2E1035F80058BD04 /* ListItemRow.swift */; };
+		0936CB412E103B250058BD04 /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB402E103B250058BD04 /* EditTaskView.swift */; };
+		0936CB432E103B730058BD04 /* EditTaskView+Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB422E103B730058BD04 /* EditTaskView+Section.swift */; };
+		0936CB452E103B8C0058BD04 /* EditTaskIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */; };
+		0936CB472E103BA80058BD04 /* iOSTimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
 		093E78FA2D238533006E5120 /* ReadTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F82D238533006E5120 /* ReadTag.swift */; };
@@ -137,6 +144,13 @@
 		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
 		0936CB372E0FA3F60058BD04 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		0936CB392E0FA57B0058BD04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0936CB3A2E10214A0058BD04 /* iOSTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTaskView.swift; sourceTree = "<group>"; };
+		0936CB3C2E1031E60058BD04 /* iOSTaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTaskListView.swift; sourceTree = "<group>"; };
+		0936CB3E2E1035F80058BD04 /* ListItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemRow.swift; sourceTree = "<group>"; };
+		0936CB402E103B250058BD04 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
+		0936CB422E103B730058BD04 /* EditTaskView+Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditTaskView+Section.swift"; sourceTree = "<group>"; };
+		0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskIntervalView.swift; sourceTree = "<group>"; };
+		0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTimeLineRowView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
 		093E78F72D238533006E5120 /* ReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadModel.swift; sourceTree = "<group>"; };
@@ -301,7 +315,14 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */,
+				0936CB402E103B250058BD04 /* EditTaskView.swift */,
+				0936CB3E2E1035F80058BD04 /* ListItemRow.swift */,
+				0936CB3C2E1031E60058BD04 /* iOSTaskListView.swift */,
+				0936CB3A2E10214A0058BD04 /* iOSTaskView.swift */,
 				0936CB372E0FA3F60058BD04 /* MainView.swift */,
+				0936CB422E103B730058BD04 /* EditTaskView+Section.swift */,
+				0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -670,11 +691,14 @@
 				09F80BFE2C665A3F00650366 /* UserManager.swift in Sources */,
 				093E790A2D23BD57006E5120 /* RatingView.swift in Sources */,
 				092545F02DD8666300D324DB /* PlanItemEditView.swift in Sources */,
+				0936CB3D2E1031EC0058BD04 /* iOSTaskListView.swift in Sources */,
 				097AE2CC2DC9041B0096059B /* View-CustomAlert.swift in Sources */,
 				09F80C202C670FAD00650366 /* DateIntervalView.swift in Sources */,
 				2BEE62722DF988840030B77F /* MarkdownParser.swift in Sources */,
 				093E78FA2D238533006E5120 /* ReadTag.swift in Sources */,
+				0936CB452E103B8C0058BD04 /* EditTaskIntervalView.swift in Sources */,
 				09AAC5522DEDDC9A0091FA4A /* ReadListView.swift in Sources */,
+				0936CB432E103B730058BD04 /* EditTaskView+Section.swift in Sources */,
 				093E78FB2D238533006E5120 /* ReadModel.swift in Sources */,
 				092AF5262DD102480067DA7D /* PlanView.swift in Sources */,
 				090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */,
@@ -712,15 +736,18 @@
 				09F80BED2C665A3100650366 /* ModelData.swift in Sources */,
 				092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */,
 				09F80C072C665A3F00650366 /* CloudProtocol.swift in Sources */,
+				0936CB3F2E1035F80058BD04 /* ListItemRow.swift in Sources */,
 				092546192DE7611F00D324DB /* NoteListView.swift in Sources */,
 				09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */,
 				09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */,
 				09F80C1C2C66FF8D00650366 /* ToDoItemRowView.swift in Sources */,
+				0936CB3B2E1021530058BD04 /* iOSTaskView.swift in Sources */,
 				092546172DE1CE6200D324DB /* PersonalTagWindowView.swift in Sources */,
 				09F80C0F2C665A5B00650366 /* View+Extensions.swift in Sources */,
 				0936CB382E0FA3FD0058BD04 /* MainView.swift in Sources */,
 				092546112DE1740400D324DB /* PersonalTagView.swift in Sources */,
 				097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */,
+				0936CB412E103B250058BD04 /* EditTaskView.swift in Sources */,
 				09F80C132C66F55C00650366 /* ToDoSection.swift in Sources */,
 				092546242DE7669E00D324DB /* NoteDetailView.swift in Sources */,
 				09F80C182C66F7F700650366 /* ToDoListView.swift in Sources */,
@@ -736,6 +763,7 @@
 				093E78F62D23852D006E5120 /* NoteModel.swift in Sources */,
 				092546132DE17A5200D324DB /* PersonalEditTagView.swift in Sources */,
 				09D714632D865F34009DB18E /* StateManager.swift in Sources */,
+				0936CB472E103BA80058BD04 /* iOSTimeLineRowView.swift in Sources */,
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
 				09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */,
 				09D714652D86F8E5009DB18E /* ReviewNewView.swift in Sources */,
