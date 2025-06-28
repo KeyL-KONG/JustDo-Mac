@@ -14,6 +14,10 @@ struct ToDoApp: App {
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
+    
+    #if os(iOS)
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    #endif
 
     let modelData = ModelData()
     @StateObject var timerModel = TimerModel()
@@ -41,7 +45,10 @@ struct ToDoApp: App {
         
 #if os(iOS)
         WindowGroup {
-            ContentView()
+            MainView(timerModel: timerModel).environmentObject(modelData)
+                .onAppear {
+                    modelData.loadFromServer()
+                }
         }
 #endif
         

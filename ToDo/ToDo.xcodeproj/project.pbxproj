@@ -30,6 +30,7 @@
 		092546222DE7665700D324DB /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925461E2DE7665700D324DB /* TagView.swift */; };
 		092546242DE7669E00D324DB /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092546232DE7669700D324DB /* NoteDetailView.swift */; };
 		092AF5262DD102480067DA7D /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AF5252DD102450067DA7D /* PlanView.swift */; };
+		0936CB382E0FA3FD0058BD04 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB372E0FA3F60058BD04 /* MainView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
 		093E78FA2D238533006E5120 /* ReadTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F82D238533006E5120 /* ReadTag.swift */; };
@@ -134,6 +135,8 @@
 		0925461E2DE7665700D324DB /* TagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
 		092546232DE7669700D324DB /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		092AF5252DD102450067DA7D /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		0936CB372E0FA3F60058BD04 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		0936CB392E0FA57B0058BD04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
 		093E78F72D238533006E5120 /* ReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadModel.swift; sourceTree = "<group>"; };
@@ -295,6 +298,14 @@
 			path = TagCloud;
 			sourceTree = "<group>";
 		};
+		0936CB362E0FA3E20058BD04 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				0936CB372E0FA3F60058BD04 /* MainView.swift */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
 		093E78F42D23852D006E5120 /* Note */ = {
 			isa = PBXGroup;
 			children = (
@@ -361,6 +372,7 @@
 		09F80BD92C66540F00650366 /* ToDo */ = {
 			isa = PBXGroup;
 			children = (
+				0936CB392E0FA57B0058BD04 /* Info.plist */,
 				090C72212C8409D600FA21C5 /* Components */,
 				09FB5D552C69A33000C079ED /* Timer */,
 				09F80C142C66F62700650366 /* Views */,
@@ -504,6 +516,7 @@
 				097A04112C71ED9600521483 /* TodoItemListView+Today.swift */,
 				093E790F2D295C60006E5120 /* AddItemView.swift */,
 				0925461A2DE7663300D324DB /* TagListView.swift */,
+				0936CB362E0FA3E20058BD04 /* iOS */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -705,6 +718,7 @@
 				09F80C1C2C66FF8D00650366 /* ToDoItemRowView.swift in Sources */,
 				092546172DE1CE6200D324DB /* PersonalTagWindowView.swift in Sources */,
 				09F80C0F2C665A5B00650366 /* View+Extensions.swift in Sources */,
+				0936CB382E0FA3FD0058BD04 /* MainView.swift in Sources */,
 				092546112DE1740400D324DB /* PersonalTagView.swift in Sources */,
 				097A04122C71ED9600521483 /* TodoItemListView+Today.swift in Sources */,
 				09F80C132C66F55C00650366 /* ToDoSection.swift in Sources */,
@@ -880,6 +894,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ToDo/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -920,6 +935,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ToDo/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
