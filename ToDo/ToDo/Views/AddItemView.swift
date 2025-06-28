@@ -1,5 +1,5 @@
 import SwiftUI
-
+#if os(macOS)
 struct AddItemView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var modelData: ModelData
@@ -206,3 +206,4 @@ struct TaskSaveView: View {
     }
     
 }
+#endif

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct NoteQuickView: View {
     
     @EnvironmentObject var modelData: ModelData
@@ -68,7 +68,9 @@ struct NoteQuickView: View {
                 
             }
             .padding()
+#if os(macOS)
             .background(Color(NSColor.controlBackgroundColor))
+#endif
         }
     }
     
@@ -82,3 +84,5 @@ struct NoteQuickView: View {
         dismiss()
     }
 }
+
+#endif

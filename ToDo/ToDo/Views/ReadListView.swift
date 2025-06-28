@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct ReadListView: View {
     
     @Binding var selectItemID: String
@@ -77,3 +77,4 @@ extension ReadListView {
             .clipShape(Capsule())
     }
 }
+#endif

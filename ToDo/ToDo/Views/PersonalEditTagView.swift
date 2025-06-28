@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct PersonalEditTagView: View {
     
     @FocusState var focusedField: FocusedField?
@@ -59,3 +59,4 @@ struct PersonalEditTagView: View {
         modelData.updatePersonalTag(tag)
     }
 }
+#endif

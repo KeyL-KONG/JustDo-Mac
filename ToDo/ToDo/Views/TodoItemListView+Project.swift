@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+#if os(macOS)
 
 struct TodoProjectDetailItem: Identifiable {
     let title: String
@@ -254,3 +255,5 @@ extension TodoItemListView {
     }
     
 }
+
+#endif

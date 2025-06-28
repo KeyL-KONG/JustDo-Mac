@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LeanCloud
+#if os(macOS)
 
 struct TodoItemListView: View {
     let selection: ToDoSection
@@ -588,3 +589,5 @@ struct TodoItemListView: View {
         Self.deleteItem = nil
     }
 }
+
+#endif

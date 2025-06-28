@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 extension TodoItemListView {
     
     func monthView() -> some View {
@@ -93,3 +93,5 @@ extension TodoItemListView {
     }
     
 }
+
+#endif

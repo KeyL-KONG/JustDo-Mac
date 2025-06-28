@@ -4,7 +4,7 @@
 //
 //  Created by LQ on 2025/6/2.
 //
-
+#if os(macOS)
 import SwiftUI
 
 struct ThinkListView: View {
@@ -86,3 +86,5 @@ extension ThinkListView {
             .clipShape(Capsule())
     }
 }
+
+#endif

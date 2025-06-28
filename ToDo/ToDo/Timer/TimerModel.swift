@@ -28,6 +28,7 @@ class TimerModel: ObservableObject {
     }
     
     private func addObservers() {
+#if os(macOS)
         NSWorkspace.shared.notificationCenter.addObserver(
             self,
             selector: #selector(systemWillSleep(_:)),
@@ -41,10 +42,13 @@ class TimerModel: ObservableObject {
             name: NSWorkspace.didWakeNotification,
             object: nil
         )
+#endif
     }
     
     private func removeObservers() {
+#if os(macOS)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
+#endif
     }
     
     @objc private func systemWillSleep(_ notification: Notification) {

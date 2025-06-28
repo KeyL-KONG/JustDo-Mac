@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct MacEditReadItemView: View {
     
     enum FocusedField {
@@ -196,3 +196,5 @@ struct ReadTimeItem: Identifiable, Hashable {
         return time.timeIntervalSince1970.stringValue ?? ""
     }
 }
+
+#endif

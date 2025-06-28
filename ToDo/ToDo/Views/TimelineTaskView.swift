@@ -85,8 +85,10 @@ struct TimelineTaskView: View {
                         .onTapGesture {
                             Self.selectedTimeInterval = hour
                             TimelineTaskView.selectedTimeItem = nil
+#if os(macOS)
                             ToDoListView.newTimelineInterval = interverlTime()
                             self.selectItemID = ToDoListView.newTimelineItemId + UUID().uuidString
+#endif
                     }
                 }
             }

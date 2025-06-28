@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 
 // 自定义弹窗内容
 struct PersonalTagWindowView: View {
@@ -113,3 +113,4 @@ struct PersonalTagWindowView: View {
     
 }
 
+#endif

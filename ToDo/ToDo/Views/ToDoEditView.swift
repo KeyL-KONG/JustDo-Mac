@@ -4,7 +4,7 @@
 //
 //  Created by LQ on 2024/8/10.
 //
-
+#if os(macOS)
 import SwiftUI
 import LeanCloud
 
@@ -1093,3 +1093,5 @@ extension ToDoEditView {
         }
     }
 }
+
+#endif

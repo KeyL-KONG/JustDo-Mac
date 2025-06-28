@@ -7,7 +7,7 @@
 
 import SwiftUI
 import LeanCloud
-
+#if os(macOS)
 struct ToDoListView: View, Equatable {
     static func == (lhs: ToDoListView, rhs: ToDoListView) -> Bool {
         return lhs.timerModel.title == rhs.timerModel.title
@@ -257,3 +257,5 @@ struct ToDoListView: View, Equatable {
         modelData.updateItem(item)
     }
 }
+
+#endif

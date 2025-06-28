@@ -4,7 +4,7 @@
 //
 //  Created by LQ on 2024/8/18.
 //
-
+#if os(macOS)
 import SwiftUI
 
 extension TodoItemListView {
@@ -629,3 +629,4 @@ extension TodoItemListView {
     }
     
 }
+#endif

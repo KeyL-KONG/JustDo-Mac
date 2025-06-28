@@ -4,11 +4,10 @@
 //
 //  Created by ByteDance on 2025/6/4.
 //
-
-import SwiftUI
 #if os(macOS)
+import SwiftUI
+
 import AppKit
-#endif
 
 struct CustomTextEditor: NSViewRepresentable {
     @Binding var text: String
@@ -81,3 +80,4 @@ struct CustomTextEditor: NSViewRepresentable {
         }
     }
 }
+#endif

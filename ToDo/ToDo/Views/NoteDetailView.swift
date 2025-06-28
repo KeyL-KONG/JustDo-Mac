@@ -4,12 +4,12 @@
 //
 //  Created by LQ on 2025/5/28.
 //
-
+#if os(macOS)
 import SwiftUI
 import AlertToast
-#if os(macOS)
+
 import AppKit
-#endif
+
 
 struct NoteDetailView: View {
     
@@ -505,3 +505,4 @@ extension NoteDetailView {
     }
     
 }
+#endif

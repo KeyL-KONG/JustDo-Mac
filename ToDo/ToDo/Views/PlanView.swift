@@ -1265,7 +1265,9 @@ extension PlanView {
             Spacer()
             Text("+").bold().font(.system(size: 25)).foregroundStyle(Color.init(hex: "2874a6"))
                 .onTapGesture {
+#if os(macOS)
                     self.selectItemID = ToDoListView.newPlanTimeItemId
+#endif
                 }
         }.padding(.top, 20)
         .padding(.horizontal, 20)

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 extension TodoItemListView {
     
     var weekDates: [Date] {
@@ -348,3 +348,4 @@ extension TodoItemListView {
     }
     
 }
+#endif

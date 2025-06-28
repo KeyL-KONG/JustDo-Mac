@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct MarkdownView: View {
     
     @EnvironmentObject var modelData: ModelData
@@ -124,3 +124,5 @@ extension MarkdownView {
     }
 #endif
 }
+
+#endif

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 extension TodoItemListView {
     
     enum PrincipleDisplayMode {
@@ -170,3 +170,5 @@ extension TodoItemListView {
     }
     
 }
+
+#endif

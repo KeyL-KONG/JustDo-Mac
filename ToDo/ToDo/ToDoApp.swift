@@ -38,6 +38,14 @@ struct ToDoApp: App {
     
     // 新增窗口场景
     var body: some Scene {
+        
+#if os(iOS)
+        WindowGroup {
+            ContentView()
+        }
+#endif
+        
+#if os(macOS)
         WindowGroup {
             EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel, selection: $selection, selectItemID: $selectedID))
                 .environmentObject(modelData)
@@ -119,7 +127,15 @@ struct ToDoApp: App {
             self.title =  timerModel.title.isEmpty ? "无事项" : "<\(timerModel.title)> 进行中"
         }
         
+#endif
+        
     }
+    
+    
+}
+
+#if os(macOS)
+extension ToDoApp {
     
     func handleRestartEvent() {
         guard let item = timerModel.timingItem else {
@@ -171,6 +187,7 @@ struct ToDoApp: App {
        }
     }
 }
+#endif
 
 #if os(macOS)
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -193,6 +210,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        return true
+    }
+    
+}
+#endif
+
+
+#if os(iOS)
+class AppDelegate: NSObject, UIApplicationDelegate {
+    
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        let appId = "sVkf4GuCkJf9r8q9BjTVax8b-gzGzoHsz"
+        let appKey = "sD7s2RQAGL77oRNg9rCkQIzE"
+        let url = "https://svkf4guc.lc-cn-n1-shared.com"
+        
+        do {
+            try LCApplication.default.set(id: appId, key: appKey, serverURL: url)
+        } catch {
+            print(error)
+        }
+        
+        return true
+    }
+    
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return true
     }
     

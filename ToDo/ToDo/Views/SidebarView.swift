@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct SidebarView: View {
     
     @EnvironmentObject var modelData: ModelData
@@ -68,3 +68,5 @@ struct SidebarView: View {
         }
     }
 }
+
+#endif

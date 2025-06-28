@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(macOS)
 struct Constants {
     static let dayHeight = 50.0
 }
@@ -163,3 +164,5 @@ extension Calendar {
         // Fallback on earlier versions
     }
 }
+
+#endif

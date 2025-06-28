@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(macOS)
 struct NoteListView: View {
     
     @Binding var selectItemID: String
@@ -93,3 +93,4 @@ struct NoteListView: View {
     }
     
 }
+#endif

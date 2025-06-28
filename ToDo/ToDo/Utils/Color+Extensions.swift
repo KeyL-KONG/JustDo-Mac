@@ -32,7 +32,7 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
-    
+#if os(macOS)
     func toHexString() -> String {
         let uic = NSColor(self)
         guard let components = uic.cgColor.components, components.count >= 3 else {
@@ -54,5 +54,6 @@ extension Color {
         }
     }
     
+#endif
 }
 
