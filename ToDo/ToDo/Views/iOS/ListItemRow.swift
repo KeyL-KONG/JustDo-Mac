@@ -52,7 +52,8 @@ struct ListItemRow: View {
                 self.finishEvent?(item.isFinish)
             }
             
-            Text(item.title).font(.system(size: 13)).foregroundStyle((item.isFinish ? Color.gray : Color.black)).onTapGesture {
+            let titleColor = (item.isPlay ? Color.blue : (item.isFinish ? Color.gray : Color.black))
+            Text(item.title).font(.system(size: 13)).foregroundStyle(titleColor).onTapGesture {
                 clickEvent()
             }
             

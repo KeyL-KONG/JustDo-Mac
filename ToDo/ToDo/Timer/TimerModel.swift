@@ -13,7 +13,7 @@ class TimerModel: ObservableObject {
     @Published var title: String = ""
     
     var timer: Timer?
-    
+    var startTime: Date?
     var isTiming: Bool = false
     var timingItem: EventItem? = nil
     
@@ -97,6 +97,7 @@ class TimerModel: ObservableObject {
     
     private func start() {
         isTiming = true
+        startTime = .now
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { timer in
             self.timeSeconds += 1
         })

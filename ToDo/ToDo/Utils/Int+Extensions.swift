@@ -26,6 +26,12 @@ extension Int {
         }
     }
     
+    var secondAndMinTimeStr: String {
+        let seconds = self % 60
+        let min = self / 60
+        return String(format: "%02d:%02d", min, seconds)
+    }
+    
     var minAndHourTimeStr: String {
         let min = (self % 3600) / 60
         let hour = self / 3600
