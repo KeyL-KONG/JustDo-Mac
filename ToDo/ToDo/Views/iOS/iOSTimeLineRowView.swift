@@ -1,4 +1,5 @@
 import SwiftUI
+#if os(iOS)
 
 struct iOSTimeLineRowView: View {
     @EnvironmentObject var modelData: ModelData
@@ -138,3 +139,5 @@ struct EditTimeLineRowView: View {
         modelData.updateTimeItem(item)
     }
 }
+
+#endif

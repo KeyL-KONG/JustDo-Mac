@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+#if os(iOS)
 
 extension EditTaskView {
     
@@ -340,3 +341,5 @@ extension EditTaskView {
     }
     
 }
+
+#endif

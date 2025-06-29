@@ -31,18 +31,17 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $selection) {
-//            PlanView(timerModel: timerModel, selectItemID: .constant(""), timeTab: .day, currentDate: $selectDate, selectionMode: .constant(.synthesis))
-//                .environmentObject(modelData)
-//                .tag(Tab.task)
-//                .tabItem {
-//                    Label("任务", systemImage: "star")
-//                }
-            
             iOSTaskView(timerModel: timerModel)
                 .environmentObject(modelData)
                 .tag(Tab.task)
                 .tabItem {
                     Label("任务", systemImage: "star")
+                }
+            iOSProjectView(timerModel: timerModel)
+                .environmentObject(modelData)
+                .tag(Tab.project)
+                .tabItem {
+                    Label("项目", systemImage: "folder.fill")
                 }
         }
         .onAppear(perform: {

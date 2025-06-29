@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+#if os(iOS)
 
 struct iOSTaskListView: View {
     
@@ -138,3 +139,5 @@ extension iOSTaskListView {
     }
     
 }
+
+#endif

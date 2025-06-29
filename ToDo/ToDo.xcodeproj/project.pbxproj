@@ -38,6 +38,7 @@
 		0936CB432E103B730058BD04 /* EditTaskView+Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB422E103B730058BD04 /* EditTaskView+Section.swift */; };
 		0936CB452E103B8C0058BD04 /* EditTaskIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */; };
 		0936CB472E103BA80058BD04 /* iOSTimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */; };
+		0936CB4A2E10CC720058BD04 /* iOSProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB492E10CC700058BD04 /* iOSProjectView.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
 		093E78FA2D238533006E5120 /* ReadTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F82D238533006E5120 /* ReadTag.swift */; };
@@ -151,6 +152,7 @@
 		0936CB422E103B730058BD04 /* EditTaskView+Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditTaskView+Section.swift"; sourceTree = "<group>"; };
 		0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskIntervalView.swift; sourceTree = "<group>"; };
 		0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTimeLineRowView.swift; sourceTree = "<group>"; };
+		0936CB492E10CC700058BD04 /* iOSProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSProjectView.swift; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
 		093E78F72D238533006E5120 /* ReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadModel.swift; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				0936CB492E10CC700058BD04 /* iOSProjectView.swift */,
 				0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */,
 				0936CB402E103B250058BD04 /* EditTaskView.swift */,
 				0936CB3E2E1035F80058BD04 /* ListItemRow.swift */,
@@ -752,6 +755,7 @@
 				092546242DE7669E00D324DB /* NoteDetailView.swift in Sources */,
 				09F80C182C66F7F700650366 /* ToDoListView.swift in Sources */,
 				09F80BEC2C665A3100650366 /* EventItem.swift in Sources */,
+				0936CB4A2E10CC720058BD04 /* iOSProjectView.swift in Sources */,
 				09F80C032C665A3F00650366 /* EventModel.swift in Sources */,
 				2B5800212DF070F400BB4DDB /* CustomTextEditor.swift in Sources */,
 				09F80C112C665A5B00650366 /* Date+Extensions.swift in Sources */,

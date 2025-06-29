@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+#if os(iOS)
 
 struct EditTaskView: View {
     
@@ -309,3 +310,5 @@ struct EditTaskView_Previews: PreviewProvider {
     }
     
 }
+
+#endif

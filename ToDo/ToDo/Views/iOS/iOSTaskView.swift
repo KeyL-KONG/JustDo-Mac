@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct iOSTaskView: View {
     @EnvironmentObject var modelData: ModelData
     @ObservedObject var timerModel: TimerModel
@@ -153,3 +154,4 @@ struct iOSTaskView: View {
     }
     
 }
+#endif
