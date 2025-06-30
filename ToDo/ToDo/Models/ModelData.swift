@@ -147,6 +147,7 @@ class ModelData: ObservableObject {
     }
     
     func saveTimeItemToServer(items: [TaskTimeItem], completion: ((Error?) -> ())? = nil) {
+        print("save time item")
         DataManager.shared.save(with: TaskTimeItem.modelClassName(), models: items) { error in
             if let error = error {
                 print(error)
