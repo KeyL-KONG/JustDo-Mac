@@ -445,6 +445,11 @@ struct TodoItemListView: View {
                 scrolledID = currentDate
                 updateWeekData()
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if self.weekTimelineItems.isEmpty {
+                    self.updateWeekData()
+                }
+            }
         }
     }
     

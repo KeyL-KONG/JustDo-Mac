@@ -36,15 +36,19 @@ struct TimelineTaskView: View {
     @State var itemType: EventActionType = .project
     var itemTypeList: [EventActionType] = [.task, .project]
     
+    @State var totalTime: Int = 0
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
            
             ScrollView(.vertical) {
-                VStack(content: {
+                VStack(spacing: 5, content: {
                     TimelineView()
+                    if totalTime > 0 {
+                        finishTotalView()
+                    }
+                    Spacer()
                 })
-                .hSpacing(.center)
-                .vSpacing(.center)
             }
             .scrollIndicators(.hidden)
             
@@ -69,6 +73,9 @@ struct TimelineTaskView: View {
         } message: {
             Text("")
         }
+        .onAppear {
+            self.totalTime = timelineItems.compactMap { $0.interval.interval }.reduce(0, +)
+        }
 
     }
     
@@ -83,6 +90,7 @@ struct TimelineTaskView: View {
                     TimelineViewRow(hour).id(hour)
                         .contentShape(Rectangle())
                         .onTapGesture {
+                            print("select hour: \(hour)")
                             Self.selectedTimeInterval = hour
                             TimelineTaskView.selectedTimeItem = nil
 #if os(macOS)
@@ -102,6 +110,17 @@ struct TimelineTaskView: View {
             }
         })
     
+    }
+    
+    func finishTotalView() -> some View {
+        HStack {
+            Text("已投入：\(totalTime.simpleTimeStr)").bold().font(.system(size: 12))
+            Spacer()
+        }
+        .padding(5)
+        .background(Color.init(hex: "e8daef"))
+        .cornerRadius(5)
+        .offset(y: 10)
     }
     
     @ViewBuilder

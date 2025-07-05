@@ -143,6 +143,14 @@ extension Date {
         return format("MM-dd HH:mm")
     }
     
+    var currentDayTimeInterval: TimeInterval {
+        return self.timeIntervalSince(startOfDay)
+    }
+    
+    var lastWeekDay: Date {
+        Calendar.current.date(byAdding: .day, value: -7, to: self) ?? self
+    }
+    
     var simpleTimeStr: String {
         format("HH:mm")
     }

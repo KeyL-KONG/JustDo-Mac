@@ -9,6 +9,10 @@ import SwiftUI
 #if os(macOS)
 extension TodoItemListView {
     
+    var reloadWeekDates: [Date] {
+        currentDate.weekDays + currentDate.lastWeekDay.weekDays
+    }
+    
     var weekDates: [Date] {
         currentDate.weekDays
     }
@@ -313,10 +317,10 @@ extension TodoItemListView {
         if modelData.weekTimelinePlanItems.count > 0 {
             self.weekTimelinePlanItems = modelData.weekTimelinePlanItems
         }
-        let weekDates = self.weekDates
+        let weekDates = self.reloadWeekDates
+        var weekTimelineItems = self.weekTimelineItems
+        var weekTimelinePlanItems = self.weekTimelinePlanItems
         DispatchQueue.global().async {
-            var weekTimelineItems: [Date: [TimelineItem]] = [:]
-            var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
             weekDates.forEach { date in
                 weekTimelineItems[date] = timelineItems(with: date, isPlan: false)
                 weekTimelinePlanItems[date] = timelineItems(with: date, isPlan: true)
@@ -343,7 +347,6 @@ extension TodoItemListView {
             }
             
         }
-        print("timeline items date: \(date), count: \(items.count)")
         return items.sorted { $0.interval.start.timeIntervalSince1970 < $1.interval.start.timeIntervalSince1970 }
     }
     

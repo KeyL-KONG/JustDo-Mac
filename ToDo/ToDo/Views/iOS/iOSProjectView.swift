@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(iOS)
 struct iOSProjectView: View {
     
     @EnvironmentObject var modelData: ModelData
@@ -171,3 +171,5 @@ extension iOSProjectView {
     }
     
 }
+
+#endif

@@ -116,16 +116,36 @@ struct EditTimeIntervalView: View {
         .onAppear {
             self.itemList = calculateItemsList()
             self.sortedTagList = calculateTagList()
-            self.selectedTag = self.sortedTagList.first?.title ?? ""
-            self.selectTitle = self.itemList.first?.title ?? ""
+            if let selectedDefaultItem = selectDefaultItem() {
+                self.selectTitle = selectedDefaultItem.title
+                if let tag = modelData.tagList.first(where: { $0.id == selectedDefaultItem.tag
+                }) {
+                    self.selectedTag = tag.title
+                }
+                self.startTime = selectedDefaultItem.fixedStartTime ?? self.startTime
+                self.endTime = selectedDefaultItem.fixedEndTime ?? self.endTime
+            } else {
+                self.selectedTag = self.sortedTagList.first?.title ?? ""
+                self.selectTitle = self.selectDefaultItem()?.title ?? ""
+            }
+            
         }
     }
 }
 
 extension EditTimeIntervalView {
     
+    func selectDefaultItem() -> EventItem? {
+        return modelData.itemList.filter { $0.actionType == .project && $0.isFixedEvent }.sorted { first, second in
+            if let firstStartTime = first.fixedStartTime, let secondStartTime = second.fixedStartTime {
+                return abs(self.startTime.currentDayTimeInterval - firstStartTime.currentDayTimeInterval) < abs(self.startTime.currentDayTimeInterval - secondStartTime.currentDayTimeInterval)
+            }
+            return true
+        }.first
+    }
+    
     func saveTimeInterval() {
-        guard let item = itemList.filter({ $0.title == selectTitle }).first as? EventItem else {
+        guard let item = itemList.filter({ $0.title == selectTitle }).first else {
             return
         }
         
