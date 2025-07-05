@@ -41,7 +41,7 @@ struct PlanView: View {
     @State var isSummaryEdit: Bool = false
     @State var summaryContent: String = ""
     @State var summaryTimeExpand: Bool = false
-    @State var fixedEventExpand: Bool = false
+    @State var fixedEventExpand: Bool = true
     
     private static var stopItem: EventItem? = nil
     @State private var showStopAlert: Bool = false
@@ -92,12 +92,12 @@ struct PlanView: View {
                     summaryTagTimeItems()
                 }
                 
-                if summaryItems.count > 0 {
+                if summaryItems.count > 0, selectionMode != .work {
                     summaryItemHeaderView()
                     summaryItemsView()
                 }
                 
-                if noteItems.count > 0 {
+                if noteItems.count > 0, selectionMode != .work {
                     noteItemHeaderView()
                     noteItemsView()
                 }

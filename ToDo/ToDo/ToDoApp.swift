@@ -30,6 +30,7 @@ struct ToDoApp: App {
     }
     
     // 新增状态属性
+    @State var selectionMode: TodoMode = .synthesis
     @State private var showStopAlert = false
     @State private var eventContent = ""
     @State private var pendingItem: (item: EventItem, playTime: Date)?
@@ -54,7 +55,7 @@ struct ToDoApp: App {
         
 #if os(macOS)
         WindowGroup {
-            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel, selection: $selection, selectItemID: $selectedID))
+            EquatableView(content: ToDoListView(uniqueID: "unique", timerModel: timerModel, selection: $selection, selectItemID: $selectedID, selectionMode: $selectionMode))
                 .environmentObject(modelData)
                 .onAppear {
                     print("main view appear")
@@ -126,7 +127,7 @@ struct ToDoApp: App {
 
         
         MenuBarExtra("\(timerModel.timeSeconds > 0 ? timerModel.timeSeconds.minAndHourTimeStr : "none")") {
-            TaskSaveView(timerModel: timerModel)
+            TaskSaveView(selectionMode: $selectionMode, timerModel: timerModel)
                 .environmentObject(modelData)
         }
         .menuBarExtraStyle(.window)

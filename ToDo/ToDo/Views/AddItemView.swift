@@ -75,6 +75,7 @@ struct AddItemView: View {
 
 struct TaskSaveView: View {
     
+    @Binding var selectionMode: TodoMode
     @State var timerModel: TimerModel
     @State var taskContent: String = ""
     @State var eventContent: String = ""
@@ -92,9 +93,23 @@ struct TaskSaveView: View {
     @State var todayItems: [EventItem] = []
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             if timerModel.isTiming {
-                Text("任务【\(timerModel.title.prefix(15))】 进行中...")
+                HStack {
+                    Text("任务【\(timerModel.title.prefix(10))】 进行中...")
+                    Spacer()
+                    
+                    Button {
+                        if let item = timerModel.timingItem {
+                            item.isPlay = false
+                            modelData.updateItem(item)
+                            timerModel.stopTimer()
+                        }
+                    } label: {
+                        Image(systemName: "x.circle").foregroundStyle(.red)
+                    }.buttonStyle(.plain)
+
+                }
                 
                 TextField("填写记录描述", text: $taskContent)
                     .focused($focusedField, equals: .record)
@@ -125,23 +140,47 @@ struct TaskSaveView: View {
             else {
                 ForEach(todayItems, id: \.self) { item in
                     HStack {
-                        Text(item.title)
+                        Text(item.title.truncated(to: 20, suffix: "..."))
+                        Spacer()
+                        
+                        Button {
+                            if timerModel.startTimer(item: item) {
+                                item.isPlay = true
+                                item.playTime = .now
+                                modelData.updateItem(item)
+                            }
+                            dismiss()
+                        } label: {
+                            Image(systemName: "play.fill").foregroundStyle(.white)
+                        }.buttonStyle(.plain)
+                    }
+                    .padding(5)
+                    .background {
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.blue.opacity(0.3))
+                                .cornerRadius(5)
+                        }
                     }
                 }
             }
             
-            TextField("添加任务", text: $eventContent)
-                .focused($focusedField, equals: .task)
-                .onSubmit {
-                    addEventItem()
-                }
-                .background(
-                    Button(action: addEventItem) {}
-                        .frame(width: 0, height: 0)
-                        .opacity(0)
-                        .keyboardShortcut(.return)
-                )
-                .padding()
+            HStack {
+                TextField("添加任务", text: $eventContent)
+                    .focused($focusedField, equals: .task)
+                    .onSubmit {
+                        addEventItem()
+                    }
+                    .background(
+                        Button(action: addEventItem) {}
+                            .frame(width: 0, height: 0)
+                            .opacity(0)
+                            .keyboardShortcut(.return)
+                    )
+                    .padding()
+                
+                Spacer()
+            }
             
             Spacer()
             
@@ -158,11 +197,22 @@ struct TaskSaveView: View {
     }
     
     func updateTodayItems() {
-        todayItems = modelData.itemList.filter { event in
-            guard let planTime = event.planTime else {
+        let eventList = selectionMode == .synthesis ? modelData.itemList : modelData.itemList.filter ({ event in
+            guard let tag = modelData.tagList.first(where: { $0.id == event.tag }) else {
                 return false
             }
-            return planTime.isToday
+            return tag.title == "工作"
+        })
+        
+        let weekDayIndex: Int = Date().weekDay
+        todayItems = eventList.filter { event in
+            if let planTime = event.planTime, planTime.isToday {
+                return true
+            }
+            if event.isFixedEvent {
+                return event.fixedWeekDays.count >= 7 && event.fixedWeekDays[weekDayIndex] != 0
+            }
+            return false
         }
     }
     

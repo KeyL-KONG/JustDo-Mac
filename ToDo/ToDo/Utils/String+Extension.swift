@@ -97,3 +97,26 @@ extension String {
     }
     
 }
+
+extension String {
+    /// 截取到指定数量的字符
+    /// - Parameter length: 要保留的字符数量
+    /// - Returns: 截取后的字符串
+    func substring(to length: Int) -> String {
+        guard length > 0 else { return "" }
+        guard count > length else { return self }
+        
+        let endIndex = index(startIndex, offsetBy: length)
+        return String(self[..<endIndex])
+    }
+    
+    /// 截取到指定数量的字符，添加后缀
+    /// - Parameters:
+    ///   - length: 要保留的字符数量
+    ///   - suffix: 截取后添加的后缀（如省略号）
+    /// - Returns: 截取后的字符串
+    func truncated(to length: Int, suffix: String = "...") -> String {
+        guard count > length else { return self }
+        return substring(to: max(0, length - suffix.count)) + suffix
+    }
+}
