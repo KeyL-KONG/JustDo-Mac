@@ -39,6 +39,7 @@
 		0936CB452E103B8C0058BD04 /* EditTaskIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */; };
 		0936CB472E103BA80058BD04 /* iOSTimeLineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */; };
 		0936CB4A2E10CC720058BD04 /* iOSProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB492E10CC700058BD04 /* iOSProjectView.swift */; };
+		0936CB522E18FCA60058BD04 /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936CB512E18FC9C0058BD04 /* Notification+Extension.swift */; };
 		093E78F52D23852D006E5120 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F32D23852D006E5120 /* TagModel.swift */; };
 		093E78F62D23852D006E5120 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F22D23852D006E5120 /* NoteModel.swift */; };
 		093E78FA2D238533006E5120 /* ReadTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093E78F82D238533006E5120 /* ReadTag.swift */; };
@@ -153,6 +154,7 @@
 		0936CB442E103B8C0058BD04 /* EditTaskIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskIntervalView.swift; sourceTree = "<group>"; };
 		0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTimeLineRowView.swift; sourceTree = "<group>"; };
 		0936CB492E10CC700058BD04 /* iOSProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSProjectView.swift; sourceTree = "<group>"; };
+		0936CB512E18FC9C0058BD04 /* Notification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		093E78F22D23852D006E5120 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		093E78F32D23852D006E5120 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
 		093E78F72D238533006E5120 /* ReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadModel.swift; sourceTree = "<group>"; };
@@ -483,6 +485,7 @@
 		09F80C092C665A5B00650366 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				0936CB512E18FC9C0058BD04 /* Notification+Extension.swift */,
 				2BEE62712DF9887B0030B77F /* MarkdownParser.swift */,
 				2B5800202DF070F200BB4DDB /* CustomTextEditor.swift */,
 				2B15F7562DEEF573000F0AC8 /* Image+Extensions.swift */,
@@ -769,6 +772,7 @@
 				09D714632D865F34009DB18E /* StateManager.swift in Sources */,
 				0936CB472E103BA80058BD04 /* iOSTimeLineRowView.swift in Sources */,
 				09F80C042C665A3F00650366 /* UserModel.swift in Sources */,
+				0936CB522E18FCA60058BD04 /* Notification+Extension.swift in Sources */,
 				09D7146A2D9052EC009DB18E /* WeekView.swift in Sources */,
 				09D714652D86F8E5009DB18E /* ReviewNewView.swift in Sources */,
 				2BC54C642DDF54AB00894C6E /* MacEditReadItemView.swift in Sources */,

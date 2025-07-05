@@ -26,7 +26,17 @@ struct TimelineTaskView: View {
 
     @Namespace private var animation
     
-    @State var timelineItems: [TimelineItem] = []
+    @State var timelineItems: [TimelineItem] = [] {
+        didSet {
+            print("update timeline items date: \(currentDate.simpleDayMonthAndYear)")
+        }
+    }
+    
+    @State var refresh: Bool = false {
+        didSet {
+            print("current timeline items count: \(timelineItems.count)")
+        }
+    }
     
     @State var timelinePlanItems: [TimelineItem] = []
     
@@ -95,6 +105,7 @@ struct TimelineTaskView: View {
                             TimelineTaskView.selectedTimeItem = nil
 #if os(macOS)
                             ToDoListView.newTimelineInterval = interverlTime()
+                            modelData.weekSelectedTimelineItem = nil
                             self.selectItemID = ToDoListView.newTimelineItemId + UUID().uuidString
 #endif
                     }
@@ -102,6 +113,9 @@ struct TimelineTaskView: View {
             }
             .onAppear(perform: {
                 proxy.scrollTo(midHour)
+//                if showTask {
+//                    self.addItemChangeObserver()
+//                }
             })
             .overlay {
                 if showTask {
@@ -110,6 +124,40 @@ struct TimelineTaskView: View {
             }
         })
     
+    }
+    
+    func addItemChangeObserver() {
+        NotificationCenter.default.addObserver(forName: NotificationName.addTimeInterval, object: nil, queue: .main) { notification in
+            if let date = notification.userInfo?["date"] as? Date, let item = notification.userInfo?["item"] as? TimelineItem {
+                if !date.isInSameDay(as: currentDate) {
+                    return
+                }
+                var items = timelineItems
+                if let index = items.firstIndex(where: { $0.interval.start > item.interval.start
+                }) {
+                    
+                    items.insert(item, at: max(0, index-1))
+                    print("add time item \(timelineItems.count) -> \(items.count)")
+                    self.timelineItems = items
+                }
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: NotificationName.deleteTimeInterval, object: nil, queue: .main) { notification in
+            if let item = notification.userInfo?["item"] as? TaskTimeItem {
+                let date = item.startTime
+                if !date.isInSameDay(as: currentDate) {
+                    return
+                }
+                var items = timelineItems
+                if let index = items.firstIndex(where: {  $0.timeItem?.id == item.id
+                }) {
+                    items.remove(at: index)
+                    print("delete time item \(timelineItems.count) -> \(items.count)")
+                    self.timelineItems = items
+                }
+            }
+         }
     }
     
     func finishTotalView() -> some View {
@@ -290,6 +338,7 @@ struct TimelineTaskView: View {
         .padding(.leading, 10)
         .contentShape(Rectangle())
         .onTapGesture {
+            modelData.weekSelectedTimelineItem = item?.timeItem
             selectItemID = task.id
         }
     }

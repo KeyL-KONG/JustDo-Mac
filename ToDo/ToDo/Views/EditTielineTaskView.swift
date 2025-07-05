@@ -122,8 +122,12 @@ struct EditTimeIntervalView: View {
                 }) {
                     self.selectedTag = tag.title
                 }
-                self.startTime = selectedDefaultItem.fixedStartTime ?? self.startTime
-                self.endTime = selectedDefaultItem.fixedEndTime ?? self.endTime
+                if let selectedStartTime = selectedDefaultItem.fixedStartTime, selectedStartTime.currentDayTimeInterval > self.startTime.currentDayTimeInterval {
+                    self.startTime = self.startTime.startTimeOfDay.dateByAddingTimeInterval(selectedStartTime.currentDayTimeInterval)
+                }
+                if let selectedEndTime = selectedDefaultItem.fixedEndTime, selectedEndTime.currentDayTimeInterval < self.endTime.currentDayTimeInterval {
+                    self.endTime = self.endTime.startTimeOfDay.dateByAddingTimeInterval(selectedEndTime.currentDayTimeInterval)
+                }
             } else {
                 self.selectedTag = self.sortedTagList.first?.title ?? ""
                 self.selectTitle = self.selectDefaultItem()?.title ?? ""
@@ -153,6 +157,9 @@ extension EditTimeIntervalView {
         timeItem.eventId = item.id
         timeItem.isPlan = setPlanTime
         modelData.updateTimeItem(timeItem)
+        
+        let info: [String: Any] = ["date": startTime, "item": TimelineItem(event: item, interval: LQDateInterval(start: timeItem.startTime, end: timeItem.endTime), timeItem: timeItem)]
+        NotificationCenter.default.post(name: NotificationName.addTimeInterval, object: nil, userInfo: info)
     }
     
     

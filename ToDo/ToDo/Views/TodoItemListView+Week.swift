@@ -64,7 +64,7 @@ extension TodoItemListView {
                         if eventDisplayMode == .task {
                             weekListView(date: date)
                         } else {
-                            let timelineItems: [TimelineItem] = weekTimelineItems[date] ?? []
+                            let timelineItems: [TimelineItem] = weekTimelineItems[date.simpleDayMonthAndYear] ?? []
                             let timelinePlanItems: [TimelineItem] = weekTimelinePlanItems[date] ?? []
                             TimelineTaskView(selectItemID: $selectItemID, currentDate: date, timelineItems: timelineItems, timelinePlanItems: timelinePlanItems)
                                 .id(UUID()).environmentObject(modelData)
@@ -75,6 +75,44 @@ extension TodoItemListView {
             .frame(minWidth: 1000)
             .padding()
         }
+        .onAppear {
+            self.addItemChangeObserver()
+        }
+    }
+    
+    func addItemChangeObserver() {
+        NotificationCenter.default.addObserver(forName: NotificationName.addTimeInterval, object: nil, queue: .main) { notification in
+            if let date = notification.userInfo?["date"] as? Date, let item = notification.userInfo?["item"] as? TimelineItem {
+                var weekItems = self.weekTimelineItems
+                if var items = weekItems[date.simpleDayMonthAndYear] {
+                    if let index = items.firstIndex(where: { $0.interval.start > item.interval.start
+                    }) {
+                        items.insert(item, at: max(0, index-1))
+                        weekItems[date.simpleDayMonthAndYear] = items
+                    }
+                } else {
+                    weekItems[date.simpleDayMonthAndYear] = [item]
+                }
+                self.weekTimelineItems = weekItems
+                modelData.weekTimelineItems = self.weekTimelineItems
+                print("add time item")
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: NotificationName.deleteTimeInterval, object: nil, queue: .main) { notification in
+            if let item = notification.userInfo?["item"] as? TaskTimeItem {
+                let date = item.startTime
+                var weekItems = self.weekTimelineItems
+                if var items = weekItems[date.simpleDayMonthAndYear], let index = items.firstIndex(where: { ($0.timeItem?.id ?? "") == item.id
+                }) {
+                    items.remove(at: index)
+                    weekItems[date.simpleDayMonthAndYear] = items
+                    self.weekTimelineItems = weekItems
+                    modelData.weekTimelineItems = self.weekTimelineItems
+                    print("delete time item")
+                }
+            }
+         }
     }
     
     func weekListView(date: Date) -> some View {
@@ -322,7 +360,7 @@ extension TodoItemListView {
         var weekTimelinePlanItems = self.weekTimelinePlanItems
         DispatchQueue.global().async {
             weekDates.forEach { date in
-                weekTimelineItems[date] = timelineItems(with: date, isPlan: false)
+                weekTimelineItems[date.simpleDayMonthAndYear] = timelineItems(with: date, isPlan: false)
                 weekTimelinePlanItems[date] = timelineItems(with: date, isPlan: true)
             }
             DispatchQueue.main.async {
@@ -330,6 +368,7 @@ extension TodoItemListView {
                 self.weekTimelinePlanItems = weekTimelinePlanItems
                 modelData.weekTimelineItems = weekTimelineItems
                 modelData.weekTimelinePlanItems = weekTimelinePlanItems
+                print("finish update week timeline items")
             }
         }
     }

@@ -80,7 +80,7 @@ class ModelData: ObservableObject {
     
     
     // Cache
-    var weekTimelineItems: [Date: [TimelineItem]] = [:]
+    var weekTimelineItems: [String: [TimelineItem]] = [:]
     var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
     
     var planCacheTime: Date?
@@ -108,6 +108,8 @@ class ModelData: ObservableObject {
     
     var cacheLastSelectItemId: String?
     var cacheNextSelectItemId: String?
+    
+    var weekSelectedTimelineItem: TaskTimeItem? = nil
     
     public func notifyEventItemsUpdate() {
         self.itemList = self.itemList

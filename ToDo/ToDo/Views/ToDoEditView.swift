@@ -146,7 +146,10 @@ struct ToDoEditView: View {
     var finishStateTitleList: [String] = [FinishState.bad.description, FinishState.normal.description, FinishState.good.description]
     
     var taskTimeItems: [TaskTimeItem] {
-        modelData.taskTimeItems.filter { item in
+        if let currentTaskTimeItem = modelData.weekSelectedTimelineItem {
+            return [currentTaskTimeItem]
+        }
+        return modelData.taskTimeItems.filter { item in
             guard let selectItem else { return false }
             return item.eventId == selectItem.id && !item.isPlan
         }.sorted(by: {
@@ -749,6 +752,8 @@ struct ToDoEditView: View {
                             Button(role: .destructive) {
                                 // 添加删除确认弹窗
                                 modelData.deleteTimeItem(item)
+                                
+                                NotificationCenter.default.post(name: NotificationName.deleteTimeInterval, object: nil, userInfo: ["item": item])
                             } label: {
                                 Text("删除").foregroundColor(.red)
                             }

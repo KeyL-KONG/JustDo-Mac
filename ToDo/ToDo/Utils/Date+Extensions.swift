@@ -203,6 +203,10 @@ extension Date {
         return Calendar.current.date(byAdding: .minute, value: minutes, to: self) ?? self
     }
     
+    func dateByAddingTimeInterval(_ interval: TimeInterval) -> Date {
+        return Calendar.current.date(byAdding: .second, value: Int(interval), to: self) ?? self
+    }
+    
     var previousWeekDate: Date {
         let calendar = Calendar.current
         return calendar.date(byAdding: .day, value: -7, to: self)!

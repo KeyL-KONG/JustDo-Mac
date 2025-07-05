@@ -75,7 +75,7 @@ struct TodoItemListView: View {
     @State var finishWeekItems: [Date: [EventItem]] = [:]
     @State var weekTotalTime: [Date: Int] = [:]
     
-    @State var weekTimelineItems: [Date: [TimelineItem]] = [:]
+    @State var weekTimelineItems: [String: [TimelineItem]] = [:]
     @State var weekTimelinePlanItems: [Date: [TimelineItem]] = [:]
     
     @State var summaryContent: String = ""
@@ -368,6 +368,10 @@ struct TodoItemListView: View {
                 updateTodayItems()
             } else if newValue == .calendar {
                 updateWeekData()
+            }
+            
+            if newValue != .calendar {
+                modelData.weekSelectedTimelineItem = nil
             }
         })
         .onChange(of: selectionMode, { oldValue, newValue in
