@@ -24,12 +24,7 @@ struct iOSTaskListView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                switch timeTab {
-                case .day:
-                    todayView()
-                default:
-                    Text("")
-                }
+                itemListView()
             }
             .overlay(alignment: .bottomTrailing, content: {
                 Button(action: {
@@ -71,7 +66,7 @@ struct iOSTaskListView: View {
 // MARK: today
 extension iOSTaskListView {
     
-    func todayView() -> some View {
+    func itemListView() -> some View {
         List {
             Section {
                 ForEach(eventItems, id: \.self.id) { item in
@@ -114,27 +109,45 @@ extension iOSTaskListView {
 extension iOSTaskListView {
     
     func updateTaskItems() {
-        switch timeTab {
-        case .day:
-            eventItems = modelData.itemList.filter({ event in
-                guard event.actionType == .task else { return false }
-                guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else {
-                    return false
-                }
-                return true
-            })
-            .sorted { (event1: EventItem, event2: EventItem) in
-                if event1.isFinish != event2.isFinish {
-                    return event1.isFinish ? false : true
-                } else if event1.importance != event2.importance {
-                    return event1.importance.value > event2.importance.value
-                } else {
-                    return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
-                }
+        
+        self.eventItems = modelData.itemList.filter({ event in
+            //guard event.actionType == .task else { return false }
+            guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else {
+                return false
             }
-        default:
-            break
+            return true
+        })
+        .sorted { (event1: EventItem, event2: EventItem) in
+            if event1.isFinish != event2.isFinish {
+                return event1.isFinish ? false : true
+            } else if event1.importance != event2.importance {
+                return event1.importance.value > event2.importance.value
+            } else {
+                return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
+            }
         }
+        
+//        switch timeTab {
+//        case .day:
+//            eventItems = modelData.itemList.filter({ event in
+//                guard event.actionType == .task else { return false }
+//                guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else {
+//                    return false
+//                }
+//                return true
+//            })
+//            .sorted { (event1: EventItem, event2: EventItem) in
+//                if event1.isFinish != event2.isFinish {
+//                    return event1.isFinish ? false : true
+//                } else if event1.importance != event2.importance {
+//                    return event1.importance.value > event2.importance.value
+//                } else {
+//                    return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
+//                }
+//            }
+//        default:
+//            break
+//        }
         print("update task items: \(eventItems.count)")
     }
     

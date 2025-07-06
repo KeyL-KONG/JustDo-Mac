@@ -90,8 +90,18 @@ struct iOSTaskView: View {
 
             Spacer()
             
-            iOSTaskListView(timerModel: timerModel, selectDate: selectDate, timeTab: selection).environmentObject(modelData)
-     
+            switch selection {
+            case .day:
+                iOSTaskListView(timerModel: timerModel, selectDate: selectDate, timeTab: .day).environmentObject(modelData)
+            case .week:
+                iOSTaskListView(timerModel: timerModel, selectDate: selectDate, timeTab: .week).environmentObject(modelData)
+            case .month:
+                iOSTaskListView(timerModel: timerModel, selectDate: selectDate, timeTab: .month).environmentObject(modelData)
+            case .year:
+                iOSTaskListView(timerModel: timerModel, selectDate: selectDate, timeTab: .year).environmentObject(modelData)
+            case .all:
+                iOSTaskListView(timerModel: timerModel, selectDate: selectDate, timeTab: .all).environmentObject(modelData)
+            }
         }
         .onChange(of: selection) { oldValue, newValue in
             if oldValue != newValue {
