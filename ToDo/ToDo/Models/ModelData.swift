@@ -46,6 +46,11 @@ class ModelData: ObservableObject {
             updateNoteIndex += 1
         }
     }
+    @Published var noteItemList: [NoteItem] = [] {
+        didSet {
+            updateNoteItemIndex += 1
+        }
+    }
     @Published var noteTagList: [TagModel] = []
     
     @Published var summaryItemList: [SummaryItem] = [] {
@@ -72,11 +77,13 @@ class ModelData: ObservableObject {
     @Published var updateNoteId: String = ""
     @Published var updateEventId: String = ""
     @Published var updateItemIndex = 0
+    @Published var updateNoteItemIndex = 0
     @Published var updateTimeIndex = 0
     @Published var updateNoteIndex = 0
     @Published var updateSummaryItemIndex = 0
     @Published var updateReadItemIndex = 0
     @Published var updateNoteTagIndex = 0
+    
     
     
     // Cache

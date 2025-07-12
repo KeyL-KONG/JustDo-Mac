@@ -21,6 +21,7 @@ enum CacheDataType {
     case personalTag
     case note
     case noteTag
+    case noteItem
     
     var cacheKey: String {
         switch self {
@@ -50,6 +51,8 @@ enum CacheDataType {
             return "com.cache.note"
         case .noteTag:
             return "com.cache.notetag"
+        case .noteItem:
+            return "com.cache.noteitem"
         }
     }
     
@@ -81,6 +84,8 @@ enum CacheDataType {
             return NoteModel.self
         case .noteTag:
             return TagModel.self
+        case .noteItem:
+            return NoteItem.self
         }
     }
 }

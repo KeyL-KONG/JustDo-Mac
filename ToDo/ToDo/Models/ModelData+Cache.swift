@@ -80,6 +80,7 @@ extension ModelData {
         
         var cacheNoteItems: [NoteModel] = []
         var cacheNoteTags: [TagModel] = []
+        var cacheNoteItemList: [NoteItem] = []
     
         // 添加缓存加载
         group.enter()
@@ -91,6 +92,12 @@ extension ModelData {
         group.enter()
         cache.asyncLoadCache(type: .noteTag) { tags in
             cacheNoteTags = tags as? [TagModel] ?? []
+            group.leave()
+        }
+        
+        group.enter()
+        cache.asyncLoadCache(type: .noteItem) { items in
+            cacheNoteItemList = items as? [NoteItem] ?? []
             group.leave()
         }
     
@@ -106,6 +113,7 @@ extension ModelData {
             self.personalTagList = cachePersonalTags
             self.noteList = cacheNoteItems
             self.noteTagList = cacheNoteTags
+            self.noteItemList = cacheNoteItemList
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
             print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count) duration: \(Int(duration * 1000))ms")
         }
@@ -132,7 +140,7 @@ extension ModelData {
         var serverPersonalTags: [PersonalTag] = []
         var serverNoteItems: [NoteModel] = []
         var serverNoteTags: [TagModel] = []
-        
+        var serverNoteItemList: [NoteItem] = []
         var isFailRequest = false
         
         group.enter()
@@ -244,6 +252,20 @@ extension ModelData {
             group.leave()
         }
         
+        func loadNoteItemList() {
+            group.enter()
+            DataManager.shared.query(type: NoteItem.self) { items, error in
+                if let error {
+                    print("cloud load all server note items error: \(error)")
+                    isFailRequest = true
+                } else {
+                    serverNoteItemList = items ?? []
+                    print("cloud load all server note itemlist: \(serverNoteItemList.count)")
+                }
+                group.leave()
+            }
+        }
+        
         func loadNoteItems() {
             group.enter()
             DataManager.shared.query(type: NoteModel.self) { items, error in
@@ -252,6 +274,7 @@ extension ModelData {
                     isFailRequest = true
                 } else {
                     serverNoteItems = items ?? []
+                    loadNoteItemList()
                     print("cloud load all server note items: \(serverNoteItems.count)")
                 }
                 group.leave()
@@ -309,9 +332,10 @@ extension ModelData {
             self.personalTagList = serverPersonalTags
             self.noteList = serverNoteItems
             self.noteTagList = serverNoteTags
+            self.noteItemList = serverNoteItemList
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
             print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), noteTags:\(serverNoteTags.count), noteItems: \(serverNoteItems.count), duration: \(Int(duration * 1000))ms")
-            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags, noteTags: serverNoteTags, noteItems: serverNoteItems) // 新增参数
+            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags, noteTags: serverNoteTags, noteItems: serverNoteItems, noteItemList: serverNoteItemList) // 新增参数
         }
     }
     
@@ -320,7 +344,7 @@ extension ModelData {
                    events: [EventItem], principles: [PrincipleModel],
                    summaryTags: [SummaryTag], summaryItems: [SummaryItem],
                    planItems: [PlanTimeItem], readItems: [ReadModel],
-                         personalTags: [PersonalTag], noteTags: [TagModel], noteItems: [NoteModel]) { // 新增参数
+                         personalTags: [PersonalTag], noteTags: [TagModel], noteItems: [NoteModel], noteItemList: [NoteItem]) { // 新增参数
     
         cache.asyncStoreCache(type: .tag, items: tags)
         cache.asyncStoreCache(type: .timeItem, items: times)
@@ -332,6 +356,7 @@ extension ModelData {
         cache.asyncStoreCache(type: .personalTag, items: personalTags) // 新增
         cache.asyncStoreCache(type: .note, items: noteItems)
         cache.asyncStoreCache(type: .noteTag, items: noteTags)
+        cache.asyncStoreCache(type: .noteItem, items: noteItemList)
     }
     
     func asyncUpdateCache(type: CacheDataType) {
@@ -354,6 +379,8 @@ extension ModelData {
             cache.storeCache(type: .note, items: self.noteList)
         case .noteTag:
             cache.storeCache(type: .noteTag, items: self.noteTagList)
+        case .noteItem:
+            cache.storeCache(type: .noteItem, items: self.noteItemList)
         default:
             break
         }

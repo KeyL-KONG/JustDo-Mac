@@ -11,7 +11,7 @@ import SwiftUI
 struct MainView: View {
     
     enum Tab {
-        case reward
+        case summary
         case task
         case todo
         case app
@@ -42,6 +42,11 @@ struct MainView: View {
                 .tag(Tab.project)
                 .tabItem {
                     Label("项目", systemImage: "folder.fill")
+                }
+            iOSSummaryView()
+                .tag(Tab.summary)
+                .tabItem {
+                    Label("统计", systemImage: "tray.full.fill")
                 }
         }
         .onAppear(perform: {
