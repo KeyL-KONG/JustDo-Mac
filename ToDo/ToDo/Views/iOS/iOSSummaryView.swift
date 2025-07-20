@@ -14,6 +14,8 @@ struct iOSSummaryView: View {
     
     @State var titleText: String = ""
     @State var selectDate: Date = .now
+    @State var selectItemID: String = ""
+    @State var showingEditItem: Bool = false
     
     var body: some View {
         VStack {
@@ -73,6 +75,9 @@ struct iOSSummaryView: View {
                 .padding(.horizontal, 10)
                 
             }
+            
+            iOSSummaryTaskView(timeTab: selection, currentDate: $selectDate, selectItemID: $selectItemID, showingEditItem: $showingEditItem)
+                .environmentObject(modelData)
 
             Spacer()
         }
@@ -84,6 +89,13 @@ struct iOSSummaryView: View {
         .onChange(of: selectDate) { oldValue, newValue in
             if oldValue != newValue {
                 updateTitleText()
+            }
+        }
+        .sheet(isPresented: $showingEditItem) {
+            if let item = modelData.itemList.first(where: { $0.id == self.selectItemID
+            }) {
+                EditTaskView(showSheetView: $showingEditItem, selectedItem: item, setPlanTime: true, setReward: false)
+                    .environmentObject(modelData)
             }
         }
         .onAppear {
