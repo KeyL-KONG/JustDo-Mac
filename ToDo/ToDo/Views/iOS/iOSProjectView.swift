@@ -15,6 +15,7 @@ struct iOSProjectView: View {
     @State var fixedProjects: [EventItem] = []
     @State var selectDate: Date = .now
     @State var showingSheet: Bool = false
+    @State var toggleToRefresh: Bool = false
     static var selectedItem: EventItem? = nil
     
     var tagList: [ItemTag] {
@@ -35,6 +36,10 @@ struct iOSProjectView: View {
                 }
             }.padding(.leading, 15)
             
+            if toggleToRefresh {
+                Text("")
+            }
+            
             List {
                 ForEach(tagList, id: \.self.id) { tag in
                     let items = fixedProjects.filter { $0.tag == tag.id }
@@ -44,30 +49,42 @@ struct iOSProjectView: View {
                         }
                         
                         Section {
-                            ForEach(strideItems, id: \.self) { rowItems in
-                                HStack {
-                                    if let first = rowItems.first {
-                                        Spacer()
-                                        quickItemView(item: first)
-                                        Spacer()
+                            if isExpandState(tag: tag.id) {
+                                ForEach(strideItems, id: \.self) { rowItems in
+                                    HStack {
+                                        if let first = rowItems.first {
+                                            Spacer()
+                                            quickItemView(item: first)
+                                            Spacer()
+                                        }
+                                        if let last = rowItems.last, rowItems.count > 1 {
+                                            quickItemView(item: last)
+                                            Spacer()
+                                        } else {
+                                            Text("").frame(width: 160, height: 120)
+                                            
+                                            Spacer()
+                                        }
                                     }
-                                    if let last = rowItems.last, rowItems.count > 1 {
-                                        quickItemView(item: last)
-                                        Spacer()
-                                    } else {
-                                        Text("").frame(width: 160, height: 120)
-                                        
-                                        Spacer()
-                                    }
+                                    .listRowSeparator(.hidden)
                                 }
-                                .listRowSeparator(.hidden)
                             }
+                            
                             
                         } header: {
                             HStack {
-                                Text(tag.title)
+                                HStack {
+                                    Text(tag.title).bold().foregroundStyle(tag.titleColor)
+                                    Text(" \(items.count)").foregroundStyle(tag.titleColor)
+                                }
                                 Spacer()
-                            }
+                                
+                                Button(action: {
+                                    self.updateExpandState(tag: tag.id)
+                                }) {
+                                    Image(systemName: self.isExpandState(tag: tag.id) ? "chevron.down" : "chevron.right")
+                                }
+                            }.padding(.horizontal, 10)
                         }
 
                     }
@@ -168,6 +185,20 @@ extension iOSProjectView {
             }
             return false
         }
+    }
+    
+}
+
+// MARK: expand
+extension iOSProjectView {
+    
+    func isExpandState(tag: String) -> Bool {
+        return modelData.projectExpandState[tag] ?? true
+    }
+    
+    func updateExpandState(tag: String) {
+        modelData.projectExpandState[tag] = !isExpandState(tag: tag)
+        toggleToRefresh.toggle()
     }
     
 }

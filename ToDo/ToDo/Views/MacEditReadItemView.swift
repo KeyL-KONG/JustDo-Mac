@@ -106,17 +106,14 @@ struct MacEditReadItemView: View {
                     
                 }
                 
-                if let url = URL(string: readItem.url) {
-                    Section("内容") {
-                        ScrollView {
-                            WebView(url: url)
-                                .frame(minHeight: 500)
-                        }
-                    }
-                }
-                
             }
             .listStyle(.plain)
+            
+            
+            if let url = URL(string: readItem.url) {
+                WebView(url: url)
+            }
+            Spacer()
         }
         .onAppear {
             urlText = readItem.url

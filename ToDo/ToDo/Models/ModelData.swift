@@ -84,6 +84,12 @@ class ModelData: ObservableObject {
     @Published var updateReadItemIndex = 0
     @Published var updateNoteTagIndex = 0
     
+#if os(iOS)
+    
+    var projectExpandState: [String: Bool] = [:]
+    
+    #endif
+    
     
     
     // Cache
