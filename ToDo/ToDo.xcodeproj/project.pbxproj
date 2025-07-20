@@ -66,6 +66,8 @@
 		097AE2CA2DC903CB0096059B /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2C92DC903CB0096059B /* CustomAlertView.swift */; };
 		097AE2CC2DC9041B0096059B /* View-CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AE2CB2DC9041B0096059B /* View-CustomAlert.swift */; };
 		09804B7F2E21F05D00A5095A /* NoteItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B7E2E21F05800A5095A /* NoteItem.swift */; };
+		09804B932E2D369400A5095A /* iOSProjectView+FixedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */; };
+		09804B952E2D370900A5095A /* iOSProjectView+List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B942E2D370100A5095A /* iOSProjectView+List.swift */; };
 		09AAC5382DED845F0091FA4A /* ThinkListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5372DED84590091FA4A /* ThinkListView.swift */; };
 		09AAC5502DEDDA200091FA4A /* MacWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC54F2DEDDA200091FA4A /* MacWebView.swift */; };
 		09AAC5522DEDDC9A0091FA4A /* ReadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5512DEDDC960091FA4A /* ReadListView.swift */; };
@@ -184,6 +186,8 @@
 		097AE2C92DC903CB0096059B /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
 		097AE2CB2DC9041B0096059B /* View-CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-CustomAlert.swift"; sourceTree = "<group>"; };
 		09804B7E2E21F05800A5095A /* NoteItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteItem.swift; sourceTree = "<group>"; };
+		09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iOSProjectView+FixedView.swift"; sourceTree = "<group>"; };
+		09804B942E2D370100A5095A /* iOSProjectView+List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iOSProjectView+List.swift"; sourceTree = "<group>"; };
 		09AAC5372DED84590091FA4A /* ThinkListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkListView.swift; sourceTree = "<group>"; };
 		09AAC54F2DEDDA200091FA4A /* MacWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacWebView.swift; sourceTree = "<group>"; };
 		09AAC5512DEDDC960091FA4A /* ReadListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadListView.swift; sourceTree = "<group>"; };
@@ -325,6 +329,8 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				09804B942E2D370100A5095A /* iOSProjectView+List.swift */,
+				09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */,
 				0936CB592E1A57CE0058BD04 /* iOSSummaryTaskView.swift */,
 				0936CB572E1A55300058BD04 /* iOSSummaryView.swift */,
 				0936CB492E10CC700058BD04 /* iOSProjectView.swift */,
@@ -705,6 +711,7 @@
 				09F80C012C665A3F00650366 /* WishModel.swift in Sources */,
 				09F80BFE2C665A3F00650366 /* UserManager.swift in Sources */,
 				093E790A2D23BD57006E5120 /* RatingView.swift in Sources */,
+				09804B932E2D369400A5095A /* iOSProjectView+FixedView.swift in Sources */,
 				0936CB5A2E1A57D50058BD04 /* iOSSummaryTaskView.swift in Sources */,
 				092545F02DD8666300D324DB /* PlanItemEditView.swift in Sources */,
 				0936CB3D2E1031EC0058BD04 /* iOSTaskListView.swift in Sources */,
@@ -800,6 +807,7 @@
 				093E790E2D2572B8006E5120 /* EditRewardView.swift in Sources */,
 				09F80C082C665A3F00650366 /* GoalModel.swift in Sources */,
 				09804B7F2E21F05D00A5095A /* NoteItem.swift in Sources */,
+				09804B952E2D370900A5095A /* iOSProjectView+List.swift in Sources */,
 				09F80C002C665A3F00650366 /* CloudManager.swift in Sources */,
 				0925460D2DE1703F00D324DB /* String+Extension.swift in Sources */,
 				093E79032D2385AD006E5120 /* SummaryItem.swift in Sources */,

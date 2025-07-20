@@ -18,6 +18,11 @@ struct iOSProjectView: View {
     @State var toggleToRefresh: Bool = false
     static var selectedItem: EventItem? = nil
     
+    @State var showFixedEventOnly: Bool = true
+    @State var showUnArchiOny: Bool = true
+    @State var showUnFinish: Bool = true
+    @State var expandedItems: Set<String> = []
+    
     var tagList: [ItemTag] {
         modelData.tagList
     }
@@ -30,7 +35,15 @@ struct iOSProjectView: View {
                 Spacer()
                 
                 Menu {
-                    
+                    Toggle(isOn: $showFixedEventOnly) {
+                        Text("仅展示固定项目")
+                    }
+                    Toggle(isOn: $showUnArchiOny) {
+                        Text("仅展示未归档项目")
+                    }
+                    Toggle(isOn: $showUnFinish) {
+                        Text("仅展示未完成事项")
+                    }
                 } label: {
                     Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
                 }
@@ -40,57 +53,12 @@ struct iOSProjectView: View {
                 Text("")
             }
             
-            List {
-                ForEach(tagList, id: \.self.id) { tag in
-                    let items = fixedProjects.filter { $0.tag == tag.id }
-                    if items.count > 0 {
-                        let strideItems = stride(from: 0, to: items.count, by: 2).map { index in
-                            Array(items[index..<min(index+2, items.count)])
-                        }
-                        
-                        Section {
-                            if isExpandState(tag: tag.id) {
-                                ForEach(strideItems, id: \.self) { rowItems in
-                                    HStack {
-                                        if let first = rowItems.first {
-                                            Spacer()
-                                            quickItemView(item: first)
-                                            Spacer()
-                                        }
-                                        if let last = rowItems.last, rowItems.count > 1 {
-                                            quickItemView(item: last)
-                                            Spacer()
-                                        } else {
-                                            Text("").frame(width: 160, height: 120)
-                                            
-                                            Spacer()
-                                        }
-                                    }
-                                    .listRowSeparator(.hidden)
-                                }
-                            }
-                            
-                            
-                        } header: {
-                            HStack {
-                                HStack {
-                                    Text(tag.title).bold().foregroundStyle(tag.titleColor)
-                                    Text(" \(items.count)").foregroundStyle(tag.titleColor)
-                                }
-                                Spacer()
-                                
-                                Button(action: {
-                                    self.updateExpandState(tag: tag.id)
-                                }) {
-                                    Image(systemName: self.isExpandState(tag: tag.id) ? "chevron.down" : "chevron.right")
-                                }
-                            }.padding(.horizontal, 10)
-                        }
-
-                    }
-                }
+            if showFixedEventOnly {
+                fixedProjectListView()
+            } else {
+                projectListView()
             }
-            .listStyle(.plain)
+            
         }
         .sheet(isPresented: $showingSheet) {
             if let selectedItem = Self.selectedItem {
@@ -102,105 +70,29 @@ struct iOSProjectView: View {
             }
         }
         .onChange(of: modelData.updateItemIndex, { oldValue, newValue in
-            updateFixedProjects()
+            updateProjectData()
+        })
+        .onChange(of: showFixedEventOnly, { oldValue, newValue in
+            updateProjectData()
         })
         .onAppear {
+            updateProjectData()
+        }
+    }
+}
+
+extension iOSProjectView {
+    
+    func updateProjectData() {
+        if showFixedEventOnly {
             updateFixedProjects()
         }
     }
-}
-
-extension iOSProjectView {
     
-    func quickItemView(item: EventItem) -> some View {
-        let tag: ItemTag? = modelData.tagList.first { $0.id == item.tag }
-        let tagColor = tag?.titleColor ?? .cyan
-        let taskTimeItems = modelData.taskTimeItems.filter { !$0.isPlan }
-        let totalTime = item.itemTotalTime(with: modelData.itemList, taskItems: taskTimeItems, taskId: item.id, date: .now)
-        
-        return VStack(alignment: .leading) {
-            HStack {
-                Text(item.title).bold().font(.system(size: 14))
-                .onTapGesture {
-                    Self.selectedItem = item
-                    showingSheet.toggle()
-                }
-                Spacer()
-            }
-            .padding()
-            .offset(y: (totalTime > 0 ? 10 : 0))
-            if totalTime > 0 {
-                HStack {
-                    Text(totalTime.simpleTimeStr).foregroundStyle(.white).font(.system(size: 13)).bold()
-                    Spacer()
-                }.padding(.horizontal)
-                    
-            }
-            Spacer()
-            HStack {
-                if let tag {
-                    tagView(with: tag.title, color: tagColor)
-                }
-                Spacer()
-                
-                Image(systemName: "play.fill").foregroundStyle(.white)
-                    .onTapGesture {
-                        timerModel.startTimer(item: item)
-                    }
-            }
-            .padding()
-        }
-        .containerShape(Rectangle())
-        .frame(width: 160, height: 120)
-        .background(content: {
-            ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(tagColor.opacity(0.6))
-                    .cornerRadius(10)
-                    .frame(width: 160, height: 120)
-            }
-        })
-    }
     
-    func tagView(with title: String, color: Color) -> some View {
-        return Button(action: { }) {
-            Text(title)
-                .font(.system(size: 12))
-                .foregroundStyle(color)
-        }.buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-        .tint(.white)
-    }
     
 }
 
-extension iOSProjectView {
-    
-    func updateFixedProjects() {
-        let weekDayIndex: Int = self.selectDate.weekDay
-        self.fixedProjects = modelData.itemList.filter { event in
-            guard event.isFixedEvent else { return false }
-            if event.fixedWeekDays.count >= 7 {
-                return event.fixedWeekDays[weekDayIndex] != 0
-            }
-            return false
-        }
-    }
-    
-}
 
-// MARK: expand
-extension iOSProjectView {
-    
-    func isExpandState(tag: String) -> Bool {
-        return modelData.projectExpandState[tag] ?? true
-    }
-    
-    func updateExpandState(tag: String) {
-        modelData.projectExpandState[tag] = !isExpandState(tag: tag)
-        toggleToRefresh.toggle()
-    }
-    
-}
 
 #endif
