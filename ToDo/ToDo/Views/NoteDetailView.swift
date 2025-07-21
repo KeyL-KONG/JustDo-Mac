@@ -24,6 +24,7 @@ struct NoteDetailView: View {
     @State var noteTags: [String] = []
     @State var toggleToRefresh: Bool = false
     @State var overviewExpand: Bool = true
+    @State var noteItemsExpand = true
     @State var noteExpand: Bool = true
     @State var summaryExpand: Bool = true
     @State var cursorPosition: Int = 0 {
@@ -45,6 +46,13 @@ struct NoteDetailView: View {
     @State var headingNodes: [HeadingNode] = []
     @State var selectCatalogId: String = ""
     @State var scrollText: String = ""
+    
+    var noteItems: [NoteItem] {
+        noteItem.items.compactMap { id in
+            modelData.noteItemList.first { item in
+                item.id == id
+        }}
+    }
     
     var body: some View {
         ScrollView {
@@ -72,7 +80,18 @@ struct NoteDetailView: View {
                     RatingView(maxRating: 5, rating: $noteRate, onRateChange: { rate in
                         self.saveItem()
                     })
-                }
+                    
+                    Button("添加内容") {
+                        let item = NoteItem()
+                        item.content = "新增笔记内容"
+                        modelData.updateNoteItem(item) { success in
+                            if success {
+                                self.noteItem.items.append(item.id)
+                                modelData.updateNote(self.noteItem)
+                            }
+                        }
+                    }
+                }.padding(.horizontal)
                 
                 if isEdit {
                     HStack {
@@ -106,6 +125,47 @@ struct NoteDetailView: View {
                     }
                 }
                 
+                if noteItem.items.count > 0 {
+                    noteItemHeaderView()
+                    
+                    if noteItemsExpand {
+                        ForEach(noteItems, id: \.self.id) { item in
+                            if isEdit {
+                                TextEditor(text: Binding(get: {
+                                    item.content
+                                }, set: { value in
+                                    item.content = value
+                                }))
+                                    .font(.system(size: 14))
+                                    .padding(10)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.brown.opacity(0.1))
+                                    .cornerRadius(8)
+                                    .frame(minHeight: 100)
+                            } else if item.content.count > 0 {
+                                ZStack {
+                                    MarkdownWebView(item.content, itemId: item.id)
+                                        .padding()
+                                        .background(Color.brown.opacity(0.1))
+                                        .cornerRadius(10)
+                                }.overlay(alignment: .topTrailing) {
+                                    if let createTime = noteItem.createTime {
+                                        Text(createTime.simpleDateStr).padding()
+                                    }
+                                }
+                                .contextMenu {
+                                    Button {
+                                        noteItem.items.removeAll { $0 == item.id }
+                                        modelData.deleteNoteItem(item)
+                                        modelData.updateNote(noteItem)
+                                    } label: {
+                                        Text("删除").foregroundStyle(.red)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 
                 noteHeaderView()
                 
@@ -422,6 +482,26 @@ extension NoteDetailView {
                 self.summaryExpand = !self.summaryExpand
             } label: {
                 Image(systemName: summaryExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.orange)
+            }
+            .buttonStyle(.plain)
+        }.padding(.top, 5)
+        .padding(.horizontal, 5)
+    }
+    
+}
+
+extension NoteDetailView {
+    
+    func noteItemHeaderView() -> some View {
+        HStack {
+            Text("记录").bold().font(.system(size: 16))
+                .foregroundStyle(Color.brown)
+            Spacer()
+            
+            Button {
+                self.noteItemsExpand = !self.noteItemsExpand
+            } label: {
+                Image(systemName: noteItemsExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.brown)
             }
             .buttonStyle(.plain)
         }.padding(.top, 5)
