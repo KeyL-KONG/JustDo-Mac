@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(iOS)
 struct iOSSummaryView: View {
     @EnvironmentObject var modelData: ModelData
     @State var selection: TimeTab = .day
@@ -151,3 +151,5 @@ extension iOSSummaryView {
         }
     }
 }
+
+#endif
