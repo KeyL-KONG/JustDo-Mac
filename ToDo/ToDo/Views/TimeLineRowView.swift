@@ -9,6 +9,8 @@ struct TimeLineRowView: View {
     @State var setRepeat: Bool = false
     @State var itemContent: String = ""
     @State var showEventConvertWindow: Bool = false
+    @State var focusValue: Int = 5
+    @State var happyValue: Int = 5
     
     private static let noneStateText = "无"
     @State var selectProjectStateTitle: String = Self.noneStateText
@@ -119,9 +121,36 @@ struct TimeLineRowView: View {
                     }
                     
                     Spacer()
+                    
+                    HStack {
+                        Text("专注值：\(focusValue)").foregroundStyle(valueColor(focusValue))
+                        
+                        Text("快乐值：\(happyValue)").foregroundStyle(valueColor(happyValue))
+                    }
+                    
+                    Spacer(minLength: 10)
+                    
                     Button("编辑") {
                         isEditing = true
                     }.foregroundStyle(.blue)
+                }
+            }
+            
+            if isEditing {
+                HStack {
+                    Picker("专注指数", selection: $focusValue) {
+                        ForEach(1..<11, id: \.self) {
+                            Text("\($0)").tag($0)
+                        }
+                    }.frame(width: 100)
+                    
+                    Spacer()
+                    
+                    Picker("快乐指数", selection: $happyValue) {
+                        ForEach(1..<11, id: \.self) {
+                            Text("\($0)").tag($0)
+                        }
+                    }.frame(width: 100)
                 }
             }
             
@@ -146,6 +175,8 @@ struct TimeLineRowView: View {
             updateItem()
         })
         .onAppear {
+            focusValue = item.focusValue
+            happyValue = item.happyValue
             itemContent = item.content
             setRepeat = item.isRepeat
             selectProjectStateTitle = modelData.noteTagList.first(where: {  $0.id == item.stateTagId && item.stateTagId.count > 0 })?.content ?? Self.noneStateText
@@ -155,9 +186,15 @@ struct TimeLineRowView: View {
         }
     }
     
+    func valueColor(_ value: Int) -> Color {
+        return value <= 3 ? .red : (value >= 8 ? .green : .blue)
+    }
+    
     func updateItem() {
         item.isRepeat = setRepeat
         item.content = itemContent
+        item.happyValue = happyValue
+        item.focusValue = focusValue
         if let tag = modelData.noteTagList.first(where: { $0.content == selectProjectStateTitle
         }), selectProjectStateTitle != Self.noneStateText {
             item.stateTagId = tag.id
