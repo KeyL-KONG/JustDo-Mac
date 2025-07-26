@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 extension iOSProjectView {
     
     
@@ -159,3 +160,5 @@ extension iOSProjectView {
     }
     
 }
+
+#endif

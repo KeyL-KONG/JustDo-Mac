@@ -179,10 +179,16 @@ struct ToDoEditView: View {
     }
     
     var fatherItem: EventItem? {
-        guard let selectItem, let fatherItem = modelData.itemList.first(where: {
-            ($0.id == selectItem.fatherId && selectItem.fatherId.count > 0) || ($0.id == selectItem.projectId && selectItem.projectId.count > 0)
-        }) else { return nil }
-        return fatherItem
+        guard let selectItem else { return nil }
+        if let fatherItem = modelData.itemList.first(where: {
+            ($0.id == selectItem.fatherId && selectItem.fatherId.count > 0)
+        }) {
+            return fatherItem
+        } else if let fatherItem = modelData.itemList.first(where: { ($0.id == selectItem.projectId && selectItem.projectId.count > 0)
+        }) {
+            return fatherItem
+        }
+        return nil
     }
     
     var subItems: [EventItem] {
