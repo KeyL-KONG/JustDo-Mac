@@ -5,7 +5,11 @@
 //  Created by LQ on 2024/8/9.
 //
 
+// 首先确保导入UIKit
 import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
 import LeanCloud
 
 @main
@@ -49,6 +53,13 @@ struct ToDoApp: App {
             MainView(timerModel: timerModel).environmentObject(modelData)
                 .onAppear {
                     modelData.loadFromServer()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    // 应用从后台回到前台时执行
+                    if Date().timeIntervalSince(modelData.lastLoadServerTime) > 60 * 5 {
+                        modelData.loadFromServer()
+                    }
+                    // 可以添加其他需要刷新的数据或UI操作
                 }
         }
 #endif

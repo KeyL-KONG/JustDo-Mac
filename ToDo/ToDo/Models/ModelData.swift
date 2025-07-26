@@ -116,6 +116,8 @@ class ModelData: ObservableObject {
     var tryLoadSummaryTimes = 0
     
     var isLoadingServer = false
+
+    var lastLoadServerTime: Date = .now
     
     @State var cacheTodoMode: TodoMode?
     
@@ -248,6 +250,7 @@ class ModelData: ObservableObject {
     }
     
     func loadFromServer() {
+        lastLoadServerTime = .now
         asyncLoadCacheData()
         asyncLoadServer()
     }
