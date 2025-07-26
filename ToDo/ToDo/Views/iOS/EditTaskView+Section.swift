@@ -328,18 +328,72 @@ extension EditTaskView {
                     }
                 }
                 
+                if isFinish {
+                    Toggle("是否需要复盘", isOn: $needReview)
+                }
+                
                 Toggle(isOn: $isArchive) {
                     Text("是否归档")
                 }
                 
-                Toggle(isOn: $isQuickEvent) {
-                    Text("设置为快捷事项")
-                }
     
             }
         }
     }
     
+}
+
+extension EditTaskView {
+    
+    func reviewView() -> some View {
+        Section {
+            Toggle(isOn: $finishReview) {
+                Text("是否已复盘")
+            }
+            if finishReview {
+                DatePicker("完成复盘时间", selection: $reviewDate, displayedComponents: [.date])
+            }
+            
+            HStack {
+                if isEditingReview {
+                    TextEditor(text: $reviewText)
+                        .font(.system(size: 14))
+                        .padding(10)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.init(hex: "#e8f6f3"))
+                        .frame(minHeight: 120)
+                        .cornerRadius(8)
+                } else if reviewText.count > 0 {
+                    MarkdownWebView(reviewText, itemId: selectedItem?.id ?? "")
+                }
+            }
+            .padding()
+            .background(isEditingReview ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+            .cornerRadius(10)
+        } header: {
+            HStack {
+                Text("复盘事项")
+                Spacer()
+                
+                Button("\(isEditingReview ? "完成" : "编辑")") {
+                    self.isEditingReview.toggle()
+                    if !self.isEditingReview {
+                        self.saveTask()
+                    }
+                }
+            }
+        }
+
+    }
+    
+}
+
+enum TaskReviewState: String {
+    case none = "无"
+    case wait = "待复盘"
+    case finish = "已复盘"
+    
+    static var list: [TaskReviewState] = [.none, .wait, .finish]
 }
 
 #endif

@@ -61,7 +61,16 @@ struct ListItemRow: View {
                 tagView(title: tag.title, color: tag.titleColor)
             }
             
-            tagView(title: item.importance.description, color: item.importance.titleColor)
+            if item.needReview {
+                if item.finishReview {
+                    tagView(title: "已复盘", color: .green)
+                } else {
+                    tagView(title: "待复盘", color: .red)
+                }
+            } else {
+                tagView(title: item.importance.description, color: item.importance.titleColor)
+            }
+            
             
             Spacer()
             

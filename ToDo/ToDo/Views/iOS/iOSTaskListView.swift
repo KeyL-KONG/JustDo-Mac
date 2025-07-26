@@ -21,6 +21,10 @@ struct iOSTaskListView: View {
     
     @State var eventItems: [EventItem] = []
     
+    @State var unPlanItems: [EventItem] = []
+    
+    @State var reviewItems: [EventItem] = []
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -92,8 +96,51 @@ extension iOSTaskListView {
                 }
             } header: {
                 HStack {
-                    Text("事项")
+                    Text("待办事项")
                     Spacer()
+                }
+            }
+            
+            if unPlanItems.count > 0 {
+                Section {
+                    ForEach(unPlanItems, id: \.self.id) { item in
+                        ListItemRow(item: item, selectDate: selectDate) {
+                            Self.selectedItem = item
+                            showingSheet.toggle()
+                        } longPress: {
+                            
+                        }.environmentObject(modelData)
+                            .swipeActions {
+                                Button(role: .destructive) {
+                                    modelData.deleteItem(item)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }.id(item.id)
+                    }
+                } header: {
+                    HStack {
+                        Text("待计划事项")
+                        Spacer()
+                    }
+                }
+            }
+            
+            if reviewItems.count > 0 {
+                Section {
+                    ForEach(reviewItems, id: \.self.id) { item in
+                        ListItemRow(item: item, selectDate: selectDate) {
+                            Self.selectedItem = item
+                            showingSheet.toggle()
+                        } longPress: {
+                            
+                        }.environmentObject(modelData)
+                    }
+                } header: {
+                    HStack {
+                        Text("复盘事项")
+                        Spacer()
+                    }
                 }
             }
 
@@ -111,7 +158,6 @@ extension iOSTaskListView {
     func updateTaskItems() {
         
         self.eventItems = modelData.itemList.filter({ event in
-            //guard event.actionType == .task else { return false }
             guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else {
                 return false
             }
@@ -127,27 +173,25 @@ extension iOSTaskListView {
             }
         }
         
-//        switch timeTab {
-//        case .day:
-//            eventItems = modelData.itemList.filter({ event in
-//                guard event.actionType == .task else { return false }
-//                guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else {
-//                    return false
-//                }
-//                return true
-//            })
-//            .sorted { (event1: EventItem, event2: EventItem) in
-//                if event1.isFinish != event2.isFinish {
-//                    return event1.isFinish ? false : true
-//                } else if event1.importance != event2.importance {
-//                    return event1.importance.value > event2.importance.value
-//                } else {
-//                    return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
-//                }
-//            }
-//        default:
-//            break
-//        }
+        self.unPlanItems = modelData.itemList.filter({ event in
+            guard event.planTime == nil else { return false }
+            guard let createTime = event.createTime else { return false }
+            return createTime.isSameTime(timeTab: timeTab, date: selectDate) && event.actionType == .task
+        })
+        
+        self.reviewItems = modelData.itemList.filter({ event in
+            guard let finishTime = event.finishTime else { return false }
+            return event.needReview && finishTime.isSameTime(timeTab: timeTab, date: selectDate)
+        }).sorted(by: { event1, event2 in
+            if event1.finishReview != event2.finishReview {
+                return event1.finishReview ? true : false
+            } else if event1.finishReview {
+                return event1.reviewDate ?? .now > event2.reviewDate ?? .now
+            } else {
+                return event1.finishTime ?? .now > event2.finishTime ?? .now
+            }
+        })
+        
         print("update task items: \(eventItems.count)")
     }
     

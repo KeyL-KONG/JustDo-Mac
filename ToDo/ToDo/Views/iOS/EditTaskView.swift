@@ -94,6 +94,13 @@ struct EditTaskView: View {
     
     @State var toggleToRefresh: Bool = false
     
+    @State var reviewState: TaskReviewState = .none
+    @State var needReview: Bool = false
+    @State var finishReview: Bool = false
+    @State var reviewDate: Date = .now
+    @State var reviewText: String = ""
+    @State var isEditingReview: Bool = false
+    
     var body: some View {
         
         NavigationView {
@@ -124,6 +131,10 @@ struct EditTaskView: View {
                     contentView()
                     
                     detailView()
+                    
+                    if needReview {
+                        reviewView()
+                    }
                     
                     taskItemViews()
                     
@@ -207,6 +218,10 @@ struct EditTaskView: View {
             selectedItem.finishTime = finishTime
             selectedItem.isArchive = isArchive
             selectedItem.quickEvent = isQuickEvent
+            selectedItem.needReview = needReview
+            selectedItem.finishReview = finishReview
+            selectedItem.reviewText = reviewText
+            selectedItem.reviewDate = reviewDate
             modelData.updateItem(selectedItem)
         } else {
             let item = EventItem.init(id: UUID().uuidString, title: title, mark: mark, tag: tag, isFinish: false, importance: importantTag, finishState: finishState, finishText: finishText, finishRating: finishRating, difficultRating: difficultRating, difficultText: difficultText, createTime: Date.now, rewardType: rewardType, rewardValue: Int(rewardValue) ?? 0, fixedReward: setFixedReward)
@@ -238,6 +253,10 @@ struct EditTaskView: View {
             item.finishTime = finishTime
             item.isArchive = isArchive
             item.quickEvent = isQuickEvent
+            item.needReview = needReview
+            item.finishReview = finishReview
+            item.reviewText = reviewText
+            item.reviewDate = reviewDate
             modelData.saveItem(item)
         }
     }
@@ -280,6 +299,10 @@ struct EditTaskView: View {
             finishTime = selectedItem.finishTime ?? .now
             isArchive = selectedItem.isArchive
             isQuickEvent = selectedItem.quickEvent
+            needReview = selectedItem.needReview
+            finishReview = selectedItem.finishReview
+            reviewText = selectedItem.reviewText
+            reviewDate = selectedItem.reviewDate ?? .now
         } else {
             selectedTag = modelData.tagList.first?.title ?? ""
             focusedField = .title
