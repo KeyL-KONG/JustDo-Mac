@@ -16,7 +16,7 @@ extension Date {
         case .week:
             return self.isInSameWeek(as: date)
         case .month:
-            return self.isInSameWeek(as: date)
+            return self.isInSameMonth(as: date)
         case .year:
             return self.isInSameYear(as: date)
         case .all:

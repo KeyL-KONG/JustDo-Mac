@@ -10,7 +10,7 @@ import SwiftUI
 struct iOSSummaryTaskView: View {
     
     @EnvironmentObject var modelData: ModelData
-    @State var timeTab: TimeTab
+    @Binding var timeTab: TimeTab
     @Binding var currentDate: Date
     @Binding var selectItemID: String
     @Binding var showingEditItem: Bool

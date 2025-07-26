@@ -76,7 +76,7 @@ struct iOSSummaryView: View {
                 
             }
             
-            iOSSummaryTaskView(timeTab: selection, currentDate: $selectDate, selectItemID: $selectItemID, showingEditItem: $showingEditItem)
+            iOSSummaryTaskView(timeTab: $selection, currentDate: $selectDate, selectItemID: $selectItemID, showingEditItem: $showingEditItem)
                 .environmentObject(modelData)
 
             Spacer()
