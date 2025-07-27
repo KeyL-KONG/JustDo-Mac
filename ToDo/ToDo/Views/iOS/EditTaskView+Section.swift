@@ -336,6 +336,11 @@ extension EditTaskView {
                     Text("是否归档")
                 }
                 
+                if actionType == .project {
+                    Toggle(isOn: $setFixedEvent) {
+                        Text("设置为固定事项")
+                    }
+                }
     
             }
         }
@@ -344,6 +349,30 @@ extension EditTaskView {
 }
 
 extension EditTaskView {
+    
+    func fixedView() -> some View {
+        Section {
+            DatePicker("开始时间:", selection: $fixedStartTime, displayedComponents: [.hourAndMinute])
+            
+            DatePicker("结束时间:", selection: $fixedEndTime, displayedComponents: [.hourAndMinute])
+            
+            HStack {
+                ForEach(fixedWeekDays.indices, id: \.self) { index in
+                    VStack(alignment: .center) {
+                        Text(index.weekDayStr)
+                        Toggle("", isOn: Binding(get: {
+                            fixedWeekDays[index]
+                        }, set: { value in
+                            fixedWeekDays[index] = value
+                        }))
+                    }.frame(minWidth: 30)
+                }
+            }
+        } header: {
+            Text("固定事项")
+        }
+
+    }
     
     func reviewView() -> some View {
         Section {

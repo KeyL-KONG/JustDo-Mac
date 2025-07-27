@@ -101,6 +101,11 @@ struct EditTaskView: View {
     @State var reviewText: String = ""
     @State var isEditingReview: Bool = false
     
+    @State var setFixedEvent: Bool = false
+    @State var fixedStartTime: Date = .now
+    @State var fixedEndTime: Date = .now
+    @State var fixedWeekDays: [Bool] = []
+    
     var body: some View {
         
         NavigationView {
@@ -131,6 +136,10 @@ struct EditTaskView: View {
                     contentView()
                     
                     detailView()
+                    
+                    if setFixedEvent {
+                        fixedView()
+                    }
                     
                     if needReview {
                         reviewView()
@@ -222,6 +231,10 @@ struct EditTaskView: View {
             selectedItem.finishReview = finishReview
             selectedItem.reviewText = reviewText
             selectedItem.reviewDate = reviewDate
+            selectedItem.isFixedEvent = setFixedEvent
+            selectedItem.fixedStartTime = fixedStartTime
+            selectedItem.fixedEndTime = fixedEndTime
+            selectedItem.fixedWeekDays = fixedWeekDays.compactMap { $0 == true ? 1 : 0 }
             modelData.updateItem(selectedItem)
         } else {
             let item = EventItem.init(id: UUID().uuidString, title: title, mark: mark, tag: tag, isFinish: false, importance: importantTag, finishState: finishState, finishText: finishText, finishRating: finishRating, difficultRating: difficultRating, difficultText: difficultText, createTime: Date.now, rewardType: rewardType, rewardValue: Int(rewardValue) ?? 0, fixedReward: setFixedReward)
@@ -257,6 +270,10 @@ struct EditTaskView: View {
             item.finishReview = finishReview
             item.reviewText = reviewText
             item.reviewDate = reviewDate
+            item.isFixedEvent = setFixedEvent
+            item.fixedStartTime = fixedStartTime
+            item.fixedEndTime = fixedEndTime
+            item.fixedWeekDays = fixedWeekDays.compactMap { $0 == true ? 1 : 0 }
             modelData.saveItem(item)
         }
     }
@@ -303,6 +320,9 @@ struct EditTaskView: View {
             finishReview = selectedItem.finishReview
             reviewText = selectedItem.reviewText
             reviewDate = selectedItem.reviewDate ?? .now
+            setFixedEvent = selectedItem.isFixedEvent
+            fixedStartTime = selectedItem.fixedStartTime ?? .now
+            fixedEndTime = selectedItem.fixedEndTime ?? .now
         } else {
             selectedTag = modelData.tagList.first?.title ?? ""
             focusedField = .title
@@ -321,6 +341,11 @@ struct EditTaskView: View {
             planTime = defaultSelectDate
         }
         isMarkExpand = !mark.isEmpty
+        if let selectedItem, selectedItem.fixedWeekDays.count == 7 {
+            self.fixedWeekDays = selectedItem.fixedWeekDays.compactMap { $0 != 0 }
+        } else {
+            self.fixedWeekDays = Array(repeating: false, count: 7)
+        }
     }
     
 }
