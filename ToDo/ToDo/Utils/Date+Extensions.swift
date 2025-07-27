@@ -24,6 +24,18 @@ extension Date {
         }
     }
     
+    var hour: Int {
+        Calendar.current.component(.hour, from: self)
+    }
+    
+    func toSameDay(date: Date) -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        let currentComponents = calendar.dateComponents([.hour, .minute], from: self)
+        let timeComponents = DateComponents(year: components.year, month: components.month, day: components.day, hour: currentComponents.hour, minute: currentComponents.minute)
+        return calendar.date(from: timeComponents) ?? self
+    }
+    
     struct WeekDay: Identifiable {
         var id: UUID = .init()
         var date: Date

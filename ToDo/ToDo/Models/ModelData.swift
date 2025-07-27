@@ -105,6 +105,8 @@ class ModelData: ObservableObject {
     var cacheTodayEventTotalTimes: [String: [String: Int]] = [:]
     var cacheTodayTagItemList: [String: [String: [EventItem]]] = [:]
     
+    var cacheTimelineItems: [Date: [TimelineItem]] = [:]
+    
     let cache = CacheManager()
     
     var retryLoadServerTimes = 0

@@ -69,6 +69,8 @@
 		09804B932E2D369400A5095A /* iOSProjectView+FixedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */; };
 		09804B952E2D370900A5095A /* iOSProjectView+List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B942E2D370100A5095A /* iOSProjectView+List.swift */; };
 		09804B972E365C3200A5095A /* iOSEditTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B962E365C2B00A5095A /* iOSEditTextView.swift */; };
+		09804BA22E3660AA00A5095A /* iOSTaskTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804BA12E36609D00A5095A /* iOSTaskTimelineView.swift */; };
+		09804BA42E3661AF00A5095A /* iOSEditTimeIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804BA32E3661AF00A5095A /* iOSEditTimeIntervalView.swift */; };
 		09AAC5382DED845F0091FA4A /* ThinkListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5372DED84590091FA4A /* ThinkListView.swift */; };
 		09AAC5502DEDDA200091FA4A /* MacWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC54F2DEDDA200091FA4A /* MacWebView.swift */; };
 		09AAC5522DEDDC9A0091FA4A /* ReadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5512DEDDC960091FA4A /* ReadListView.swift */; };
@@ -190,6 +192,8 @@
 		09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iOSProjectView+FixedView.swift"; sourceTree = "<group>"; };
 		09804B942E2D370100A5095A /* iOSProjectView+List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iOSProjectView+List.swift"; sourceTree = "<group>"; };
 		09804B962E365C2B00A5095A /* iOSEditTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSEditTextView.swift; sourceTree = "<group>"; };
+		09804BA12E36609D00A5095A /* iOSTaskTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTaskTimelineView.swift; sourceTree = "<group>"; };
+		09804BA32E3661AF00A5095A /* iOSEditTimeIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSEditTimeIntervalView.swift; sourceTree = "<group>"; };
 		09AAC5372DED84590091FA4A /* ThinkListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkListView.swift; sourceTree = "<group>"; };
 		09AAC54F2DEDDA200091FA4A /* MacWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacWebView.swift; sourceTree = "<group>"; };
 		09AAC5512DEDDC960091FA4A /* ReadListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadListView.swift; sourceTree = "<group>"; };
@@ -331,6 +335,7 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				09804BA12E36609D00A5095A /* iOSTaskTimelineView.swift */,
 				09804B962E365C2B00A5095A /* iOSEditTextView.swift */,
 				09804B942E2D370100A5095A /* iOSProjectView+List.swift */,
 				09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */,
@@ -345,6 +350,7 @@
 				0936CB372E0FA3F60058BD04 /* MainView.swift */,
 				0936CB422E103B730058BD04 /* EditTaskView+Section.swift */,
 				0936CB462E103BA80058BD04 /* iOSTimeLineRowView.swift */,
+				09804BA32E3661AF00A5095A /* iOSEditTimeIntervalView.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -764,6 +770,7 @@
 				092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */,
 				09F80C072C665A3F00650366 /* CloudProtocol.swift in Sources */,
 				0936CB3F2E1035F80058BD04 /* ListItemRow.swift in Sources */,
+				09804BA22E3660AA00A5095A /* iOSTaskTimelineView.swift in Sources */,
 				092546192DE7611F00D324DB /* NoteListView.swift in Sources */,
 				09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */,
 				09F80BDB2C66540F00650366 /* ToDoApp.swift in Sources */,
@@ -817,6 +824,7 @@
 				093E79032D2385AD006E5120 /* SummaryItem.swift in Sources */,
 				093E79042D2385AD006E5120 /* SummaryTag.swift in Sources */,
 				09D714752DAB5AC1009DB18E /* PrincipleModel.swift in Sources */,
+				09804BA42E3661AF00A5095A /* iOSEditTimeIntervalView.swift in Sources */,
 				097AE2CA2DC903CB0096059B /* CustomAlertView.swift in Sources */,
 				093E79122D297ADD006E5120 /* SummaryEditView.swift in Sources */,
 			);
