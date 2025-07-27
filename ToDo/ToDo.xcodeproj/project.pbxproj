@@ -68,6 +68,7 @@
 		09804B7F2E21F05D00A5095A /* NoteItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B7E2E21F05800A5095A /* NoteItem.swift */; };
 		09804B932E2D369400A5095A /* iOSProjectView+FixedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */; };
 		09804B952E2D370900A5095A /* iOSProjectView+List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B942E2D370100A5095A /* iOSProjectView+List.swift */; };
+		09804B972E365C3200A5095A /* iOSEditTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09804B962E365C2B00A5095A /* iOSEditTextView.swift */; };
 		09AAC5382DED845F0091FA4A /* ThinkListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5372DED84590091FA4A /* ThinkListView.swift */; };
 		09AAC5502DEDDA200091FA4A /* MacWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC54F2DEDDA200091FA4A /* MacWebView.swift */; };
 		09AAC5522DEDDC9A0091FA4A /* ReadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AAC5512DEDDC960091FA4A /* ReadListView.swift */; };
@@ -188,6 +189,7 @@
 		09804B7E2E21F05800A5095A /* NoteItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteItem.swift; sourceTree = "<group>"; };
 		09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iOSProjectView+FixedView.swift"; sourceTree = "<group>"; };
 		09804B942E2D370100A5095A /* iOSProjectView+List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iOSProjectView+List.swift"; sourceTree = "<group>"; };
+		09804B962E365C2B00A5095A /* iOSEditTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSEditTextView.swift; sourceTree = "<group>"; };
 		09AAC5372DED84590091FA4A /* ThinkListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkListView.swift; sourceTree = "<group>"; };
 		09AAC54F2DEDDA200091FA4A /* MacWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacWebView.swift; sourceTree = "<group>"; };
 		09AAC5512DEDDC960091FA4A /* ReadListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadListView.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				09804B962E365C2B00A5095A /* iOSEditTextView.swift */,
 				09804B942E2D370100A5095A /* iOSProjectView+List.swift */,
 				09804B922E2D368C00A5095A /* iOSProjectView+FixedView.swift */,
 				0936CB592E1A57CE0058BD04 /* iOSSummaryTaskView.swift */,
@@ -753,6 +756,7 @@
 				09D7147B2DAB651D009DB18E /* ToDoEditPrincipleView.swift in Sources */,
 				092546082DE0D7BB00D324DB /* CommonDefine.swift in Sources */,
 				09D714612D85D318009DB18E /* TimeLineRowView.swift in Sources */,
+				09804B972E365C3200A5095A /* iOSEditTextView.swift in Sources */,
 				09FDBE4E2C6870A500AC8F38 /* TodoItemListView+Week.swift in Sources */,
 				097A04102C6C588300521483 /* Array+Extensions.swift in Sources */,
 				09F80C162C66F63200650366 /* SidebarView.swift in Sources */,

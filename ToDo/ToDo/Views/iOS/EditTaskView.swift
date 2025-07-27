@@ -105,6 +105,8 @@ struct EditTaskView: View {
     @State var fixedStartTime: Date = .now
     @State var fixedEndTime: Date = .now
     @State var fixedWeekDays: [Bool] = []
+    @State var showReviewText: Bool = false
+    @State var showMarkText: Bool = false
     
     var body: some View {
         
@@ -180,6 +182,16 @@ struct EditTaskView: View {
                     .environmentObject(modelData)
                     .presentationDetents([.height(450)])
             }
+        }
+        .sheet(isPresented: $showReviewText) {
+            iOSEditTextView(text: $reviewText)
+                .environmentObject(modelData)
+                .presentationDetents([.height(450)])
+        }
+        .sheet(isPresented: $showMarkText) {
+            iOSEditTextView(text: $mark)
+                .environmentObject(modelData)
+                .presentationDetents([.height(450)])
         }
         
     }

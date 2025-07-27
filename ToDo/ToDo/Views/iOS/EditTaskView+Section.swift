@@ -203,9 +203,12 @@ extension EditTaskView {
                 if self.isEditMark {
                     focusedField = .mark
                     self.isMarkExpand = true
+                    showMarkText.toggle()
+                } else {
+                    saveTask()
                 }
             } label: {
-                Text("\(isEditMark ? "预览" : "编辑")").font(.system(size: 14))
+                Text("\(isEditMark ? "保存" : "编辑")").font(.system(size: 14))
             }
 
             Button(action: {
@@ -216,21 +219,31 @@ extension EditTaskView {
                 Image(systemName: isMarkExpand ? "chevron.up" : "chevron.right")
             })
         })) {
-            if isMarkExpand {
-                if isEditMark {
-                    TextEditor(text: $mark)
-                        .font(.system(size: 12))
-                        .padding(5)
-                        .scrollContentBackground(.hidden)
-                        .frame(minHeight: 80)
-                        .cornerRadius(8)
-                        .background(Color.init(hex: "f8f9f9"))
-                } else {
-                    MarkdownWebView(mark)
-                        .padding(5)
-                        .background(Color.init(hex: "d4e6f1"))
+            if mark.count > 0 {
+                HStack {
+                    MarkdownWebView(mark, itemId: selectedItem?.id ?? "")
                 }
+                .padding()
+                .background(isEditingReview ? Color.init(hex: "f8f9f9") : Color.init(hex: "d4e6f1"))
+                .cornerRadius(10)
+                
             }
+            
+//            if isMarkExpand {
+//                if isEditMark {
+//                    TextEditor(text: $mark)
+//                        .font(.system(size: 12))
+//                        .padding(5)
+//                        .scrollContentBackground(.hidden)
+//                        .frame(minHeight: 80)
+//                        .cornerRadius(8)
+//                        .background(Color.init(hex: "f8f9f9"))
+//                } else {
+//                    MarkdownWebView(mark)
+//                        .padding(5)
+//                        .background(Color.init(hex: "d4e6f1"))
+//                }
+//            }
         }
     }
     
@@ -384,15 +397,16 @@ extension EditTaskView {
             }
             
             HStack {
-                if isEditingReview {
-                    TextEditor(text: $reviewText)
-                        .font(.system(size: 14))
-                        .padding(10)
-                        .scrollContentBackground(.hidden)
-                        .background(Color.init(hex: "#e8f6f3"))
-                        .frame(minHeight: 120)
-                        .cornerRadius(8)
-                } else if reviewText.count > 0 {
+//                if isEditingReview {
+//                    TextEditor(text: $reviewText)
+//                        .font(.system(size: 14))
+//                        .padding(10)
+//                        .scrollContentBackground(.hidden)
+//                        .background(Color.init(hex: "#e8f6f3"))
+//                        .frame(minHeight: 120)
+//                        .cornerRadius(8)
+//                }
+                if reviewText.count > 0 {
                     MarkdownWebView(reviewText, itemId: selectedItem?.id ?? "")
                 }
             }
@@ -404,10 +418,12 @@ extension EditTaskView {
                 Text("复盘事项")
                 Spacer()
                 
-                Button("\(isEditingReview ? "完成" : "编辑")") {
+                Button("\(isEditingReview ? "保存" : "编辑")") {
                     self.isEditingReview.toggle()
                     if !self.isEditingReview {
                         self.saveTask()
+                    } else {
+                        self.showReviewText.toggle()
                     }
                 }
             }
