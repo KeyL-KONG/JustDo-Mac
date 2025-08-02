@@ -51,8 +51,12 @@ struct NoteDetailView: View {
         noteItem.items.compactMap { id in
             modelData.noteItemList.first { item in
                 item.id == id
-        }}
+            }}.sorted { ($0.updateAt?.timeIntervalSince1970 ?? 0) > ($1.updateAt?.timeIntervalSince1970 ?? 0)
+            }
     }
+    
+    @State var editItemState: [String: Bool] = [:]
+    @State var itemEditingContent: [String: String] = [:]  // 新增：用于存储编辑中的内容
     
     var body: some View {
         ScrollView {
@@ -130,27 +134,46 @@ struct NoteDetailView: View {
                     
                     if noteItemsExpand {
                         ForEach(noteItems, id: \.self.id) { item in
-                            if isEdit {
-                                TextEditor(text: Binding(get: {
-                                    item.content
-                                }, set: { value in
-                                    item.content = value
-                                }))
-                                    .font(.system(size: 14))
-                                    .padding(10)
-                                    .scrollContentBackground(.hidden)
-                                    .background(Color.brown.opacity(0.1))
-                                    .cornerRadius(8)
-                                    .frame(minHeight: 100)
+                            if isEditNoteItem(item) {
+                                ZStack {
+                                    TextEditor(text: Binding(get: {
+                                        return itemEditingContent[item.id] ?? item.content
+                                    }, set: { val in
+                                        itemEditingContent[item.id] = val
+                                    }))
+                                        .font(.system(size: 14))
+                                        .padding(10)
+                                        .scrollContentBackground(.hidden)
+                                        .background(Color.brown.opacity(0.1))
+                                        .cornerRadius(8)
+                                        .frame(minHeight: 100)
+                                }.overlay(alignment: .topTrailing) {
+                                    Button {
+                                        item.content = itemEditingContent[item.id] ?? item.content  // 将编辑后的值写回item
+                                        updateEditNoteItem(item, isEdit: false)
+                                        modelData.updateNoteItem(item)
+                                    } label: {
+                                        Text("保存").foregroundStyle(.blue)
+                                    }
+                                }
+                                
                             } else if item.content.count > 0 {
                                 ZStack {
                                     MarkdownWebView(item.content, itemId: item.id)
-                                        .padding()
-                                        .background(Color.brown.opacity(0.1))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 15)
+                                        .background(Color.blue.opacity(0.1))
                                         .cornerRadius(10)
+                                }.overlay(alignment: .bottomTrailing) {
+                                    if let updateAt = noteItem.updateAt {
+                                        Text(updateAt.simpleDateStr)
+                                    }
                                 }.overlay(alignment: .topTrailing) {
-                                    if let createTime = noteItem.createTime {
-                                        Text(createTime.simpleDateStr).padding()
+                                    Button {
+                                        itemEditingContent[item.id] = item.content  // 编辑前将当前值存入State变量
+                                        updateEditNoteItem(item, isEdit: true)
+                                    } label: {
+                                        Text("编辑").foregroundStyle(.blue)
                                     }
                                 }
                                 .contextMenu {
@@ -305,6 +328,14 @@ struct NoteDetailView: View {
 
 extension NoteDetailView {
     
+    func isEditNoteItem(_ item: NoteItem) -> Bool {
+        return editItemState[item.id] ?? false
+    }
+    
+    func updateEditNoteItem(_ item: NoteItem, isEdit: Bool) {
+        editItemState[item.id] = isEdit
+    }
+    
     // 修改按钮响应方法
     private func showNoteWindow() {
         openWindow(id: CommonDefine.noteWindow, value: noteItem)
@@ -322,10 +353,6 @@ extension NoteDetailView {
         })
         noteItem.title = noteTitle
         modelData.updateNote(noteItem)
-        
-        noteItems.forEach { item in
-            modelData.updateNoteItem(item)
-        }
     }
     
     func saveTag(_ tag: String) {
