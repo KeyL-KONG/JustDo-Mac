@@ -334,7 +334,7 @@ extension ModelData {
             self.noteTagList = serverNoteTags
             self.noteItemList = serverNoteItemList
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
-            print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), noteTags:\(serverNoteTags.count), noteItems: \(serverNoteItems.count), duration: \(Int(duration * 1000))ms")
+            print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), noteTags:\(serverNoteTags.count), noteItems: \(serverNoteItems.count), notesubitems: \(serverNoteItemList.count), duration: \(Int(duration * 1000))ms")
             self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags, noteTags: serverNoteTags, noteItems: serverNoteItems, noteItemList: serverNoteItemList) // 新增参数
         }
     }

@@ -4,7 +4,7 @@
 //
 //  Created by LQ on 2025/7/27.
 //
-
+#if os(iOS)
 import SwiftUI
 
 @available(iOS 17.0, *)
@@ -441,3 +441,5 @@ struct OffsetKey: PreferenceKey {
     }
     
 }
+
+#endif

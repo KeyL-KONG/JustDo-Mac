@@ -322,6 +322,10 @@ extension NoteDetailView {
         })
         noteItem.title = noteTitle
         modelData.updateNote(noteItem)
+        
+        noteItems.forEach { item in
+            modelData.updateNoteItem(item)
+        }
     }
     
     func saveTag(_ tag: String) {
