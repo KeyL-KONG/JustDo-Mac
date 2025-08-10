@@ -23,6 +23,7 @@ struct iOSTaskListView: View {
     @State var eventItems: [EventItem] = []
     @State var unPlanItems: [EventItem] = []
     @State var reviewItems: [EventItem] = []
+    @State var recentExpireItems: [EventItem] = []
     
     var body: some View {
         NavigationView {
@@ -132,7 +133,7 @@ extension iOSTaskListView {
             if reviewItems.count > 0 {
                 Section {
                     ForEach(reviewItems, id: \.self.id) { item in
-                        ListItemRow(item: item, selectDate: selectDate) {
+                        ListItemRow(item: item, showFinishTime: true, selectDate: selectDate) {
                             Self.selectedItem = item
                             showingSheet.toggle()
                         } longPress: {
@@ -142,6 +143,24 @@ extension iOSTaskListView {
                 } header: {
                     HStack {
                         Text("复盘事项")
+                        Spacer()
+                    }
+                }
+            }
+            
+            if recentExpireItems.count > 0 {
+                Section {
+                    ForEach(recentExpireItems, id: \.self.id) { item in
+                        ListItemRow(item: item, showDeadline: true, selectDate: selectDate) {
+                            Self.selectedItem = item
+                            showingSheet.toggle()
+                        } longPress: {
+                            
+                        }.environmentObject(modelData)
+                    }
+                } header: {
+                    HStack {
+                        Text("过期事项")
                         Spacer()
                     }
                 }
@@ -182,6 +201,7 @@ extension iOSTaskListView {
             })
             self.unPlanItems = []
             self.reviewItems = []
+            self.recentExpireItems = []
             return
         }
         
@@ -206,8 +226,12 @@ extension iOSTaskListView {
         })
         
         self.reviewItems = modelData.itemList.filter({ event in
-            guard let finishTime = event.finishTime else { return false }
-            return event.needReview && finishTime.isSameTime(timeTab: timeTab, date: selectDate)
+            guard let finishTime = event.finishTime, event.needReview else { return false }
+            if timeTab == .day {
+                let days = selectDate.daysBetween(finishTime)
+                return days >= 0 && days <= 7
+            }
+            return finishTime.isSameTime(timeTab: timeTab, date: selectDate)
         }).sorted(by: { event1, event2 in
             if event1.finishReview != event2.finishReview {
                 return event1.finishReview ? true : false
@@ -217,6 +241,14 @@ extension iOSTaskListView {
                 return event1.finishTime ?? .now > event2.finishTime ?? .now
             }
         })
+        
+        if timeTab == .day {
+            self.recentExpireItems = modelData.itemList.filter({ event in
+                guard let planTime = event.planTime, event.setPlanTime else { return false }
+                return event.actionType == .task && !event.isFinish && selectDate.daysBetween(planTime) <= 7 && !selectDate.isSameTime(timeTab: .day, date: planTime)
+            })
+        }
+        
         
         print("update task items: \(eventItems.count)")
     }

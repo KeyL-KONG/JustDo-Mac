@@ -18,6 +18,8 @@ struct ListItemRow: View {
     @State var item: EventItem
     @State var displayMode: DisplayMode = .task
     @State var timeMode: TimeTab = .day
+    @State var showDeadline: Bool = false
+    @State var showFinishTime: Bool = false
     @State var selectDate: Date?
     var finishEvent: ((Bool) -> Void)?
     var clickEvent: () -> Void
@@ -73,8 +75,16 @@ struct ListItemRow: View {
             
             
             Spacer()
-            
-            if timeElapsed > 0{
+            if let finishTime = item.finishTime, item.isFinish, showFinishTime {
+                Text(finishTime.simpleMonthAndDay).foregroundStyle(.gray).font(.system(size: 12))
+            }
+            if let planTime = item.planTime, !item.isPlay, showDeadline {
+                let time: Date = selectDate ?? .now
+                let days =  planTime.daysBetween(time)
+                let text = days < 0 ? "过期\(abs(days))天" : "截止\(days)天"
+                Text(text).foregroundStyle(.red).font(.system(size: 12))
+            }
+            else if timeElapsed > 0 {
                 Text(timeElapsed.simpleTimeStr).font(.footnote).foregroundStyle(.gray)
             } else if let planTime = item.planTime, item.importance == .high, !planTime.isToday {
                 let days = planTime.daysBetween(Date.now)
@@ -86,12 +96,21 @@ struct ListItemRow: View {
         .onTapGesture {
             clickEvent()
         }
+        .onChange(of: modelData.updateEventId, { oldValue, newValue in
+            if newValue == item.id {
+                updateTimeElapsed()
+            }
+        })
         .onAppear {
-            if let selectDate {
-                timeElapsed = item.itemTotalTime(with: modelData.itemList, taskItems: modelData.taskTimeItems.filter {!$0.isPlan}, taskId: item.id, date: selectDate)
+            if selectDate != nil {
+                updateTimeElapsed()
             }
         }
         
+    }
+    
+    func updateTimeElapsed() {
+        timeElapsed = item.itemTotalTime(with: modelData.itemList, taskItems: modelData.taskTimeItems.filter {!$0.isPlan}, taskId: item.id, date: selectDate)
     }
     
     var timeButton: some View {

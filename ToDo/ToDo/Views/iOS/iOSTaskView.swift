@@ -116,6 +116,11 @@ struct iOSTaskView: View {
         .onAppear {
             updateTitleText()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            if selectDate != .now {
+                selectDate = .now
+            }
+        }
     }
     
     func updateSelectDate(next: Bool) {
