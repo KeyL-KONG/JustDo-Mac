@@ -123,9 +123,9 @@ struct TimeLineRowView: View {
                     Spacer()
                     
                     HStack {
-                        Text("专注值：\(focusValue)").foregroundStyle(valueColor(focusValue))
+                        Text("FO：\(focusValue)").foregroundStyle(valueColor(focusValue))
                         
-                        Text("快乐值：\(happyValue)").foregroundStyle(valueColor(happyValue))
+                        Text("HP：\(happyValue)").foregroundStyle(valueColor(happyValue))
                     }
                     
                     Spacer(minLength: 10)
@@ -138,7 +138,7 @@ struct TimeLineRowView: View {
             
             if isEditing {
                 HStack {
-                    Picker("专注指数", selection: $focusValue) {
+                    Picker("FO Value", selection: $focusValue) {
                         ForEach(1..<11, id: \.self) {
                             Text("\($0)").tag($0)
                         }
@@ -146,7 +146,7 @@ struct TimeLineRowView: View {
                     
                     Spacer()
                     
-                    Picker("快乐指数", selection: $happyValue) {
+                    Picker("HP Value", selection: $happyValue) {
                         ForEach(1..<11, id: \.self) {
                             Text("\($0)").tag($0)
                         }
