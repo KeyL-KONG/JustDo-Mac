@@ -16,13 +16,12 @@ struct iOSTaskListView: View {
     @State var isShowingTimer: Bool = false
     var selectDate: Date
     var timeTab: TimeTab
+    @State private var searchText: String = ""
     
     static var selectedItem: EventItem?
     
     @State var eventItems: [EventItem] = []
-    
     @State var unPlanItems: [EventItem] = []
-    
     @State var reviewItems: [EventItem] = []
     
     var body: some View {
@@ -51,6 +50,9 @@ struct iOSTaskListView: View {
             .onChange(of: modelData.updateItemIndex, { oldValue, newValue in
                 updateTaskItems()
             })
+            .onChange(of: searchText) { oldValue, newValue in
+                updateTaskItems()
+            }
             .sheet(isPresented: $showingSheet) {
                 if let selectedItem = Self.selectedItem {
                     EditTaskView(showSheetView: $showingSheet, selectedItem: selectedItem, setPlanTime: true, setReward: false)
@@ -63,6 +65,7 @@ struct iOSTaskListView: View {
             .onAppear {
                 updateTaskItems()
             }
+            .searchable(text: $searchText, prompt: "搜索任务...")
         }
     }
 }
@@ -157,10 +160,33 @@ extension iOSTaskListView {
     
     func updateTaskItems() {
         
-        self.eventItems = modelData.itemList.filter({ event in
-            guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else {
-                return false
+        // 添加搜索过滤逻辑
+        let searchLowercased = searchText.lowercased()
+        let matchesSearch: (EventItem) -> Bool = { item in
+            if searchText.isEmpty {
+                return true
             }
+            let titleMatch = item.title.lowercased().contains(searchLowercased)
+            let contentMatch = item.mark.lowercased().contains(searchLowercased)
+            return titleMatch || contentMatch
+        }
+        
+        if !searchText.isEmpty {
+            self.eventItems = modelData.itemList.filter({ event in
+                return matchesSearch(event)
+            }).sorted(by: { first, second in
+                if first.isFinish != second.isFinish {
+                    return !first.isFinish
+                }
+                return first.createTime?.timeIntervalSince1970 ?? 0 > second.createTime?.timeIntervalSince1970 ?? 0
+            })
+            self.unPlanItems = []
+            self.reviewItems = []
+            return
+        }
+        
+        self.eventItems = modelData.itemList.filter({ event in
+            guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else { return false }
             return true
         })
         .sorted { (event1: EventItem, event2: EventItem) in
