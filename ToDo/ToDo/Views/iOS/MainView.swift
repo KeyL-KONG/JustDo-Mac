@@ -20,6 +20,7 @@ struct MainView: View {
         case habit
         case principle
         case timeline
+        case reviewNote
     }
     
     @EnvironmentObject var modelData: ModelData
@@ -50,12 +51,20 @@ struct MainView: View {
                     Label("统计", systemImage: "tray.full.fill")
                 }
             
-            iOSTaskTimelineView()
+//            iOSTaskTimelineView()
+//                .environmentObject(modelData)
+//                .tag(Tab.timeline)
+//                .tabItem {
+//                    Label("时间轴", systemImage: "list.bullet")
+//                }
+            
+            iOSReviewNoteView()
                 .environmentObject(modelData)
-                .tag(Tab.timeline)
+                .tag(Tab.reviewNote)
                 .tabItem {
-                    Label("时间轴", systemImage: "list.bullet")
+                    Label("笔记", systemImage: "list.bullet")
                 }
+            
         }
         .onAppear(perform: {
             

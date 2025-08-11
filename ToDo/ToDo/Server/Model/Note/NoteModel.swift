@@ -19,6 +19,16 @@ class NoteModel: BaseModel, Identifiable, Codable {
     var rate: Int = 0
     var items: [String] = []
     
+    var faTimes: [Date] = []
+    var stTimes: [Date] = []
+    
+    var faScore: Int { faTimes.count }
+    var stScore: Int { stTimes.count }
+    
+    var score: Int {
+        return faScore - stScore
+    }
+    
     required init() {
         super.init()
     }
@@ -34,6 +44,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         overview = try container.decode(String.self, forKey: .overview)
         rate = try container.decode(Int.self, forKey: .rate)
         items = try container.decode([String].self, forKey: .items)
+        faTimes = try container.decode([Date].self, forKey: .faTimes)
+        stTimes = try container.decode([Date].self, forKey: .stTimes)
     }
     
     init(content: String) {
@@ -51,6 +63,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try container.encode(overview, forKey: .overview)
         try container.encode(rate, forKey: .rate)
         try container.encode(items, forKey: .items)
+        try container.encode(faTimes, forKey: .faTimes)
+        try container.encode(stTimes, forKey: .stTimes)
     }
     
     override class func modelClassName() -> String {
@@ -73,6 +87,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         overview = cloudObj.get(NoteModelKeys.overview.rawValue)?.stringValue ?? ""
         rate = cloudObj.get(NoteModelKeys.rate.rawValue)?.intValue ?? 0
         items = cloudObj.get(NoteModelKeys.items.rawValue)?.arrayValue as? [String] ?? []
+        faTimes = cloudObj.get(NoteModelKeys.faTimes.rawValue)?.arrayValue as? [Date] ?? []
+        stTimes = cloudObj.get(NoteModelKeys.stTimes.rawValue)?.arrayValue as? [Date] ?? []
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -85,6 +101,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try cloudObj.set(NoteModelKeys.summary.rawValue, value: summary.lcString)
         try cloudObj.set(NoteModelKeys.rate.rawValue, value: rate.lcNumber)
         try cloudObj.set(NoteModelKeys.items.rawValue, value: items.lcArray)
+        try cloudObj.set(NoteModelKeys.faTimes.rawValue, value: faTimes.lcArray)
+        try cloudObj.set(NoteModelKeys.stTimes.rawValue, value: stTimes.lcArray)
     }
     
 }
@@ -101,6 +119,8 @@ extension NoteModel {
         case summary
         case rate
         case items
+        case faTimes
+        case stTimes
     }
     
 }
