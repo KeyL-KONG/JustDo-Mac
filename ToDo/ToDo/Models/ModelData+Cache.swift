@@ -115,7 +115,7 @@ extension ModelData {
             self.noteTagList = cacheNoteTags
             self.noteItemList = cacheNoteItemList
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
-            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count) duration: \(Int(duration * 1000))ms")
+            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count), noteitems: \(cacheNoteItemList.count) duration: \(Int(duration * 1000))ms")
         }
         
     }

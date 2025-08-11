@@ -148,6 +148,22 @@ struct NoteDetailView: View {
                                             Spacer()
                                             
                                             Button {
+                                                item.faTimes.append(Date())
+                                                modelData.updateNoteItem(item)
+                                            } label: {
+                                                let text = item.faScore > 0 ? "Fa(\(item.faScore))" : "Fa"
+                                                Text(text).foregroundStyle(.green)
+                                            }
+                                            
+                                            Button {
+                                                item.stTimes.append(Date())
+                                                modelData.updateNoteItem(item)
+                                            } label: {
+                                                let text = item.stScore > 0 ? "Sa(\(item.stScore))" : "Sa"
+                                                Text(text).foregroundStyle(.red)
+                                            }
+                                            
+                                            Button {
                                                 item.content = itemEditingContent[item.id] ?? item.content  // 将编辑后的值写回item
                                                 item.title = itemEditingTitle[item.id] ?? item.title
                                                 updateEditNoteItem(item, isEdit: false)
@@ -178,6 +194,22 @@ struct NoteDetailView: View {
                                             HStack {
                                                 Text(AttributedString("- \(item.title)")).bold()
                                                 Spacer()
+                                                
+                                                Button {
+                                                    item.faTimes.append(Date())
+                                                    modelData.updateNoteItem(item)
+                                                } label: {
+                                                    let text = item.faScore > 0 ? "Fa(\(item.faScore))" : "Fa"
+                                                    Text(text).foregroundStyle(.green)
+                                                }
+                                                
+                                                Button {
+                                                    item.stTimes.append(Date())
+                                                    modelData.updateNoteItem(item)
+                                                } label: {
+                                                    let text = item.stScore > 0 ? "Sa(\(item.stScore))" : "Sa"
+                                                    Text(text).foregroundStyle(.red)
+                                                }
                                                 
                                                 Button {
                                                     itemEditingContent[item.id] = item.content  // 编辑前将当前值存入State变量
