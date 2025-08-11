@@ -57,6 +57,7 @@ struct NoteDetailView: View {
     
     @State var editItemState: [String: Bool] = [:]
     @State var itemEditingContent: [String: String] = [:]  // 新增：用于存储编辑中的内容
+    @State var itemEditingTitle: [String: String] = [:]
     
     var body: some View {
         ScrollView {
@@ -136,44 +137,77 @@ struct NoteDetailView: View {
                         ForEach(noteItems, id: \.self.id) { item in
                             if isEditNoteItem(item) {
                                 ZStack {
-                                    TextEditor(text: Binding(get: {
-                                        return itemEditingContent[item.id] ?? item.content
-                                    }, set: { val in
-                                        itemEditingContent[item.id] = val
-                                    }))
-                                        .font(.system(size: 14))
-                                        .padding(10)
-                                        .scrollContentBackground(.hidden)
-                                        .background(Color.brown.opacity(0.1))
-                                        .cornerRadius(8)
-                                        .frame(minHeight: 100)
-                                }.overlay(alignment: .topTrailing) {
-                                    Button {
-                                        item.content = itemEditingContent[item.id] ?? item.content  // 将编辑后的值写回item
-                                        updateEditNoteItem(item, isEdit: false)
-                                        modelData.updateNoteItem(item)
-                                    } label: {
-                                        Text("保存").foregroundStyle(.blue)
+                                    VStack {
+                                        HStack {
+                                            TextField("标题", text: Binding(get: {
+                                                return itemEditingTitle[item.id] ?? item.title
+                                            }, set: { val in
+                                                itemEditingTitle[item.id] = val
+                                            }))
+                                            
+                                            Spacer()
+                                            
+                                            Button {
+                                                item.content = itemEditingContent[item.id] ?? item.content  // 将编辑后的值写回item
+                                                item.title = itemEditingTitle[item.id] ?? item.title
+                                                updateEditNoteItem(item, isEdit: false)
+                                                modelData.updateNoteItem(item)
+                                            } label: {
+                                                Text("保存").foregroundStyle(.blue)
+                                            }
+                                        }
+                                        
+                                        TextEditor(text: Binding(get: {
+                                            return itemEditingContent[item.id] ?? item.content
+                                        }, set: { val in
+                                            itemEditingContent[item.id] = val
+                                        }))
+                                            .font(.system(size: 14))
+                                            .padding(10)
+                                            .scrollContentBackground(.hidden)
+                                            .background(Color.brown.opacity(0.1))
+                                            .cornerRadius(8)
+                                            .frame(minHeight: 100)
                                     }
                                 }
                                 
                             } else if item.content.count > 0 {
                                 ZStack {
-                                    MarkdownWebView(item.content, itemId: item.id)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 15)
-                                        .background(Color.blue.opacity(0.1))
-                                        .cornerRadius(10)
+                                    VStack {
+                                        if item.title.count > 0 {
+                                            HStack {
+                                                Text(AttributedString("- \(item.title)")).bold()
+                                                Spacer()
+                                                
+                                                Button {
+                                                    itemEditingContent[item.id] = item.content  // 编辑前将当前值存入State变量
+                                                    itemEditingTitle[item.id] = item.title
+                                                    updateEditNoteItem(item, isEdit: true)
+                                                } label: {
+                                                    Text("编辑").foregroundStyle(.blue)
+                                                }
+                                            }
+                                        }
+                                        
+                                        MarkdownWebView(item.content, itemId: item.id)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 15)
+                                            .background(Color.blue.opacity(0.1))
+                                            .cornerRadius(10)
+                                    }
+                                    
                                 }.overlay(alignment: .bottomTrailing) {
                                     if let updateAt = noteItem.updateAt {
                                         Text(updateAt.simpleDateStr)
                                     }
                                 }.overlay(alignment: .topTrailing) {
-                                    Button {
-                                        itemEditingContent[item.id] = item.content  // 编辑前将当前值存入State变量
-                                        updateEditNoteItem(item, isEdit: true)
-                                    } label: {
-                                        Text("编辑").foregroundStyle(.blue)
+                                    if item.title.isEmpty {
+                                        Button {
+                                            itemEditingContent[item.id] = item.content  // 编辑前将当前值存入State变量
+                                            updateEditNoteItem(item, isEdit: true)
+                                        } label: {
+                                            Text("编辑").foregroundStyle(.blue)
+                                        }
                                     }
                                 }
                                 .contextMenu {
