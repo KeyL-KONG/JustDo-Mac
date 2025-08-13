@@ -57,11 +57,13 @@ struct RemovableTagListView: View {
             if showCloseButton {
                 Button {
                     focusedField = .editTag
-                    if modelData.tagList.isEmpty {
-                        presentAlert = true
-                    } else {
-                        presentSelectAlert = true
-                    }
+                    presentAlert = true
+                    
+//                    if modelData.tagList.isEmpty {
+//                        presentAlert = true
+//                    } else {
+//                        presentSelectAlert = true
+//                    }
                     
                 } label: {
                     Image(systemName: "plus")

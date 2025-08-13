@@ -70,6 +70,10 @@ struct NoteDetailView: View {
                 HStack {
                     if isEdit {
                         RemovableTagListView(showCloseButton: true, tags:noteTags, addTagEvent: { tag in
+                            if !self.noteTags.contains(where: { $0 == tag
+                            }) {
+                                self.noteTags.append(tag)
+                            }
                             self.saveTag(tag)
                         }, removeTagEvent: { tag in
                             self.noteTags.removeAll { $0 == tag }
