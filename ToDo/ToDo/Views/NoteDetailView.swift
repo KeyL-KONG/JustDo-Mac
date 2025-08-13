@@ -21,7 +21,7 @@ struct NoteDetailView: View {
     @State var noteContent: String = ""
     @State var overviewText: String = ""
     @State var summaryText: String = ""
-    @State var noteTags: [String] = []
+    @State var noteTags: Set<String> = .init()
     @State var toggleToRefresh: Bool = false
     @State var overviewExpand: Bool = true
     @State var noteItemsExpand = true
@@ -69,19 +69,18 @@ struct NoteDetailView: View {
                 }
                 HStack {
                     if isEdit {
-                        RemovableTagListView(showCloseButton: true, tags:noteTags, addTagEvent: { tag in
-                            if !self.noteTags.contains(where: { $0 == tag
-                            }) {
-                                self.noteTags.append(tag)
-                            }
+                        RemovableTagListView(showCloseButton: true, tags:Array(noteTags), addTagEvent: { tag in
+                            self.noteTags.insert(tag)
                             self.saveTag(tag)
                         }, removeTagEvent: { tag in
-                            self.noteTags.removeAll { $0 == tag }
+                            if let index = self.noteTags.firstIndex(of: tag) {
+                                self.noteTags.remove(at: index)
+                            }
                         }, selectTagEvent: { tags in
-                            self.noteTags += tags
+                            
                         }).environmentObject(modelData)
                     } else if noteTags.count > 0 {
-                        RemovableTagListView(showCloseButton: false, tags: noteTags)
+                        RemovableTagListView(showCloseButton: false, tags: Array(noteTags))
                             .environmentObject(modelData)
                     }
                     Spacer()
@@ -388,11 +387,11 @@ struct NoteDetailView: View {
         self.overviewText = noteItem.overview
         self.summaryText = noteItem.summary
         self.noteRate = Double(noteItem.rate)
-        self.noteTags = noteItem.tags.compactMap({ tagId in
+        self.noteTags = Set(noteItem.tags.compactMap({ tagId in
             modelData.noteTagList.first {
                 $0.id == tagId
             }?.content
-        })
+        }))
     }
 }
 
@@ -427,7 +426,7 @@ extension NoteDetailView {
     
     func saveTag(_ tag: String) {
         if modelData.noteTagList.contains(where: { $0.content == tag }) {
-            self.noteTags.append(tag)
+            self.noteTags.insert(tag)
             return
         }
         let tagModel = TagModel()
