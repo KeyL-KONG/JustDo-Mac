@@ -22,6 +22,11 @@ class NoteItem: BaseModel, Identifiable, Codable {
         return faScore - stScore
     }
     
+    func hasReview(date: Date) -> Bool {
+        let times = faTimes + stTimes
+        return times.contains { $0.isInSameDay(as: date)}
+    }
+    
     required init() {
         super.init()
     }

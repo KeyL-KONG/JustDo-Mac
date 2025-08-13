@@ -12,6 +12,7 @@ struct ReviewNoteItem {
     let answer: String
     let score: Int
     let id: String
+    let createTime: Date
 }
 
 struct iOSReviewNoteView: View {
@@ -29,41 +30,57 @@ struct iOSReviewNoteView: View {
                     .font(.title3)
                     .foregroundColor(.gray)
             } else {
-                Text("Index: \(currentIndex) Score: \(noteItems[currentIndex].score)").font(.title)
-                ScrollView {
-                    FlashCardView(
-                        noteItem: noteItems[currentIndex],
-                        isFlipped: $isFlipped,
-                        onSwipe: { direction in
-                            withAnimation {
-                                switch direction {
-                                case .left:
-                                    currentIndex = min(currentIndex + 1, noteItems.count - 1)
-                                case .right:
-                                    currentIndex = max(currentIndex - 1, 0)
-                                }
-                                isFlipped = false
-                            }
+                
+                Text("Index: \(currentIndex) Score: \(noteItems[currentIndex].score)").font(.title2)
+                
+                List {
+                    
+                    Section {
+                            FlashCardView(content: noteItems[currentIndex].question, color: Color.gray.opacity(0.2))
+                            .listRowSeparator(.hidden)
+                    } header: {
+                        Text("Q:").font(.title).bold()
+                    }
+
+                    if isFlipped {
+                        Section {
+                                FlashCardView(content: noteItems[currentIndex].answer, color: Color.blue.opacity(0.2))
+                                .listRowSeparator(.hidden)
+                        } header: {
+                            Text("A:").font(.title).bold().foregroundStyle(.blue)
                         }
-                    )
+                    }
                 }
+                .listStyle(.plain)
                 
                 
                 ControlButtons(
                     isFlipped: $isFlipped,
                     onAnswer: { updateScore(0) },
                     onShowAnswer: { isFlipped.toggle() },
-                    onRemember: { updateScore(2) }
+                    onRemember: { updateScore(2) }, changeIndex: { index in
+                        self.isFlipped = false
+                        self.currentIndex = min(max(self.currentIndex + index, 0), self.noteItems.count-1)
+                    }
                 )
             }
         }
         .onAppear {
-            self.noteItems = modelData.noteItemList.filter { $0.title.count > 0 && $0.content.count > 0 }.compactMap({ item in
-                return ReviewNoteItem(question: item.title, answer: item.content, score: item.score, id: item.id)
-            }) + modelData.noteList.compactMap({ item in
+            self.noteItems = modelData.noteItemList.filter { $0.title.count > 0 && $0.content.count > 0 && !$0.hasReview(date: .now) }.compactMap({ item in
+                return ReviewNoteItem(question: item.title, answer: item.content, score: item.score, id: item.id, createTime: (item.createTime ?? Date()))
+            }) + modelData.noteList.filter({ $0.title.count > 0 && $0.content.count > 0 && !$0.hasReview(date: .now)
+            }).compactMap({ item in
                 let desc = item.overview.count > 0 ? item.overview : item.title
-                return ReviewNoteItem(question: desc, answer: item.content, score: item.score, id: item.id)
-            }).sorted(by: { $0.score < $1.score })
+                return ReviewNoteItem(question: desc, answer: item.content, score: item.score, id: item.id, createTime: (item.createTime ?? Date()))
+            })
+            .sorted(by: { first, second in
+                if first.score != second.score {
+                    return first.score < second.score
+                }
+                return first.createTime > second.createTime
+            })
+            self.currentIndex = 0
+            self.isFlipped = false
         }
         
     }
@@ -73,7 +90,7 @@ struct iOSReviewNoteView: View {
         
         let currentNote = noteItems[currentIndex]
         
-        if var noteModel = modelData.noteList.first(where: {  $0.id == currentNote.id
+        if let noteModel = modelData.noteList.first(where: {  $0.id == currentNote.id
         }) {
             if level == 0 {
                 noteModel.stTimes.append(Date())
@@ -81,7 +98,7 @@ struct iOSReviewNoteView: View {
                 noteModel.faTimes.append(Date())
             }
             modelData.updateNote(noteModel)
-        } else if var noteItem = modelData.noteItemList.first(where: { $0.id == currentNote.id
+        } else if let noteItem = modelData.noteItemList.first(where: { $0.id == currentNote.id
         }) {
             if level == 0 {
                 noteItem.stTimes.append(Date())
@@ -90,12 +107,7 @@ struct iOSReviewNoteView: View {
             }
             modelData.updateNoteItem(noteItem)
         }
-        
-        // 自动切换下个条目
-        if currentIndex < noteItems.count - 1 {
-            currentIndex += 1
-        }
-        isFlipped = false
+        isFlipped = true
     }
         
     private func calculateNewScore(level: Int) -> Int {
@@ -126,31 +138,18 @@ struct ScoreButtonStyle: ButtonStyle {
 
 // 提取子视图
 struct FlashCardView: View {
-    let noteItem: ReviewNoteItem
-    @Binding var isFlipped: Bool
-    var onSwipe: (SwipeDirection) -> Void
+    let content: String
+    let color: Color
+    
     
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 25)
-                .fill(isFlipped ? Color.gray.opacity(0.2) : Color.blue.opacity(0.2))
+                .fill(color)
             
-            ScrollView {
-                VStack {
-                    if isFlipped {
-                        MarkdownWebView(noteItem.answer, itemId: noteItem.id)
-                            .padding()
-                    } else {
-                        MarkdownWebView(noteItem.question, itemId: noteItem.id)
-                            .font(.title)
-                            .padding()
-                    }
-                    
-                }
-            }
-            
+            MarkdownWebView(content)
+                        .padding()
         }
-        .frame(minHeight: 400)
 //        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
 //        .animation(.easeInOut(duration: 0.3), value: isFlipped)
 //        .gesture(DragGesture()
@@ -169,31 +168,34 @@ struct ControlButtons: View {
     var onAnswer: () -> Void
     var onShowAnswer: () -> Void
     var onRemember: () -> Void
+    var changeIndex:(Int) -> Void
     
     var body: some View {
         HStack {
+            Button {
+                changeIndex(-1)
+            } label: {
+                Image(systemName: "arrowshape.left")
+            }.buttonStyle(ScoreButtonStyle(color: .red))
+
             Button(action: onAnswer) {
-                VStack {
-                    Image(systemName: "xmark.circle")
-                    Text("陌生")
-                }
-            }
+                Text("陌生")
+            }.buttonStyle(ScoreButtonStyle(color: .red))
             
             Button(action: onShowAnswer) {
-                VStack {
-                    Image(systemName: "doc.text.magnifyingglass")
-                    Text(isFlipped ? "隐藏答案" : "显示答案")
-                }
-            }
+                Text(isFlipped ? "隐藏答案" : "显示答案")
+            }.buttonStyle(ScoreButtonStyle(color: .blue))
             
             Button(action: onRemember) {
-                VStack {
-                    Image(systemName: "checkmark.circle")
-                    Text("熟悉")
-                }
-            }
+                Text("熟悉")
+            }.buttonStyle(ScoreButtonStyle(color: .green))
+            
+            Button {
+                changeIndex(1)
+            } label: {
+                Image(systemName: "arrowshape.right")
+            }.buttonStyle(ScoreButtonStyle(color: .green))
         }
-        .buttonStyle(ScoreButtonStyle(color: .blue))
     }
 }
 
