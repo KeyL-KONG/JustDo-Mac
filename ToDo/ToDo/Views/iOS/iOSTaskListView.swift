@@ -24,6 +24,7 @@ struct iOSTaskListView: View {
     @State var unPlanItems: [EventItem] = []
     @State var reviewItems: [EventItem] = []
     @State var recentExpireItems: [EventItem] = []
+    @State var willReachItems: [EventItem] = []
     
     var body: some View {
         NavigationView {
@@ -105,6 +106,31 @@ extension iOSTaskListView {
                 }
             }
             
+            if willReachItems.count > 0 {
+                Section {
+                    ForEach(willReachItems, id: \.self.id) { item in
+                        ListItemRow(item: item, selectDate: selectDate) {
+                            Self.selectedItem = item
+                            showingSheet.toggle()
+                        } longPress: {
+                            
+                        }.environmentObject(modelData)
+                            .swipeActions {
+                                Button(role: .destructive) {
+                                    modelData.deleteItem(item)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }.id(item.id)
+                    }
+                } header: {
+                    HStack {
+                        Text("即将到达事项")
+                        Spacer()
+                    }
+                }
+            }
+            
             if unPlanItems.count > 0 {
                 Section {
                     ForEach(unPlanItems, id: \.self.id) { item in
@@ -125,31 +151,6 @@ extension iOSTaskListView {
                 } header: {
                     HStack {
                         Text("待计划事项")
-                        Spacer()
-                    }
-                }
-            }
-            
-            if reviewItems.count > 0 {
-                Section {
-                    ForEach(reviewItems, id: \.self.id) { item in
-                        ListItemRow(item: item, showFinishTime: true, selectDate: selectDate) {
-                            Self.selectedItem = item
-                            showingSheet.toggle()
-                        } longPress: {
-                            
-                        }.environmentObject(modelData)
-                        .swipeActions {
-                            Button(action: {
-                                timerModel.startTimer(item: item)
-                            }, label: {
-                                Label("Start", systemImage: "Flag")
-                            }).tint(.blue)
-                        }.id(item.id)
-                    }
-                } header: {
-                    HStack {
-                        Text("复盘事项")
                         Spacer()
                     }
                 }
@@ -181,6 +182,31 @@ extension iOSTaskListView {
                 } header: {
                     HStack {
                         Text("过期事项")
+                        Spacer()
+                    }
+                }
+            }
+            
+            if reviewItems.count > 0 {
+                Section {
+                    ForEach(reviewItems, id: \.self.id) { item in
+                        ListItemRow(item: item, showFinishTime: true, selectDate: selectDate) {
+                            Self.selectedItem = item
+                            showingSheet.toggle()
+                        } longPress: {
+                            
+                        }.environmentObject(modelData)
+                        .swipeActions {
+                            Button(action: {
+                                timerModel.startTimer(item: item)
+                            }, label: {
+                                Label("Start", systemImage: "Flag")
+                            }).tint(.blue)
+                        }.id(item.id)
+                    }
+                } header: {
+                    HStack {
+                        Text("复盘事项")
                         Spacer()
                     }
                 }
@@ -222,6 +248,7 @@ extension iOSTaskListView {
             self.unPlanItems = []
             self.reviewItems = []
             self.recentExpireItems = []
+            self.willReachItems = []
             return
         }
         
@@ -277,8 +304,20 @@ extension iOSTaskListView {
         if timeTab == .day {
             self.recentExpireItems = modelData.itemList.filter({ event in
                 guard let planTime = event.planTime, event.setPlanTime else { return false }
-                return event.actionType == .task && !event.isFinish && selectDate.daysBetween(planTime) <= 7 && !selectDate.isSameTime(timeTab: .day, date: planTime)
+                return event.actionType == .task && !event.isFinish && selectDate.daysBetween(planTime) <= 7 && !selectDate.isSameTime(timeTab: .day, date: planTime) && selectDate > planTime
             })
+            if selectDate.startOfDay >= Date().startOfDay {
+                self.willReachItems = modelData.itemList.filter({ event in
+                    guard let planTime = event.planTime, event.setPlanTime else { return false }
+                    if selectDate.startOfDay < Date().startOfDay {
+                        return false
+                    }
+                    let days = planTime.daysBetween(selectDate)
+                    return !event.isFinish && !planTime.isSameTime(timeTab: .day, date: selectDate) && days <= 3 && planTime > selectDate
+                })
+            } else {
+                self.willReachItems = []
+            }
         }
         
         

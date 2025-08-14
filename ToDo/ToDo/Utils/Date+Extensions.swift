@@ -555,7 +555,7 @@ extension Date {
 
     func daysBetween(_ date: Date) -> Int {
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.day], from: date, to: self)
+        let components = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: self))
         return components.day ?? 0
     }
 }

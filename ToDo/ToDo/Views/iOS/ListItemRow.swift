@@ -87,9 +87,11 @@ struct ListItemRow: View {
             }
             else if timeElapsed > 0 {
                 Text(timeElapsed.simpleTimeStr).font(.footnote).foregroundStyle(.gray)
-            } else if let planTime = item.planTime, item.importance == .high, !planTime.isToday {
-                let days = planTime.daysBetween(Date.now)
-                Text("截止\(days)天").foregroundStyle(.red).font(.system(size: 12))
+            } else if let planTime = item.planTime, !planTime.isInSameDay(as: selectDate ?? .now) {
+                let days = planTime.daysBetween(selectDate ?? .now)
+                if days > 0 {
+                    Text("\(days)天后").foregroundStyle(.green).font(.system(size: 12))
+                }
             }
             
             if item.actionType == .task {
