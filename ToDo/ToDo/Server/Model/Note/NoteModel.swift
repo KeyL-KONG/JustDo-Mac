@@ -21,6 +21,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
     
     var faTimes: [Date] = []
     var stTimes: [Date] = []
+    var needReview: Bool = true
     
     var faScore: Int { faTimes.count }
     var stScore: Int { stTimes.count }
@@ -51,6 +52,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         items = try container.decode([String].self, forKey: .items)
         faTimes = try container.decode([Date].self, forKey: .faTimes)
         stTimes = try container.decode([Date].self, forKey: .stTimes)
+        needReview = try container.decode(Bool.self, forKey: .needReview)
     }
     
     init(content: String) {
@@ -70,6 +72,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try container.encode(items, forKey: .items)
         try container.encode(faTimes, forKey: .faTimes)
         try container.encode(stTimes, forKey: .stTimes)
+        try container.encode(needReview, forKey: .needReview)
     }
     
     override class func modelClassName() -> String {
@@ -94,6 +97,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         items = cloudObj.get(NoteModelKeys.items.rawValue)?.arrayValue as? [String] ?? []
         faTimes = cloudObj.get(NoteModelKeys.faTimes.rawValue)?.arrayValue as? [Date] ?? []
         stTimes = cloudObj.get(NoteModelKeys.stTimes.rawValue)?.arrayValue as? [Date] ?? []
+        needReview = cloudObj.get(NoteModelKeys.needReview.rawValue)?.boolValue ?? true
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -108,6 +112,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         try cloudObj.set(NoteModelKeys.items.rawValue, value: items.lcArray)
         try cloudObj.set(NoteModelKeys.faTimes.rawValue, value: faTimes.lcArray)
         try cloudObj.set(NoteModelKeys.stTimes.rawValue, value: stTimes.lcArray)
+        try cloudObj.set(NoteModelKeys.needReview.rawValue, value: needReview.lcBool)
     }
     
 }
@@ -126,6 +131,7 @@ extension NoteModel {
         case items
         case faTimes
         case stTimes
+        case needReview
     }
     
 }

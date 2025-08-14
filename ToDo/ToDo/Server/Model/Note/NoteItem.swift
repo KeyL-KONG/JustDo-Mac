@@ -14,6 +14,7 @@ class NoteItem: BaseModel, Identifiable, Codable {
     var content: String = ""
     var faTimes: [Date] = []
     var stTimes: [Date] = []
+    var needReview: Bool = true
     
     var faScore: Int { faTimes.count }
     var stScore: Int { stTimes.count }
@@ -38,6 +39,7 @@ class NoteItem: BaseModel, Identifiable, Codable {
         title = try container.decode(String.self, forKey: .title)
         faTimes = try container.decode([Date].self, forKey: .faTimes)
         stTimes = try container.decode([Date].self, forKey: .stTimes)
+        needReview = try container.decode(Bool.self, forKey: .needReview)
     }
     
     init(content: String, title: String = "") {
@@ -52,6 +54,7 @@ class NoteItem: BaseModel, Identifiable, Codable {
         try container.encode(title, forKey: .title)
         try container.encode(faTimes, forKey: .faTimes)
         try container.encode(stTimes, forKey: .stTimes)
+        try container.encode(needReview, forKey: .needReview)
     }
     
     override class func modelClassName() -> String {
@@ -68,6 +71,7 @@ class NoteItem: BaseModel, Identifiable, Codable {
         title = cloudObj.get(NoteItemKeys.title.rawValue)?.stringValue ?? ""
         faTimes = cloudObj.get(NoteItemKeys.faTimes.rawValue)?.arrayValue as? [Date] ?? []
         stTimes = cloudObj.get(NoteItemKeys.stTimes.rawValue)?.arrayValue as? [Date] ?? []
+        needReview = cloudObj.get(NoteItemKeys.needReview.rawValue)?.boolValue ?? true
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -76,6 +80,7 @@ class NoteItem: BaseModel, Identifiable, Codable {
         try cloudObj.set(NoteItemKeys.title.rawValue, value: title.lcString)
         try cloudObj.set(NoteItemKeys.faTimes.rawValue, value: faTimes.lcArray)
         try cloudObj.set(NoteItemKeys.stTimes.rawValue, value: stTimes.lcArray)
+        try cloudObj.set(NoteItemKeys.needReview.rawValue, value: needReview.lcBool)
     }
     
 }
@@ -87,6 +92,7 @@ extension NoteItem {
         case title
         case faTimes
         case stTimes
+        case needReview
     }
     
 }

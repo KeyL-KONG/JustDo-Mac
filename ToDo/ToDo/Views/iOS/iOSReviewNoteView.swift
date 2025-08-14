@@ -31,7 +31,19 @@ struct iOSReviewNoteView: View {
                     .foregroundColor(.gray)
             } else {
                 
-                Text("Index: \(currentIndex) Score: \(noteItems[currentIndex].score)").font(.title2)
+                HStack {
+                    Text("Index: \(currentIndex) Score: \(noteItems[currentIndex].score)").font(.title2)
+                    
+                    Spacer()
+                    
+                    Button {
+                        self.removeItem()
+                    } label: {
+                        Image(systemName: "trash.circle.fill").font(.title)
+                    }
+
+                }.padding()
+                
                 
                 List {
                     
@@ -66,9 +78,9 @@ struct iOSReviewNoteView: View {
             }
         }
         .onAppear {
-            self.noteItems = modelData.noteItemList.filter { $0.title.count > 0 && $0.content.count > 0 && !$0.hasReview(date: .now) }.compactMap({ item in
+            self.noteItems = modelData.noteItemList.filter { $0.title.count > 0 && $0.content.count > 0 && !$0.hasReview(date: .now) && $0.needReview }.compactMap({ item in
                 return ReviewNoteItem(question: item.title, answer: item.content, score: item.score, id: item.id, createTime: (item.createTime ?? Date()))
-            }) + modelData.noteList.filter({ $0.title.count > 0 && $0.content.count > 0 && !$0.hasReview(date: .now)
+            }) + modelData.noteList.filter({ $0.title.count > 0 && $0.content.count > 0 && !$0.hasReview(date: .now) && $0.needReview
             }).compactMap({ item in
                 let desc = item.overview.count > 0 ? item.overview : item.title
                 return ReviewNoteItem(question: desc, answer: item.content, score: item.score, id: item.id, createTime: (item.createTime ?? Date()))
@@ -83,6 +95,33 @@ struct iOSReviewNoteView: View {
             self.isFlipped = false
         }
         
+    }
+    
+    private func removeItem() {
+        guard currentIndex >= 0  && currentIndex < noteItems.count else {
+            return
+        }
+        let removeItem = noteItem(with: noteItems[currentIndex])
+        if let noteItem = removeItem as? NoteItem {
+            noteItem.needReview = false
+            modelData.updateNoteItem(noteItem)
+        } else if let noteModel = removeItem as? NoteModel {
+            noteModel.needReview = false
+            modelData.updateNote(noteModel)
+        }
+        
+        noteItems.remove(at: currentIndex)
+    }
+    
+    func noteItem(with item: ReviewNoteItem) -> BaseModel? {
+        if let noteModel = modelData.noteList.first(where: {  $0.id == item.id
+        }) {
+            return noteModel
+        } else if let noteItem = modelData.noteItemList.first(where: { $0.id == item.id
+        }) {
+            return noteItem
+        }
+        return nil
     }
         
     private func updateScore(_ level: Int) {
