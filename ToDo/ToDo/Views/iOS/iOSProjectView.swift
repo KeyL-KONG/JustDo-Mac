@@ -62,10 +62,10 @@ struct iOSProjectView: View {
         }
         .sheet(isPresented: $showingSheet) {
             if let selectedItem = Self.selectedItem {
-                EditTaskView(showSheetView: $showingSheet, selectedItem: selectedItem, setPlanTime: true, setReward: false)
+                EditTaskView(showSheetView: $showingSheet, selectedItem: selectedItem, setPlanTime: true, setReward: false, setDeadlineTime: false)
                     .environmentObject(modelData)
             } else {
-                EditTaskView(showSheetView: $showingSheet, fatherItem: nil, setPlanTime: true, setReward: false, initProjectType: true)
+                EditTaskView(showSheetView: $showingSheet, fatherItem: nil, setPlanTime: true, setReward: false, setDeadlineTime: false, initProjectType: true)
                    .environmentObject(modelData)
             }
         }

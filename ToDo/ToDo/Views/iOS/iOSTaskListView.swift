@@ -56,10 +56,10 @@ struct iOSTaskListView: View {
             }
             .sheet(isPresented: $showingSheet) {
                 if let selectedItem = Self.selectedItem {
-                    EditTaskView(showSheetView: $showingSheet, selectedItem: selectedItem, setPlanTime: true, setReward: false)
+                    EditTaskView(showSheetView: $showingSheet, selectedItem: selectedItem, setPlanTime: true, setReward: false, setDeadlineTime: false)
                         .environmentObject(modelData)
                 } else {
-                    EditTaskView(showSheetView: $showingSheet, setPlanTime: (timeTab != .all), setReward: false, defaultSelectDate: selectDate)
+                    EditTaskView(showSheetView: $showingSheet, setPlanTime: (timeTab != .all), setReward: false, defaultSelectDate: selectDate, setDeadlineTime: false)
                        .environmentObject(modelData)
                 }
             }
@@ -139,6 +139,13 @@ extension iOSTaskListView {
                         } longPress: {
                             
                         }.environmentObject(modelData)
+                        .swipeActions {
+                            Button(action: {
+                                timerModel.startTimer(item: item)
+                            }, label: {
+                                Label("Start", systemImage: "Flag")
+                            }).tint(.blue)
+                        }.id(item.id)
                     }
                 } header: {
                     HStack {
@@ -157,6 +164,19 @@ extension iOSTaskListView {
                         } longPress: {
                             
                         }.environmentObject(modelData)
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                modelData.deleteItem(item)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+
+                            Button(action: {
+                                timerModel.startTimer(item: item)
+                            }, label: {
+                                Label("Start", systemImage: "Flag")
+                            }).tint(.blue)
+                        }.id(item.id)
                     }
                 } header: {
                     HStack {
@@ -206,8 +226,20 @@ extension iOSTaskListView {
         }
         
         self.eventItems = modelData.itemList.filter({ event in
-            guard let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate) else { return false }
-            return true
+            if event.actionType == .task {
+                if let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate), event.setPlanTime {
+                    return true
+                }
+            } else {
+                if let planTime = event.planTime?.startOfDay, let deadlineTime = event.deadlineTime?.endOfDay, event.setPlanTime, event.setDealineTime {
+                    if timeTab == .day {
+                        return planTime <= selectDate && selectDate <= deadlineTime
+                    } else {
+                        return deadlineTime.isSameTime(timeTab: timeTab, date: selectDate)
+                    }
+                }
+            }
+            return false
         })
         .sorted { (event1: EventItem, event2: EventItem) in
             if event1.isFinish != event2.isFinish {

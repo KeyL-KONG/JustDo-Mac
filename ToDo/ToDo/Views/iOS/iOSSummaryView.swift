@@ -94,7 +94,7 @@ struct iOSSummaryView: View {
         .sheet(isPresented: $showingEditItem) {
             if let item = modelData.itemList.first(where: { $0.id == self.selectItemID
             }) {
-                EditTaskView(showSheetView: $showingEditItem, selectedItem: item, setPlanTime: true, setReward: false)
+                EditTaskView(showSheetView: $showingEditItem, selectedItem: item, setPlanTime: true, setReward: false, setDeadlineTime: false)
                     .environmentObject(modelData)
             }
         }

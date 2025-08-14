@@ -110,7 +110,7 @@ struct iOSTaskTimelineView: View {
             }
         })
         .sheet(isPresented: $showingEditTaskView) {
-            EditTaskView(showSheetView: $showingEditTaskView, setPlanTime: true, setReward: false)
+            EditTaskView(showSheetView: $showingEditTaskView, setPlanTime: true, setReward: false, setDeadlineTime: false)
                .environmentObject(modelData)
         }
         .sheet(isPresented: $showingTimeIntervalView) {

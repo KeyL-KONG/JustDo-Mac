@@ -45,6 +45,9 @@ struct EditTaskView: View {
     @State var isFinish: Bool = false
     @State var defaultSelectDate: Date = .now
     
+    @State var setDeadlineTime: Bool
+    @State var deadlineTime: Date = .now
+    
     @State var finishStateList: [FinishState] = [.normal, .good, .bad]
     @State var finishState: FinishState = .normal
     @State var finishRating: Int = 3
@@ -222,6 +225,10 @@ struct EditTaskView: View {
             if setPlanTime {
                 selectedItem.planTime = planTime
             }
+            selectedItem.setDealineTime = setDeadlineTime
+            if setDeadlineTime {
+                selectedItem.deadlineTime = deadlineTime
+            }
             selectedItem.importance = importantTag
             selectedItem.finishState = finishState
             selectedItem.finishText = finishText
@@ -272,6 +279,10 @@ struct EditTaskView: View {
             if setPlanTime {
                 item.planTime = planTime
             }
+            item.setDealineTime = setDeadlineTime
+            if setDeadlineTime {
+                item.deadlineTime = deadlineTime
+            }
             item.isFinish = isFinish
             item.rewardId = rewardItem?.id ?? ""
             item.actionType = actionType
@@ -314,6 +325,12 @@ struct EditTaskView: View {
                 self.planTime = planTime
             } else {
                 planTime = .now
+            }
+            setDeadlineTime = selectedItem.setDealineTime
+            if let dealineTime = selectedItem.deadlineTime {
+                self.deadlineTime = dealineTime
+            } else {
+                self.deadlineTime = .now
             }
             isFinish = selectedItem.isFinish
             selectReward = modelData.rewardList.filter({ $0.id == selectedItem.rewardId }).first?.title ?? "无"
@@ -358,15 +375,6 @@ struct EditTaskView: View {
         } else {
             self.fixedWeekDays = Array(repeating: false, count: 7)
         }
-    }
-    
-}
-
-
-struct EditTaskView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        EditTaskView(showSheetView: .constant(true), setPlanTime: true, setReward: false, setFixedReward: false).environmentObject(ModelData())
     }
     
 }

@@ -75,6 +75,7 @@ struct ListItemRow: View {
             
             
             Spacer()
+            
             if let finishTime = item.finishTime, item.isFinish, showFinishTime {
                 Text(finishTime.simpleMonthAndDay).foregroundStyle(.gray).font(.system(size: 12))
             }
@@ -89,6 +90,12 @@ struct ListItemRow: View {
             } else if let planTime = item.planTime, item.importance == .high, !planTime.isToday {
                 let days = planTime.daysBetween(Date.now)
                 Text("截止\(days)天").foregroundStyle(.red).font(.system(size: 12))
+            }
+            
+            if item.actionType == .task {
+                tagView(title: "T", color: .blue)
+            } else {
+                tagView(title: "P", color: .green)
             }
             
         }

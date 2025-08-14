@@ -629,6 +629,12 @@ extension PlanView {
                 }
             }
             
+            if item.event.actionType == .task {
+                tagView(title: "任务", color: .blue)
+            } else {
+                tagView(title: "项目", color: .green)
+            }
+            
             if let tag = modelData.tagList.first(where: {  $0.id == item.event.tag }) {
                 tagView(title: tag.title, color: tag.titleColor)
             }
@@ -726,7 +732,7 @@ extension PlanView {
                         timeResult = event.planTime?.isInSameDay(as: currentDate) ?? false
                     } else if event.actionType == .project {
                         if let startTime = event.planTime?.startOfDay, let deadlineTime = event.deadlineTime?.endOfDay {
-                            timeResult = startTime >= currentDate && currentDate <= deadlineTime
+                            timeResult = startTime <= currentDate && currentDate <= deadlineTime
                         }
                     }
                     return timeResult || timeItems.filter { $0.eventId == event.id && $0.startTime.isSameTime(timeTab: timeTab, date: currentDate)}.count > 0

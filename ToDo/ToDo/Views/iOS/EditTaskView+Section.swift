@@ -272,10 +272,15 @@ extension EditTaskView {
                 }
             }
             
-            if eventType == .num {
-                Toggle(isOn: $isFinish) {
-                    Text("是否已完成")
+            Picker("选择类型", selection: $actionType) {
+                ForEach(actionList, id: \.self) { type in
+                    Text(type.title).tag(type)
                 }
+            }
+            
+            
+            Toggle(isOn: $isFinish) {
+                Text("是否已完成")
             }
             
             if isFinish {
@@ -296,6 +301,20 @@ extension EditTaskView {
                 }
             })
             
+            if actionType == .project {
+                HStack(content: {
+                    DatePicker(selection: $deadlineTime, displayedComponents: .date) {
+                        Text("截止时间")
+                    }
+                    
+                    Spacer()
+                    
+                    Toggle(isOn: $setDeadlineTime) {
+                        Text("")
+                    }
+                })
+            }
+            
         }
     }
     
@@ -313,11 +332,6 @@ extension EditTaskView {
         })) {
             if isDetailExpand {
                 
-                Picker("选择类型", selection: $actionType) {
-                    ForEach(actionList, id: \.self) { type in
-                        Text(type.title).tag(type)
-                    }
-                }
                 
                 if projectListTitle.count > 1 {
                     Picker("选择项目", selection: $selectProject) {
