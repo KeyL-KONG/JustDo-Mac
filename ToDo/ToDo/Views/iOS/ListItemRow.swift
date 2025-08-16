@@ -20,6 +20,7 @@ struct ListItemRow: View {
     @State var timeMode: TimeTab = .day
     @State var showDeadline: Bool = false
     @State var showFinishTime: Bool = false
+    @State var showEventType: Bool = false
     @State var selectDate: Date?
     var finishEvent: ((Bool) -> Void)?
     var clickEvent: () -> Void
@@ -37,8 +38,19 @@ struct ListItemRow: View {
                     Label("Toggle Finish", systemImage: "star.square")
                         .labelStyle(.iconOnly)
                 } else {
-                    Label("Toggle Finish", systemImage: item.isFinish ? "checkmark.square.fill" : "square")
-                        .labelStyle(.iconOnly)
+                    if item.actionType == .task {
+                        Label("Toggle Finish", systemImage: item.isFinish ? "checkmark.square.fill" : "square")
+                            .labelStyle(.iconOnly)
+                    } else {
+                        if item.isFinish {
+                            Label("Toggle Finish", systemImage: "checkmark.square.fill" )
+                                .labelStyle(.iconOnly)
+                        } else {
+                            Label("Toggle Finish", systemImage:"star.square.fill")
+                                .labelStyle(.iconOnly)
+                        }
+                    }
+                    
                 }
             }
             .onTapGesture {
@@ -59,7 +71,13 @@ struct ListItemRow: View {
                 clickEvent()
             }
             
-            if let tag, displayMode != .task {
+            Spacer()
+            
+            if let planTime = item.planTime, planTime.isToday, item.setDetailTime {
+                Text(planTime.simpleHourMinTimeStr).foregroundStyle(.green).font(.system(size: 12))
+            }
+            
+            if let tag {
                 tagView(title: tag.title, color: tag.titleColor)
             }
             
@@ -69,19 +87,17 @@ struct ListItemRow: View {
                 } else {
                     tagView(title: "待复盘", color: .red)
                 }
-            } else {
+            } else if item.importance == .high {
                 tagView(title: item.importance.description, color: item.importance.titleColor)
             }
             
             
-            Spacer()
-            
             if let finishTime = item.finishTime, item.isFinish, showFinishTime {
                 Text(finishTime.simpleMonthAndDay).foregroundStyle(.gray).font(.system(size: 12))
             }
-            if let planTime = item.planTime, !item.isPlay, showDeadline {
+            if let deadlineTime = item.displayDeadlineTime, !item.isPlay, showDeadline {
                 let time: Date = selectDate ?? .now
-                let days =  planTime.daysBetween(time)
+                let days =  deadlineTime.daysBetween(time)
                 let text = days < 0 ? "过期\(abs(days))天" : "截止\(days)天"
                 Text(text).foregroundStyle(.red).font(.system(size: 12))
             }
@@ -94,10 +110,12 @@ struct ListItemRow: View {
                 }
             }
             
-            if item.actionType == .task {
-                tagView(title: "T", color: .blue)
-            } else {
-                tagView(title: "P", color: .green)
+            if showEventType {
+                if item.actionType == .task {
+                    tagView(title: "T", color: .blue)
+                } else {
+                    tagView(title: "P", color: .green)
+                }
             }
             
         }
@@ -155,7 +173,7 @@ struct ListItemRow: View {
         Text(title)
             .foregroundColor(.white)
             .font(.system(size: 8))
-            .padding(EdgeInsets.init(top: 2, leading: 2, bottom: 2, trailing: 2))
+            .padding(EdgeInsets.init(top: 2, leading: 4, bottom: 2, trailing: 4))
             .background(color)
             .clipShape(Capsule())
     }

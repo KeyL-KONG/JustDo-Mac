@@ -29,6 +29,7 @@ struct EditTaskView: View {
     //@State var rewardValueType: RewardValueType = .num
     @State var rewardValue: String = ""
     @State var planTime = Date.now
+    @State var setDetailTime: Bool = false
     @State var finishTime = Date.now
     @FocusState var focusedField: FocusedField?
     
@@ -217,7 +218,7 @@ struct EditTaskView: View {
                 fatherItem.childrenIds.append(selectedItem.id)
                 modelData.updateItem(fatherItem)
             }
-            
+            selectedItem.setDetailTime = setDetailTime
             selectedItem.title = title
             selectedItem.tag = tag
             selectedItem.mark = mark
@@ -272,7 +273,7 @@ struct EditTaskView: View {
                 fatherItem.childrenIds.append(item.generateId)
                 modelData.updateItem(fatherItem)
             }
-            
+            item.setDetailTime = setDetailTime
             item.eventType = eventType
             item.intervals = intervals
             item.setPlanTime = setPlanTime
@@ -352,6 +353,7 @@ struct EditTaskView: View {
             setFixedEvent = selectedItem.isFixedEvent
             fixedStartTime = selectedItem.fixedStartTime ?? .now
             fixedEndTime = selectedItem.fixedEndTime ?? .now
+            setDetailTime = selectedItem.setDetailTime
         } else {
             selectedTag = modelData.tagList.first?.title ?? ""
             focusedField = .title

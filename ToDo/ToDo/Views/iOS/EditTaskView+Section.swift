@@ -290,9 +290,16 @@ extension EditTaskView {
             }
             
             HStack(content: {
-                DatePicker(selection: $planTime, displayedComponents: .date) {
-                    Text("计划时间")
+                if setDetailTime {
+                    DatePicker(selection: $planTime, displayedComponents: [.date, .hourAndMinute]) {
+                        Text("设置时间")
+                    }
+                } else {
+                    DatePicker(selection: $planTime, displayedComponents: .date) {
+                        Text("设置日期")
+                    }
                 }
+                
                 
                 Spacer()
                 
@@ -300,6 +307,10 @@ extension EditTaskView {
                     Text("")
                 }
             })
+            
+            Toggle(isOn: $setDetailTime) {
+                Text("是否设置具体时间")
+            }
             
             if actionType == .project {
                 HStack(content: {

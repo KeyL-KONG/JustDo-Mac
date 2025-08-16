@@ -21,6 +21,7 @@ struct iOSTaskListView: View {
     static var selectedItem: EventItem?
     
     @State var eventItems: [EventItem] = []
+    @State var projectItems: [EventItem] = []
     @State var unPlanItems: [EventItem] = []
     @State var reviewItems: [EventItem] = []
     @State var recentExpireItems: [EventItem] = []
@@ -97,12 +98,43 @@ extension iOSTaskListView {
                             }, label: {
                                 Label("Start", systemImage: "Flag")
                             }).tint(.blue)
-                        }.id(item.id)
+                        }.id(UUID().uuidString)
                 }
             } header: {
                 HStack {
                     Text("待办事项")
                     Spacer()
+                }
+            }
+            
+            if projectItems.count > 0 {
+                Section {
+                    ForEach(projectItems, id: \.self.id) { item in
+                        ListItemRow(item: item, showDeadline: true, selectDate: selectDate) {
+                            Self.selectedItem = item
+                            showingSheet.toggle()
+                        } longPress: {
+                            
+                        }.environmentObject(modelData)
+                            .swipeActions {
+                                Button(role: .destructive) {
+                                    modelData.deleteItem(item)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+
+                                Button(action: {
+                                    timerModel.startTimer(item: item)
+                                }, label: {
+                                    Label("Start", systemImage: "Flag")
+                                }).tint(.blue)
+                            }.id(UUID().uuidString)
+                    }
+                } header: {
+                    HStack {
+                        Text("待办项目")
+                        Spacer()
+                    }
                 }
             }
             
@@ -121,7 +153,7 @@ extension iOSTaskListView {
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
-                            }.id(item.id)
+                            }.id(UUID().uuidString)
                     }
                 } header: {
                     HStack {
@@ -146,7 +178,7 @@ extension iOSTaskListView {
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
-                            }.id(item.id)
+                            }.id(UUID().uuidString)
                     }
                 } header: {
                     HStack {
@@ -177,7 +209,7 @@ extension iOSTaskListView {
                             }, label: {
                                 Label("Start", systemImage: "Flag")
                             }).tint(.blue)
-                        }.id(item.id)
+                        }.id(UUID().uuidString)
                     }
                 } header: {
                     HStack {
@@ -202,7 +234,7 @@ extension iOSTaskListView {
                             }, label: {
                                 Label("Start", systemImage: "Flag")
                             }).tint(.blue)
-                        }.id(item.id)
+                        }.id(UUID().uuidString)
                     }
                 } header: {
                     HStack {
@@ -249,22 +281,14 @@ extension iOSTaskListView {
             self.reviewItems = []
             self.recentExpireItems = []
             self.willReachItems = []
+            self.projectItems = []
             return
         }
         
         self.eventItems = modelData.itemList.filter({ event in
-            if event.actionType == .task {
-                if let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate), event.setPlanTime {
-                    return true
-                }
-            } else {
-                if let planTime = event.planTime?.startOfDay, let deadlineTime = event.deadlineTime?.endOfDay, event.setPlanTime, event.setDealineTime {
-                    if timeTab == .day {
-                        return planTime <= selectDate && selectDate <= deadlineTime
-                    } else {
-                        return deadlineTime.isSameTime(timeTab: timeTab, date: selectDate)
-                    }
-                }
+            guard event.actionType == .task else { return false }
+            if let planTime = event.planTime, planTime.isSameTime(timeTab: timeTab, date: selectDate), event.setPlanTime {
+                return true
             }
             return false
         })
@@ -274,6 +298,32 @@ extension iOSTaskListView {
             } else if event1.importance != event2.importance {
                 return event1.importance.value > event2.importance.value
             } else {
+                return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
+            }
+        }
+        
+        self.projectItems = modelData.itemList.filter({ event in
+            guard event.actionType == .project else {
+                return false
+            }
+            guard let planTime = event.planTime?.startOfDay, let deadlineTime = event.deadlineTime?.endOfDay, event.setPlanTime, event.setDealineTime else {
+                return false
+            }
+            if let finishTime = event.finishTime, timeTab == .day && event.isFinish && finishTime.isInSameDay(as: selectDate) {
+                return false
+            }
+            return planTime <= selectDate && selectDate <= deadlineTime
+        }).sorted { (event1: EventItem, event2: EventItem) in
+            if event1.isFinish != event2.isFinish {
+                return event1.isFinish ? false : true
+            } else if event1.importance != event2.importance {
+                return event1.importance.value > event2.importance.value
+            } else if let time1 = event1.displayDeadlineTime, let time2 = event2.displayDeadlineTime {
+                let days1 = time1.daysBetween(selectDate)
+                let days2 = time2.daysBetween(selectDate)
+                return days1 < days2
+            }
+            else {
                 return event1.tagPriority(tags: modelData.tagList) > event2.tagPriority(tags: modelData.tagList)
             }
         }

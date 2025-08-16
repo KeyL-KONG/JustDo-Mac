@@ -23,6 +23,17 @@ import SwiftUI
 
 extension EventItem {
     
+    var displayDeadlineTime: Date? {
+        if let deadlineTime = self.deadlineTime, self.setDealineTime {
+            return deadlineTime
+        }
+        if let planTime = self.planTime, self.setPlanTime {
+            return planTime
+        }
+        return nil
+    }
+
+    
     var score: Int {
         switch eventType {
         case .num:

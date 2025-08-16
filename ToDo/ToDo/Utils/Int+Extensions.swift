@@ -49,3 +49,27 @@ extension Int {
     }
     
 }
+
+extension Date {
+    /// 计算与另一个日期的时间差并返回格式化字符串
+    /// - Parameter anotherDate: 要比较的另一个日期
+    /// - Returns: 格式化后的时间差字符串，例如 "2h 后" 或 "30min 后"
+    func timeDifferenceString(from anotherDate: Date) -> String {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute], from: self, to: anotherDate)
+        
+        // 计算总分钟差（绝对值）
+        let totalMinutes = abs((components.hour ?? 0) * 60 + (components.minute ?? 0))
+        
+        if totalMinutes >= 60 {
+            // 超过1小时，显示小时数
+            let hours = totalMinutes / 60
+            return "\(hours)h 后"
+        } else {
+            // 不足1小时，显示分钟数
+            // 如果分钟数为0，显示"即将"
+            return totalMinutes == 0 ? "即将" : "\(totalMinutes)min 后"
+        }
+    }
+    
+}

@@ -85,6 +85,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         }
     }
     
+    var setDetailTime: Bool = false
     var isPlay: Bool = false
     var playTime: Date? = nil
     var intervals: [LQDateInterval] = []
@@ -202,6 +203,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.projectStateId = try container.decodeIfPresent(String.self, forKey: .projectStateId) ?? ""
         self.setQuickProjectState = try container.decodeIfPresent(Bool.self, forKey: .setQuickProjectState) ?? false
         self.fixedWeekDays = try container.decodeIfPresent([Int].self, forKey: .fixedWeekDays) ?? []
+        self.setDetailTime = try container.decodeIfPresent(Bool.self, forKey: .setDetailTime) ?? false
     }
     
     func encode(to encoder: Encoder) throws {
@@ -269,6 +271,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try container.encode(projectStateId, forKey: .projectStateId)
         try container.encode(setQuickProjectState, forKey: .setQuickProjectState)
         try container.encode(fixedWeekDays, forKey: .fixedWeekDays)
+        try container.encode(setDetailTime, forKey: .setDetailTime)
     }
     
     init(id: String, title: String, mark: String, tag: String, isFinish: Bool, importance: ImportanceTag, finishState: FinishState = .normal, finishText: String = "", finishRating: Int = 3, difficultRating: Int = 3, difficultText: String = "", createTime: Date? = nil, planTime: Date? = nil, finishTime: Date? = nil, rewardType: RewardType = .none, rewardValue: Int = 0, fixedReward: Bool = false) {
@@ -390,6 +393,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
             }
             self.fixedWeekDays = weekDays
         }
+        setDetailTime = cloudObj.get(EventModelKeys.setDetailTime.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -465,6 +469,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         try cloudObj.set(EventModelKeys.projectStateId.rawValue, value: projectStateId.lcString)
         try cloudObj.set(EventModelKeys.setQuickProjectState.rawValue, value: setQuickProjectState.lcBool)
         try cloudObj.set(EventModelKeys.fixedWeekDays.rawValue, value: fixedWeekDays.lcArray)
+        try cloudObj.set(EventModelKeys.setDetailTime.rawValue, value: setDetailTime.lcBool)
     }
     
 }
@@ -540,6 +545,7 @@ extension EventModel {
         case projectStateId
         case setQuickProjectState
         case fixedWeekDays
+        case setDetailTime
     }
     
 }
