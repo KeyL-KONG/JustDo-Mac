@@ -19,6 +19,8 @@
 		091AA3642E505B3A00BB1519 /* iOSWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3632E505B3A00BB1519 /* iOSWebView.swift */; };
 		091AA3662E505EFF00BB1519 /* iOSReadEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3652E505EF900BB1519 /* iOSReadEditView.swift */; };
 		091AA3682E50DC3200BB1519 /* WebTitleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3672E50DC3200BB1519 /* WebTitleFetcher.swift */; };
+		091AA36B2E50E61D00BB1519 /* iOSDouYinWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA36A2E50E61500BB1519 /* iOSDouYinWebView.swift */; };
+		091AA36D2E50E89F00BB1519 /* iOSUniversialWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA36C2E50E89000BB1519 /* iOSUniversialWebView.swift */; };
 		092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545E82DD81E7600D324DB /* ProgressBar.swift */; };
 		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
 		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
@@ -149,6 +151,8 @@
 		091AA3632E505B3A00BB1519 /* iOSWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSWebView.swift; sourceTree = "<group>"; };
 		091AA3652E505EF900BB1519 /* iOSReadEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReadEditView.swift; sourceTree = "<group>"; };
 		091AA3672E50DC3200BB1519 /* WebTitleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebTitleFetcher.swift; sourceTree = "<group>"; };
+		091AA36A2E50E61500BB1519 /* iOSDouYinWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSDouYinWebView.swift; sourceTree = "<group>"; };
+		091AA36C2E50E89000BB1519 /* iOSUniversialWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSUniversialWebView.swift; sourceTree = "<group>"; };
 		092545E82DD81E7600D324DB /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
 		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
@@ -322,6 +326,15 @@
 			path = stylesheets;
 			sourceTree = "<group>";
 		};
+		091AA3692E50E60E00BB1519 /* Read */ = {
+			isa = PBXGroup;
+			children = (
+				091AA36C2E50E89000BB1519 /* iOSUniversialWebView.swift */,
+				091AA36A2E50E61500BB1519 /* iOSDouYinWebView.swift */,
+			);
+			path = Read;
+			sourceTree = "<group>";
+		};
 		092545EA2DD83F7300D324DB /* Plan */ = {
 			isa = PBXGroup;
 			children = (
@@ -351,6 +364,7 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				091AA3692E50E60E00BB1519 /* Read */,
 				091AA3652E505EF900BB1519 /* iOSReadEditView.swift */,
 				091AA3612E505ABE00BB1519 /* iOSReadItemDetailView.swift */,
 				091AA35F2E505A0100BB1519 /* iOSReadItemView.swift */,
@@ -842,6 +856,7 @@
 				093E79062D2385B4006E5120 /* ModelData+Summary.swift in Sources */,
 				09F80C102C665A5B00650366 /* Color+Extensions.swift in Sources */,
 				097AE2C82DC9011A0096059B /* EditTielineTaskView.swift in Sources */,
+				091AA36D2E50E89F00BB1519 /* iOSUniversialWebView.swift in Sources */,
 				2BA5B92B2E4A17F900E2E540 /* iOSReviewNoteView.swift in Sources */,
 				09F80C1A2C66F88C00650366 /* TodoItemListView.swift in Sources */,
 				0925461B2DE7663300D324DB /* TagListView.swift in Sources */,
@@ -857,6 +872,7 @@
 				093E79042D2385AD006E5120 /* SummaryTag.swift in Sources */,
 				09D714752DAB5AC1009DB18E /* PrincipleModel.swift in Sources */,
 				09804BA42E3661AF00A5095A /* iOSEditTimeIntervalView.swift in Sources */,
+				091AA36B2E50E61D00BB1519 /* iOSDouYinWebView.swift in Sources */,
 				097AE2CA2DC903CB0096059B /* CustomAlertView.swift in Sources */,
 				093E79122D297ADD006E5120 /* SummaryEditView.swift in Sources */,
 			);

@@ -14,19 +14,25 @@ struct iOSReadItemDetailView: View {
     @State var clickCallback: () -> ()
     @State var startTime: Date? = nil
     @State var tabBarVisible: Bool = false
+    @State var isLoading: Bool = false
     
     var body: some View {
         VStack {
             Spacer()
             if let item, let URL = URL(string: item.url) {
-                iOSWebView(url: URL) { note in
-                    if item.note.isEmpty {
-                        item.note = note
-                    } else {
-                        item.note += "\n\n- \(note)"
-                    }
-                    modelData.updateReadModel(item)
-                }
+                UniversalWebView(urlString: item.url, isLoading: $isLoading)
+//                if item.url.contains("douyin") {
+//                    DouyinWebView(url: URL, isLoading: $isLoading)
+//                } else {
+//                    iOSWebView(url: URL) { note in
+//                        if item.note.isEmpty {
+//                            item.note = note
+//                        } else {
+//                            item.note += "\n\n- \(note)"
+//                        }
+//                        modelData.updateReadModel(item)
+//                    }
+//                }
             }
             Spacer()
             

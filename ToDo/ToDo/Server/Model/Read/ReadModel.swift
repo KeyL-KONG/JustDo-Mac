@@ -34,7 +34,7 @@ class ReadModel: BaseModel, Identifiable {
     required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
         let container = try decoder.container(keyedBy: ReadModelKeys.self)
-        title = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
         url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
         note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
         tag = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
