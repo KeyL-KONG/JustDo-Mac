@@ -18,6 +18,7 @@ enum CacheDataType {
     case summaryItem
     case planItem
     case readItem
+    case readTag
     case personalTag
     case note
     case noteTag
@@ -53,6 +54,8 @@ enum CacheDataType {
             return "com.cache.notetag"
         case .noteItem:
             return "com.cache.noteitem"
+        case .readTag:
+            return "com.cache.readtag"
         }
     }
     
@@ -86,6 +89,8 @@ enum CacheDataType {
             return TagModel.self
         case .noteItem:
             return NoteItem.self
+        case .readTag:
+            return ReadTag.self
         }
     }
 }

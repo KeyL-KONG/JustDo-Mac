@@ -60,6 +60,21 @@ extension ModelData {
         }
     }
     
+    func updateReadTag(_ model: ReadTag) {
+        if let index = readTagList.firstIndex(where: { $0.id == model.id
+        }) {
+            readTagList[index] = model
+        } else {
+            readTagList.append(model)
+        }
+        
+        DataManager.shared.save(with: ReadTag.modelClassName(), models: [model]) { error in
+            if let error {
+                print(error)
+            }
+        }
+    }
+    
     func updateReadModel(_ model: ReadModel) {
         if let index = readList.firstIndex(where: { $0.id == model.id
         }) {

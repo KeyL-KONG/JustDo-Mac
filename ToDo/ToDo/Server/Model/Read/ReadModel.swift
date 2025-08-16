@@ -65,6 +65,7 @@ class ReadModel: BaseModel, Identifiable {
             }
             try container.encode(dates, forKey: .intervals)
         }
+        try container.encode(rate, forKey: .rate)
         try container.encode(finishTimes, forKey: .finishTimes)
         try container.encode(tags, forKey: .tags)
     }

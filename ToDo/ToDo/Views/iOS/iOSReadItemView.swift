@@ -13,6 +13,7 @@ struct iOSReadItemView: View {
     
     var item: ReadModel
     @State var showBottomView: Bool = false
+    @State var tags: [String] = []
     
     var title: String {
         if item.title.count == 0 {
@@ -29,8 +30,12 @@ struct iOSReadItemView: View {
                 .truncationMode(.tail)
             if showBottomView {
                 HStack {
-                    if item.tag.count > 0 {
-                        tagView(title: item.tag, color: .blue)
+                    if tags.count > 0 {
+                        HStack {
+                            ForEach(tags, id: \.self) { tag in
+                                tagView(title: tag, color: .blue)
+                            }
+                        }
                     }
                     
                     if item.rate > 0 {
@@ -62,6 +67,8 @@ struct iOSReadItemView: View {
         })
         .onAppear {
             showBottomView = item.tag.count > 0 || item.readTimes > 0 || item.rate > 0
+            tags = item.tags.compactMap { tag in modelData.readTagList.first {  $0.id == tag
+            }?.type }
         }
     }
     

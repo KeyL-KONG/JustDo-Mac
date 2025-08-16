@@ -14,6 +14,7 @@ struct iOSReadEditView: View {
         case url
         case title
         case content
+        case tag
     }
     
     @EnvironmentObject var modelData: ModelData
@@ -31,6 +32,9 @@ struct iOSReadEditView: View {
     @State var intervals: [LQDateInterval] = []
     @State var isTimeExpand: Bool = false
     @State var rating: Double = 0.0
+    @State var tags: [String] = []
+    @State var selectTags: [String] = []
+    @State var tagText: String = ""
     
     var body: some View {
         
@@ -64,28 +68,41 @@ struct iOSReadEditView: View {
                                 fetchTitle(url: urlText)
                             }
                         }
+                        
+                        RatingView(maxRating: 5, rating: $rating).previewLayout(.sizeThatFits)
                     }
                     
                     Section {
-                        RatingView(maxRating: 5, rating: $rating).previewLayout(.sizeThatFits)
                         
-//                        Picker("标签", selection: $readTag) {
-//                            ForEach(modelData.tagList, id: \.self.type) { type in
-//                                Text(type.type).tag(type)
-//                            }
-//                        }.onChange(of: readTag) { newValue in
-//                            if newValue == ReadTag.createTag.type {
-//                                presentAlert = true
-//                            }
-//                        }.alert("添加标签", isPresented: $presentAlert) {
-//                            TextField("标签类型", text: $newReadTag)
-//                            Button("取消") {
-//                                
-//                            }
-//                            Button("确认") {
-//                               
-//                            }
-//                        }
+                        ZStack {
+                            TextField("标签", text: $tagText, axis: .vertical)
+                                .focused($focusedField, equals: .tag)
+                                .onChange(of: tagText) { oldValue, newValue in
+                                    if tags.contains(where: { $0 == newValue }), !selectTags.contains(newValue) {
+                                        selectTags.append(newValue)
+                                    }
+                                }
+                        }.overlay(alignment: .bottomTrailing) {
+                            if tagText.count > 0 && !tags.contains(tagText) {
+                                Spacer()
+                                Button {
+                                    addReadTag(tag: tagText)
+                                    tagText = ""
+                                } label: {
+                                    Text("添加").foregroundStyle(.blue)
+                                }
+
+                            }
+                        }
+                        
+                        MultiSelectTagListView(tags: tags, selectedTags: $selectTags)
+                            .padding(.init(top: -15, leading: -20, bottom: -15, trailing: -20))
+                        
+                        
+                        
+                    }
+                    
+                    Section {
                         
                         TextField("备注", text: $contentText, axis: .vertical)
                             .focused($focusedField, equals: .content)
@@ -107,6 +124,9 @@ struct iOSReadEditView: View {
                 intervals = readItem.intervals.sorted(by: { $0.start.timeIntervalSince1970 >= $1.start.timeIntervalSince1970 })
                 isTimeExpand = readItem.intervals.count > 0
                 rating = readItem.rate
+                self.selectTags = modelData.readTagList.filter({ tag in
+                    readItem.tags.contains(tag.id)
+                }).compactMap { $0.type }
             } else {
                 if iOSReadListView.pastedURL.count > 0 {
                     urlText = iOSReadListView.pastedURL
@@ -118,6 +138,8 @@ struct iOSReadEditView: View {
                 }
                 readTag = ReadTag.createTag.type
             }
+            self.tags = modelData.readTagList.compactMap { $0.type }
+            
         }
         .onDisappear {
             if let _ = readItem {
@@ -125,6 +147,16 @@ struct iOSReadEditView: View {
             }
         }
         
+    }
+    
+    func addReadTag(tag: String) {
+        self.selectTags.append(tag)
+        if modelData.readTagList.contains(where: { $0.type == tag }) {
+            return
+        }
+        let model = ReadTag()
+        model.type = tag
+        modelData.updateReadTag(model)
     }
     
     private func saveReadItem() {
@@ -137,6 +169,9 @@ struct iOSReadEditView: View {
         }
         readItem.rate = rating
         readItem.intervals = intervals
+        readItem.tags = selectTags.compactMap { title in
+            modelData.readTagList.first { $0.type == title }?.id
+        }
         modelData.updateReadModel(readItem)
     }
     

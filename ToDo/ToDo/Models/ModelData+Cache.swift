@@ -20,6 +20,7 @@ extension ModelData {
         var cacheSummaryTags: [SummaryTag] = []
         var cacheSummaryItems: [SummaryItem] = []
         var cachePlanItems: [PlanTimeItem] = []
+        var cacheReadTags: [ReadTag] = []
         var cacheReadItems: [ReadModel] = []
         var cachePersonalTags: [PersonalTag] = [] // 新增
         
@@ -71,6 +72,12 @@ extension ModelData {
             group.leave()
         }
         
+        group.enter()
+        cache.asyncLoadCache(type: .readTag) { items in
+            cacheReadTags = items as? [ReadTag] ?? []
+            group.leave()
+        }
+        
         // 新增 PersonalTag 缓存加载
         group.enter()
         cache.asyncLoadCache(type: .personalTag) { tags in
@@ -114,6 +121,7 @@ extension ModelData {
             self.noteList = cacheNoteItems
             self.noteTagList = cacheNoteTags
             self.noteItemList = cacheNoteItemList
+            self.readTagList = cacheReadTags
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
             print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count), noteitems: \(cacheNoteItemList.count), readItems: \(cacheReadItems.count) duration: \(Int(duration * 1000))ms")
             self.updateDataIndex += 1
@@ -142,6 +150,7 @@ extension ModelData {
         var serverNoteItems: [NoteModel] = []
         var serverNoteTags: [TagModel] = []
         var serverNoteItemList: [NoteItem] = []
+        var serverReadTags: [ReadTag] = []
         var isFailRequest = false
         
         group.enter()
@@ -297,6 +306,21 @@ extension ModelData {
             }
         }
         
+        func loadReadTags() {
+            group.enter()
+            DataManager.shared.query(type: ReadTag.self) { items, error in
+                if let error {
+                    print("cloud load all server read items error: \(error)")
+                    isFailRequest = true
+                } else {
+                    serverReadTags = items ?? []
+                    print("cloud load all server read items: \(serverReadTags.count)")
+                }
+                loadNoteTagss()
+                group.leave()
+            }
+        }
+        
         func loadReadItems() {
             group.enter()
             DataManager.shared.query(type: ReadModel.self) { items, error in
@@ -307,7 +331,7 @@ extension ModelData {
                     serverReadItems = items ?? []
                     print("cloud load all server read items: \(serverReadItems.count)")
                 }
-                loadNoteTagss()
+                loadReadTags()
                 group.leave()
             }
         }
@@ -334,10 +358,11 @@ extension ModelData {
             self.noteList = serverNoteItems
             self.noteTagList = serverNoteTags
             self.noteItemList = serverNoteItemList
+            self.readTagList = serverReadTags
             self.updateDataIndex += 1
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
             print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), noteTags:\(serverNoteTags.count), noteItems: \(serverNoteItems.count), notesubitems: \(serverNoteItemList.count), duration: \(Int(duration * 1000))ms")
-            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags, noteTags: serverNoteTags, noteItems: serverNoteItems, noteItemList: serverNoteItemList) // 新增参数
+            self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags, noteTags: serverNoteTags, noteItems: serverNoteItems, noteItemList: serverNoteItemList, readTags: serverReadTags) // 新增参数
         }
     }
     
@@ -346,7 +371,7 @@ extension ModelData {
                    events: [EventItem], principles: [PrincipleModel],
                    summaryTags: [SummaryTag], summaryItems: [SummaryItem],
                    planItems: [PlanTimeItem], readItems: [ReadModel],
-                         personalTags: [PersonalTag], noteTags: [TagModel], noteItems: [NoteModel], noteItemList: [NoteItem]) { // 新增参数
+                         personalTags: [PersonalTag], noteTags: [TagModel], noteItems: [NoteModel], noteItemList: [NoteItem], readTags: [ReadTag]) { // 新增参数
     
         cache.asyncStoreCache(type: .tag, items: tags)
         cache.asyncStoreCache(type: .timeItem, items: times)
@@ -360,6 +385,7 @@ extension ModelData {
         cache.asyncStoreCache(type: .noteTag, items: noteTags)
         cache.asyncStoreCache(type: .noteItem, items: noteItemList)
         cache.asyncStoreCache(type: .readItem, items: readItems)
+        cache.asyncStoreCache(type: .readTag, items: readTags)
     }
     
     func asyncUpdateCache(type: CacheDataType) {
@@ -386,6 +412,8 @@ extension ModelData {
             cache.storeCache(type: .noteItem, items: self.noteItemList)
         case .readItem:
             cache.storeCache(type: .readItem, items: self.readList)
+        case .readTag:
+            cache.storeCache(type: .readTag, items: self.readTagList)
         default:
             break
         }
