@@ -48,7 +48,7 @@ enum PersonalTagNumType {
     case excellent
 }
 
-class PersonalTag: BaseModel, Identifiable, Codable {
+class PersonalTag: BaseModel, Identifiable {
     var tag: String = ""
     var goodEvents: [String: Int] = [:]
     var badEvents: [String: Int] = [:]
@@ -83,7 +83,7 @@ class PersonalTag: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: PersonalTagKeys.self)
         tag = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
         goodEvents = try container.decodeIfPresent([String: Int].self, forKey: .goodEvents) ?? [:]
@@ -92,7 +92,8 @@ class PersonalTag: BaseModel, Identifiable, Codable {
         badColorHex = try container.decodeIfPresent(String.self, forKey: .badColorHex) ?? "#F44336"
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: PersonalTagKeys.self)
         try container.encode(tag, forKey: .tag)
         try container.encode(goodEvents, forKey: .goodEvents)

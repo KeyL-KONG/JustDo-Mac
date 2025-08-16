@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class BaseModel: NSObject {
+class BaseModel: NSObject, Codable {
     var id:String = ""
     var createTime:Date?
     var updateAt:Date?
@@ -19,11 +19,34 @@ class BaseModel: NSObject {
     class func modelClassName() -> String {
         return "BaseModel"
     }
+    
+    required init(from decoder: Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: BaseModelKeys.self)
+        self.createTime = try container.decodeIfPresent(Date.self, forKey: .createTime)
+        self.updateAt = try container.decodeIfPresent(Date.self, forKey: .updateAt)
+        self.id = try container.decodeIfPresent(String.self, forKey: .id) ?? ""
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: BaseModelKeys.self)
+        try container.encode(self.id, forKey: .id)
+        if let createTime {
+            try container.encode(createTime, forKey: .createTime)
+        }
+        if let updateAt {
+            try container.encode(updateAt, forKey: .updateAt)
+        }
+    }
+    
 }
 
 extension BaseModel: CloudProtocol {
-    enum BaseModelKeys: String {
+    enum BaseModelKeys: String, CodingKey {
         case user = "user"
+        case id
+        case createTime
+        case updateAt
     }
     
     #if os(macOS)

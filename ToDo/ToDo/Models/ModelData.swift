@@ -37,6 +37,7 @@ class ModelData: ObservableObject {
     
     @Published var readList: [ReadModel] = [] {
         didSet {
+            print("readlist change: \(readList.count)")
             updateReadItemIndex += 1
         }
     }
@@ -73,6 +74,7 @@ class ModelData: ObservableObject {
     @Published var personalTagList: [PersonalTag] = []
     
     @Published var toggleToRefresh: Bool = false
+    @Published var updateDataIndex: Int = 0
     
     @Published var updateNoteId: String = ""
     @Published var updateEventId: String = ""

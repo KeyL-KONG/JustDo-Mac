@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class ReadModel: BaseModel, Identifiable, Codable {
+class ReadModel: BaseModel, Identifiable {
     
     var title: String = ""
     var url: String = ""
@@ -32,7 +32,7 @@ class ReadModel: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: ReadModelKeys.self)
         title = try container.decodeIfPresent(String.self, forKey: .tag) ?? ""
         url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
@@ -51,7 +51,8 @@ class ReadModel: BaseModel, Identifiable, Codable {
         tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: ReadModelKeys.self)
         try container.encode(tag, forKey: .tag)
         try container.encode(title, forKey: .title)

@@ -87,7 +87,7 @@ protocol BasicTaskProtocol: Identifiable {
     func score(with tabType: RewardTabType) -> Int
 }
 
-class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
+class RewardModel: BaseModel, Identifiable {
     
     var generateId: String = ""
     var title: String = ""
@@ -114,12 +114,8 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
     
     var setPlanTime: Bool = false
     
-    required init() {
-        
-    }
-    
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: RewardModelKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.createTime = try container.decode(Date.self, forKey: .createTime)
@@ -161,7 +157,8 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         self.isArchive = try container.decode(Bool.self, forKey: .isArchive)
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: RewardModelKeys.self)
         try container.encode(self.id, forKey: .id)
         try container.encode(self.createTime, forKey: .createTime)
@@ -201,6 +198,10 @@ class RewardModel: BaseModel, Decodable, Encodable, Identifiable {
         self.rewardValue = rewardValue
         self.rewardCount = rewardCount
         self.intervals = intervals
+    }
+    
+    required init() {
+        super.init()
     }
     
     

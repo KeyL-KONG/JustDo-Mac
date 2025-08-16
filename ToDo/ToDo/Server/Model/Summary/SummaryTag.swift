@@ -8,14 +8,11 @@
 import SwiftUI
 import LeanCloud
 
-class SummaryTag: BaseModel, Identifiable, Encodable, Decodable {
+class SummaryTag: BaseModel, Identifiable {
     var generateId: String = ""
     var content: String = ""
     var hexColor: String = ""
-    
-    required init() {
-        
-    }
+
     
     override class func modelClassName() -> String {
         return "SummaryTag"
@@ -26,14 +23,24 @@ class SummaryTag: BaseModel, Identifiable, Encodable, Decodable {
     }
     
     required init(from decoder: any Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: SummaryTagKeys.self)
         self.generateId = try container.decodeIfPresent(String.self, forKey: .generateId) ?? ""
         self.content = try container.decodeIfPresent(String.self, forKey: .content) ?? ""
         self.hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor) ?? ""
     }
     
-    func encode(to encoder: any Encoder) throws {
+    init(content: String = "") {
+        super.init()
+        self.content = content
+    }
+    
+    required init() {
+        super.init()
+    }
+    
+    override func encode(to encoder: any Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: SummaryTagKeys.self)
         try container.encode(self.generateId, forKey: .generateId)
         try container.encode(self.content, forKey: .content)

@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class NoteItem: BaseModel, Identifiable, Codable {
+class NoteItem: BaseModel, Identifiable {
     
     var title: String = ""
     var content: String = ""
@@ -33,7 +33,7 @@ class NoteItem: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy:  NoteItemKeys.self)
         content = try container.decode(String.self, forKey: .content)
         title = try container.decode(String.self, forKey: .title)
@@ -48,7 +48,8 @@ class NoteItem: BaseModel, Identifiable, Codable {
         self.title = title
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: NoteItemKeys.self)
         try container.encode(content, forKey: .content)
         try container.encode(title, forKey: .title)

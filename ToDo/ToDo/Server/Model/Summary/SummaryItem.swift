@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
+class SummaryItem: BaseModel, Identifiable {
     var generateId: String = ""
     var summaryId: String = ""
     var content: String = ""
@@ -41,15 +41,13 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     // 修改初始化方法
     init(generateId: String, summaryId: String, content: String, improve: String, 
          time: String = "", summaryDate: Date? = nil) {
+        super.init()
         self.generateId = generateId
         self.summaryId = summaryId
         self.content = content
         self.improve = improve
         self.time = time
         self.summaryDate = summaryDate
-    }
-    
-    required init() {
     }
     
     override class func modelClassName() -> String {
@@ -61,7 +59,7 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
     }
     
     required init(from decoder: any Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: SummaryItemKeys.self)
         self.generateId = try container.decodeIfPresent(String.self, forKey: .generateId) ?? ""
         self.content = try container.decodeIfPresent(String.self, forKey: .content) ?? ""
@@ -73,7 +71,12 @@ class SummaryItem: BaseModel, Identifiable, Decodable, Encodable {
         self.associateIds = try container.decodeIfPresent([String].self, forKey: .associateIds) ?? []
     }
     
-    func encode(to encoder: any Encoder) throws {
+    required init() {
+        super.init()
+    }
+    
+    override func encode(to encoder: any Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: SummaryItemKeys.self)
         try container.encode(self.generateId, forKey: .generateId)
         try container.encode(self.content, forKey: .content)
@@ -231,6 +234,7 @@ class SummaryModel: BaseModel, Identifiable {
     var effectText: String = ""
     
     init(generateId: String, taskId: String, taskType: SummaryTaskType, items: [String], summaryDate: Date = .now) {
+        super.init()
         self.generateId = generateId
         self.taskId = taskId
         self.taskType = taskType
@@ -239,6 +243,11 @@ class SummaryModel: BaseModel, Identifiable {
     }
     
     required init() {
+        super.init()
+    }
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
     }
     
     override func fillModel(with cloudObj: LCObject) {

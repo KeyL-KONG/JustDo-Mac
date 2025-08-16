@@ -22,7 +22,7 @@ enum WishValueType: Int {
     }
 }
 
-class WishModel: BaseModel, Identifiable, Decodable, Encodable {
+class WishModel: BaseModel, Identifiable {
     
     var title: String = ""
     var score: Int = 0
@@ -30,12 +30,8 @@ class WishModel: BaseModel, Identifiable, Decodable, Encodable {
     var mark: String = ""
     var isFinish: Bool = false
     
-    required init() {
-        
-    }
-    
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: WishModelKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.createTime = try container.decode(Date.self, forKey: .createTime)
@@ -47,7 +43,12 @@ class WishModel: BaseModel, Identifiable, Decodable, Encodable {
         self.isFinish = try container.decode(Bool.self, forKey: .isFinish)
     }
     
-    func encode(to encoder: Encoder) throws {
+    required init() {
+        super.init()
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: WishModelKeys.self)
         try container.encode(self.id, forKey: .id)
         try container.encode(self.createTime, forKey: .createTime)

@@ -115,7 +115,8 @@ extension ModelData {
             self.noteTagList = cacheNoteTags
             self.noteItemList = cacheNoteItemList
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
-            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count), noteitems: \(cacheNoteItemList.count) duration: \(Int(duration * 1000))ms")
+            print("load all cache tag: \(cacheTags.count), events: \(cacheEventItems.count), times: \(cacheTimeItems.count), principles: \(cachePrincipleItems.count), summaryItems: \(cacheSummaryItems.count), planItems: \(cachePlanItems.count), notes: \(cacheNoteItems.count), noteitems: \(cacheNoteItemList.count), readItems: \(cacheReadItems.count) duration: \(Int(duration * 1000))ms")
+            self.updateDataIndex += 1
         }
         
     }
@@ -333,6 +334,7 @@ extension ModelData {
             self.noteList = serverNoteItems
             self.noteTagList = serverNoteTags
             self.noteItemList = serverNoteItemList
+            self.updateDataIndex += 1
             let duration = Date().timeIntervalSince1970 - startTime.timeIntervalSince1970
             print("cloud load all server tag: \(serverTags.count), events: \(serverTimeItems.count), times: \(serverTimeItems.count), principles: \(serverPrincipleItems.count), summary: \(serverSummaryItems.count), plan items: \(serverPlanItems.count), noteTags:\(serverNoteTags.count), noteItems: \(serverNoteItems.count), notesubitems: \(serverNoteItemList.count), duration: \(Int(duration * 1000))ms")
             self.asyncStoreCache(tags: serverTags, times: serverTimeItems, events: serverEventItems, principles: serverPrincipleItems, summaryTags: serverSummaryTags, summaryItems: serverSummaryItems, planItems: serverPlanItems, readItems: serverReadItems, personalTags: serverPersonalTags, noteTags: serverNoteTags, noteItems: serverNoteItems, noteItemList: serverNoteItemList) // 新增参数
@@ -357,6 +359,7 @@ extension ModelData {
         cache.asyncStoreCache(type: .note, items: noteItems)
         cache.asyncStoreCache(type: .noteTag, items: noteTags)
         cache.asyncStoreCache(type: .noteItem, items: noteItemList)
+        cache.asyncStoreCache(type: .readItem, items: readItems)
     }
     
     func asyncUpdateCache(type: CacheDataType) {
@@ -381,6 +384,8 @@ extension ModelData {
             cache.storeCache(type: .noteTag, items: self.noteTagList)
         case .noteItem:
             cache.storeCache(type: .noteItem, items: self.noteItemList)
+        case .readItem:
+            cache.storeCache(type: .readItem, items: self.readList)
         default:
             break
         }

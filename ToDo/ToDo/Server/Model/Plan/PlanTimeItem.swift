@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class PlanTimeItem: BaseModel, Identifiable, Codable {
+class PlanTimeItem: BaseModel, Identifiable {
     var startTime: Date = .now
     var endTime: Date = .now
     var content: String = ""
@@ -45,7 +45,7 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: CodingKeys.self)
         startTime = try container.decode(Date.self, forKey: .startTime)
         endTime = try container.decode(Date.self, forKey: .endTime)
@@ -64,7 +64,8 @@ class PlanTimeItem: BaseModel, Identifiable, Codable {
         self.content = content
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(startTime, forKey: .startTime)
         try container.encode(endTime, forKey: .endTime)

@@ -9,6 +9,13 @@ import SwiftUI
 
 extension Date {
     
+    var dateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd EEEE"
+        formatter.locale = Locale(identifier: "zh_CN")
+        return formatter.string(from: self)
+    }
+    
     func isSameTime(timeTab: TimeTab, date: Date) -> Bool {
         switch timeTab {
         case .day:

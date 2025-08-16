@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class NoteModel: BaseModel, Identifiable, Codable {
+class NoteModel: BaseModel, Identifiable {
     
     var convertId: String  = ""
     var title: String = ""
@@ -40,7 +40,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: NoteModelKeys.self)
         title = try container.decode(String.self, forKey: .title)
         tags = try container.decode([String].self, forKey: .tags)
@@ -60,7 +60,8 @@ class NoteModel: BaseModel, Identifiable, Codable {
         self.content = content
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: NoteModelKeys.self)
         try container.encode(tags, forKey: .tags)
         try container.encode(title, forKey: .title)
@@ -97,7 +98,7 @@ class NoteModel: BaseModel, Identifiable, Codable {
         items = cloudObj.get(NoteModelKeys.items.rawValue)?.arrayValue as? [String] ?? []
         faTimes = cloudObj.get(NoteModelKeys.faTimes.rawValue)?.arrayValue as? [Date] ?? []
         stTimes = cloudObj.get(NoteModelKeys.stTimes.rawValue)?.arrayValue as? [Date] ?? []
-        needReview = cloudObj.get(NoteModelKeys.needReview.rawValue)?.boolValue ?? true
+        needReview = cloudObj.get(NoteModelKeys.needReview.rawValue)?.boolValue ?? false
     }
     
     override func convert(to cloudObj: LCObject) throws {

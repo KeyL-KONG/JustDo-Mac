@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class ReadTag: BaseModel, Identifiable, Codable {
+class ReadTag: BaseModel, Identifiable {
     
     public static let createTag = ReadTag(type: "创建")
     
@@ -16,12 +16,9 @@ class ReadTag: BaseModel, Identifiable, Codable {
     
     init(type: String) {
         self.type = type
+        super.init()
     }
-    
-    required init() {
         
-    }
-    
     override class func modelClassName() -> String {
         return "ReadTag"
     }
@@ -31,12 +28,17 @@ class ReadTag: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: ReadTagKeys.self)
         type = try container.decodeIfPresent(String.self, forKey: .type) ?? ""
     }
     
-    func encode(to encoder: Encoder) throws {
+    required init() {
+        super.init()
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: ReadTagKeys.self)
         try container.encode(type, forKey: .type)
     }

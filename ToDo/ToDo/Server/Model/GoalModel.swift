@@ -14,14 +14,19 @@ class GoalModel: BaseModel, Identifiable {
     var tag: String = "work"
     var deadline: Date?
     var mark: String = ""
-    
-    required init() {
-        
-    }
+
     
     init(title: String) {
         self.title = title
         super.init()
+    }
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    required init() {
+        fatalError("init() has not been implemented")
     }
     
     override class func modelClassName() -> String {

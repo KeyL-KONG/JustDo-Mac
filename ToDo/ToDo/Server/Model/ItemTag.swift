@@ -9,7 +9,7 @@ import Foundation
 import LeanCloud
 import SwiftUI
 
-class ItemTag: BaseModel, Decodable, Encodable, Identifiable {
+class ItemTag: BaseModel, Identifiable {
     
     public static let work = ItemTag(title: "work", hexColor: "#3498DB")
     public static let learn = ItemTag(title: "learn", hexColor: "#2ECC71")
@@ -29,12 +29,8 @@ class ItemTag: BaseModel, Decodable, Encodable, Identifiable {
         self.hexColor = hexColor
     }
     
-    required init() {
-        
-    }
-    
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: ItemTagKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.createTime = try container.decode(Date.self, forKey: .createTime)
@@ -46,7 +42,12 @@ class ItemTag: BaseModel, Decodable, Encodable, Identifiable {
         self.priority = try container.decode(Int.self, forKey: .priority)
     }
     
-    func encode(to encoder: Encoder) throws {
+    required init() {
+        super.init()
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: ItemTagKeys.self)
         try container.encode(self.id, forKey: .id)
         try container.encode(self.createTime, forKey: .createTime)

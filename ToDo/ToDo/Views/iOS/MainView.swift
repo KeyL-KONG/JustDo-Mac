@@ -21,11 +21,12 @@ struct MainView: View {
         case principle
         case timeline
         case reviewNote
+        case read
     }
     
     @EnvironmentObject var modelData: ModelData
     @ObservedObject var timerModel: TimerModel
-    @State private var selection: Tab = .task
+    @State private var selection: Tab = .read
     @State var selectDate: Date = .now
     
     @State var showTimelineView: Bool = false
@@ -49,6 +50,13 @@ struct MainView: View {
                 .tag(Tab.summary)
                 .tabItem {
                     Label("统计", systemImage: "tray.full.fill")
+                }
+            NavigationView {
+                iOSReadView()
+            }
+                .tag(Tab.read)
+                .tabItem {
+                    Label("阅读", systemImage: "bookmark")
                 }
             
 //            iOSTaskTimelineView()

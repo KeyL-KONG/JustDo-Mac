@@ -8,7 +8,7 @@
 import Foundation
 import LeanCloud
 
-class PrincipleModel: BaseModel, Identifiable, Codable {
+class PrincipleModel: BaseModel, Identifiable {
     var tag: String = ""
     var content: String = ""
     var taskIds: [String] = []
@@ -24,7 +24,7 @@ class PrincipleModel: BaseModel, Identifiable, Codable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tag = try container.decode(String.self, forKey: .tag)
         taskIds = try container.decode([String].self, forKey: .taskIds)
@@ -36,7 +36,8 @@ class PrincipleModel: BaseModel, Identifiable, Codable {
         self.content = content
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(tag, forKey: .tag)
         try container.encode(taskIds, forKey: .taskIds)

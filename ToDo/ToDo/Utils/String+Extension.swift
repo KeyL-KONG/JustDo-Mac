@@ -52,6 +52,15 @@ extension String {
         let cutoffIndex = includingSubstring ? range.upperBound : range.lowerBound
         return String(self[..<cutoffIndex])
     }
+    
+    func truncated(limit: Int) -> String {
+        if self.count > limit {
+            let index = index(self.startIndex, offsetBy: limit, limitedBy: self.endIndex) ?? self.endIndex
+            return String(self[..<index]) + "..."
+        } else {
+            return self
+        }
+    }
 }
 
 
@@ -119,4 +128,23 @@ extension String {
         guard count > length else { return self }
         return substring(to: max(0, length - suffix.count)) + suffix
     }
+}
+
+extension String {
+    
+    var extractURL: String? {
+        let pattern = "(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)"
+        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        let range = NSRange(location: 0, length: self.utf16.count)
+        if let match = regex?.firstMatch(in: self, options: [], range: range), let urlRange = Range(match.range, in: self) {
+            let url = String(self[urlRange])
+            if url.hasPrefix("http://") {
+                return url.replacingOccurrences(of: "http://", with: "https://")
+            } else {
+                return url
+            }
+        }
+        return nil
+    }
+    
 }

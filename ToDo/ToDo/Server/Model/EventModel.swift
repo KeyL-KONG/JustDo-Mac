@@ -53,7 +53,7 @@ enum EventFinishResultType: Int {
     case good
 }
 
-class EventModel: BaseModel, Identifiable, Encodable, Decodable {
+class EventModel: BaseModel, Identifiable {
     
     var generateId: String = UUID().uuidString
     var title: String = ""
@@ -143,7 +143,7 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
     }
     
     required init(from decoder: Decoder) throws {
-        super.init()
+        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: EventModelKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.createTime = try container.decode(Date.self, forKey: .createTime)
@@ -206,7 +206,8 @@ class EventModel: BaseModel, Identifiable, Encodable, Decodable {
         self.setDetailTime = try container.decodeIfPresent(Bool.self, forKey: .setDetailTime) ?? false
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder.container(keyedBy: EventModelKeys.self)
         try container.encode(self.id, forKey: .id)
         try container.encode(self.createTime, forKey: .createTime)
