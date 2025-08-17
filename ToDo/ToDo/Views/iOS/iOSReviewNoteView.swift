@@ -165,10 +165,13 @@ struct iOSReviewNoteView: View {
 // 按钮样式
 struct ScoreButtonStyle: ButtonStyle {
     var color: Color
+    var horizonPadding: CGFloat = 15
+    var verticalPadding: CGFloat = 8
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding()
+            .padding(.horizontal, horizonPadding)
+            .padding(.vertical, verticalPadding)
             .background(color.opacity(0.3))
             .foregroundColor(color)
             .cornerRadius(10)

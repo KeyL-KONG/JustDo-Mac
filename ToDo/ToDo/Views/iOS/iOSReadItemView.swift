@@ -13,6 +13,7 @@ struct iOSReadItemView: View {
     
     var item: ReadModel
     @State var showBottomView: Bool = false
+    @State var showMark: Bool = true
     @State var tags: [String] = []
     
     var title: String {
@@ -48,7 +49,9 @@ struct iOSReadItemView: View {
                     Spacer()
                 }
             }
-            Spacer()
+            if showMark, item.note.count > 0 {
+                Text(item.note).font(.system(size: 10)).foregroundStyle(.gray).padding(.top, 5)
+            }
         }
         .contextMenu(menuItems: {
             

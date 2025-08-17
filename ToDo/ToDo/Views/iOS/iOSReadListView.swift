@@ -101,7 +101,7 @@ extension iOSReadListView {
                         } label: {
                             iOSReadItemView(item: item)
                                 .environmentObject(modelData)
-                                .frame(height: 50)
+                                .frame(height: item.itemRowHeight)
                                 .swipeActions {
                                     Button(role: .destructive) {
                                         modelData.deleteReadModel(item)

@@ -10,6 +10,7 @@ import SwiftUI
 struct iOSEditTextView: View {
     
     @Binding var text: String
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         VStack {
@@ -20,6 +21,13 @@ struct iOSEditTextView: View {
                 .background(Color.init(hex: "#e8f6f3"))
                 .frame(minHeight: 150)
                 .cornerRadius(8)
+                .focused($isFocused)
+        }
+        .onAppear {
+            // 视图出现时自动设置焦点，触发键盘弹出
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isFocused = true
+            }
         }
     }
 }

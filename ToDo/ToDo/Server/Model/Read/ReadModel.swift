@@ -19,6 +19,12 @@ class ReadModel: BaseModel, Identifiable {
     var intervals: [LQDateInterval] = []
     var finishTimes: [Date] = []
     
+    var itemRowHeight: Double {
+        if tags.isEmpty && rate == 0 { return 30 }
+        if self.note.isEmpty { return 50}
+        return Double(50 + 20 * (self.note.count / 30 + 1))
+    }
+    
     required init() { 
         super.init()
     }
