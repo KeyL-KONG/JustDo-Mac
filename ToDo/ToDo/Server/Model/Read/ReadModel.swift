@@ -18,6 +18,7 @@ class ReadModel: BaseModel, Identifiable {
     var rate: Double = 0
     var intervals: [LQDateInterval] = []
     var finishTimes: [Date] = []
+    var timeItems: [String] = []
     
     var itemRowHeight: Double {
         if tags.isEmpty && rate == 0 { return 30 }
@@ -131,6 +132,7 @@ extension ReadModel {
         case intervals
         case finishTimes
         case tags
+        case timeItems
     }
     
     var readTimes: Int {

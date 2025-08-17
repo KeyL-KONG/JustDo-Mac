@@ -19,7 +19,8 @@ struct iOSReadItemDetailView: View {
     @State var mark: String = ""
     @StateObject var timer = CommonTimerModel()
     
-    
+    @State var showTimelineView: Bool = false
+    private static var selectedTimeItem: TaskTimeItem? = nil
     
     var body: some View {
         VStack {
@@ -84,6 +85,13 @@ struct iOSReadItemDetailView: View {
             })
         )
         .toolbar((tabBarVisible ? .visible : .hidden), for: .tabBar)
+        .sheet(isPresented: $showTimelineView, content: {
+            if let item = Self.selectedTimeItem {
+                EditTimeLineRowView(showSheetView: $showTimelineView, item: item)
+                    .environmentObject(modelData)
+                    .presentationDetents([.height(450)])
+            }
+        })
         .onAppear {
             startTime = Date()
             tabBarVisible = false
@@ -111,13 +119,14 @@ struct iOSReadItemDetailView: View {
 
     }
     
-    func updateReadTime() {
+    func updateReadTime(content: String = "") {
         guard let startTime else { return }
         let timeInterval = TimeInterval(timer.timeSeconds)
         let endTime = startTime.addingTimeInterval(timeInterval)
-        let interval = LQDateInterval(start: startTime, end: endTime)
-        item.intervals.append(interval)
-        modelData.updateReadModel(item)
+        let timeItem = TaskTimeItem(startTime: startTime, endTime: endTime, content: "")
+        timeItem.eventId = item.id
+        Self.selectedTimeItem = timeItem
+        self.showTimelineView.toggle()
     }
     
 }

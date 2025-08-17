@@ -111,7 +111,7 @@ struct EditTimeLineRowView: View {
                         DatePicker(selection: $endTime, displayedComponents: components) {
                             Text("结束时间")
                         }
-                        Toggle("设置为计划时间", isOn: $setIsPlan)
+                        //Toggle("设置为计划时间", isOn: $setIsPlan)
                     }
                     
                     Section {

@@ -36,6 +36,18 @@ struct iOSReadEditView: View {
     @State var selectTags: [String] = []
     @State var tagText: String = ""
     
+    @State var showingTimeTaskItemView: Bool = false
+    static var selectedTaskItem: TaskTimeItem? = nil
+    
+    var taskTimeItems: [TaskTimeItem] {
+        guard let readItem else { return [] }
+        return modelData.taskTimeItems.filter { item in
+            return item.eventId == readItem.id
+        }.sorted(by: {
+            $0.startTime.timeIntervalSince1970 > $1.startTime.timeIntervalSince1970
+        })
+    }
+    
     var body: some View {
         
         NavigationView {
@@ -113,6 +125,13 @@ struct iOSReadEditView: View {
 #if os(iOS)
                 .listStyle(.insetGrouped)
 #endif
+            }
+        }
+        .sheet(isPresented: $showingTimeTaskItemView) {
+            if let selectedItem = Self.selectedTaskItem {
+                EditTimeLineRowView(showSheetView: $showingTimeTaskItemView, item: selectedItem)
+                    .environmentObject(modelData)
+                    .presentationDetents([.height(450)])
             }
         }
         .onAppear {
@@ -199,18 +218,28 @@ struct iOSReadEditView: View {
     }
     
     
+    var taskTotalTime: Int {
+        taskTimeItems.compactMap { $0.interval}.reduce(0, +)
+    }
+    
     // MARK: time interval
     func timeIntervalView() -> some View {
         Section(header:
-            HStack(alignment: .center) {
-                Text("统计时间")
+            HStack() {
+                Text("阅读记录")
+                Text("\(taskTotalTime.simpleTimeStr)")
                 Spacer()
                 Button {
-                    let interval = LQDateInterval(start: .now, end: .now)
-                    self.intervals = [interval] + intervals
-                    print("add time interval")
+                    let item = TaskTimeItem(startTime: .now, endTime: .now, content: "")
+                    item.eventId = readItem?.id ?? ""
+                    modelData.updateTimeItem(item)
                 } label: {
-                    Text("添加时间").font(.system(size: 14))
+                    let recordCount = taskTimeItems.count
+                    if recordCount > 0 {
+                        Text("添加记录 (\(recordCount))").font(.system(size: 14))
+                    } else {
+                        Text("添加第一条记录").font(.system(size: 14))
+                    }
                 }
             
                 Button(action: {
@@ -221,20 +250,31 @@ struct iOSReadEditView: View {
                     Image(systemName: isTimeExpand ? "chevron.up" : "chevron.right")
                 })
             }
-        , content: {
+        ) {
             if isTimeExpand {
-                ForEach(intervals.indices, id: \.self) { index in
-                    let interval = intervals[index]
-                    DateIntervalView(interval: interval, index: index) { change in
-                        intervals[index] = change
-                    }
+                ForEach(taskTimeItems) { item in
+                    iOSTimeLineRowView(
+                        item: item,
+                        isEditing: .constant(true)
+                    )
+                    .swipeActions(content: {
+                        Button {
+                            modelData.deleteTimeItem(item)
+                        } label: {
+                            Text("删除")
+                        }.tint(.red)
+                        
+                        Button {
+                            Self.selectedTaskItem = item
+                            self.showingTimeTaskItemView.toggle()
+                        } label: {
+                            Text("编辑")
+                        }.tint(.green)
+                    })
                 }
-                .onDelete { indexSet in
-                    intervals.remove(atOffsets: indexSet)
-                }
-                .id(UUID())
             }
-        })
+            
+        }
     }
     
 }
