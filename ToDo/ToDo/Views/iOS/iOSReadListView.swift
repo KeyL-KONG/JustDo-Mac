@@ -44,6 +44,9 @@ struct iOSReadListView: View {
                     .environmentObject(modelData)
             }
         }
+        .onChange(of: selectDate, { oldValue, newValue in
+            updateReadList()
+        })
         .onChange(of: modelData.updateDataIndex, { oldValue, newValue in
             updateReadList()
         })
@@ -99,7 +102,7 @@ extension iOSReadListView {
                             }.environmentObject(modelData)
                             .navigationBarTitle(Text(""), displayMode: .inline)
                         } label: {
-                            iOSReadItemView(item: item)
+                            iOSReadItemView(item: item, showTime: true)
                                 .environmentObject(modelData)
                                 .frame(height: item.itemRowHeight)
                                 .swipeActions {

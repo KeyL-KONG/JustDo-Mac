@@ -14,6 +14,7 @@ struct iOSReadItemView: View {
     var item: ReadModel
     @State var showBottomView: Bool = false
     @State var showMark: Bool = true
+    @State var showTime: Bool = false
     @State var tags: [String] = []
     
     var title: String {
@@ -22,6 +23,16 @@ struct iOSReadItemView: View {
         } else {
             return item.title.truncated(limit: 30)
         }
+    }
+    
+    var taskTimeItems: [TaskTimeItem] {
+        return modelData.taskTimeItems.filter { item in
+            return item.eventId == self.item.id
+        }
+    }
+    
+    var totaltime: Int {
+        taskTimeItems.compactMap { $0.interval}.reduce(0, +)
     }
     
     var body: some View {
@@ -45,6 +56,10 @@ struct iOSReadItemView: View {
                     
                     if item.readTimes > 0 {
                         Text("已读\(item.readTimes)次").font(.system(size: 12)).foregroundStyle(.gray)
+                    }
+                    
+                    if showTime, totaltime > 0 {
+                        Text(totaltime.simpleTimeStr).foregroundStyle(.gray).font(.system(size: 12))
                     }
                     Spacer()
                 }

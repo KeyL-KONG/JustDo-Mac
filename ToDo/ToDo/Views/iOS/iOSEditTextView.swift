@@ -11,6 +11,7 @@ struct iOSEditTextView: View {
     
     @Binding var text: String
     @FocusState private var isFocused: Bool
+    var disappearCallback: (() -> Void)? = nil
     
     var body: some View {
         VStack {
@@ -28,6 +29,9 @@ struct iOSEditTextView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isFocused = true
             }
+        }
+        .onDisappear {
+            disappearCallback?()
         }
     }
 }

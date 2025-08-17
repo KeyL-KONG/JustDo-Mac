@@ -107,12 +107,12 @@ struct iOSReadItemDetailView: View {
             timer.stopTimer()
         }
         .sheet(isPresented: $showMarkText, onDismiss: {
-            if item.note != mark {
+            
+        }, content: {
+            iOSEditTextView(text: $mark, disappearCallback: {
                 item.note = mark
                 modelData.updateReadModel(item)
-            }
-        }, content: {
-            iOSEditTextView(text: $mark)
+            })
                 .presentationDetents([.height(100)])
                 .environmentObject(modelData)
         })
