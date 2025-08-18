@@ -1,3 +1,4 @@
+#if os(iOS)
 import SwiftUI
 import WebKit
 import SafariServices
@@ -107,3 +108,5 @@ struct DouyinWebViewContainer: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
+#endif

@@ -8,6 +8,13 @@
 import Foundation
 import LeanCloud
 
+enum NoteType: String {
+    case text
+    case web
+    
+    static let types: [String] = ["text", "web"]
+}
+
 class NoteItem: BaseModel, Identifiable {
     
     var title: String = ""
@@ -15,6 +22,12 @@ class NoteItem: BaseModel, Identifiable {
     var faTimes: [Date] = []
     var stTimes: [Date] = []
     var needReview: Bool = true
+    var type: String = "text"
+    var url: String = ""
+    
+    var noteType: NoteType {
+        return NoteType(rawValue: type) ?? .text
+    }
     
     var faScore: Int { faTimes.count }
     var stScore: Int { stTimes.count }
@@ -40,6 +53,8 @@ class NoteItem: BaseModel, Identifiable {
         faTimes = try container.decode([Date].self, forKey: .faTimes)
         stTimes = try container.decode([Date].self, forKey: .stTimes)
         needReview = try container.decode(Bool.self, forKey: .needReview)
+        type = try container.decode(String.self, forKey: .type)
+        url = try container.decode(String.self, forKey: .url)
     }
     
     init(content: String, title: String = "") {
@@ -56,6 +71,8 @@ class NoteItem: BaseModel, Identifiable {
         try container.encode(faTimes, forKey: .faTimes)
         try container.encode(stTimes, forKey: .stTimes)
         try container.encode(needReview, forKey: .needReview)
+        try container.encode(type, forKey: .type)
+        try container.encode(url, forKey: .url)
     }
     
     override class func modelClassName() -> String {
@@ -73,6 +90,8 @@ class NoteItem: BaseModel, Identifiable {
         faTimes = cloudObj.get(NoteItemKeys.faTimes.rawValue)?.arrayValue as? [Date] ?? []
         stTimes = cloudObj.get(NoteItemKeys.stTimes.rawValue)?.arrayValue as? [Date] ?? []
         needReview = cloudObj.get(NoteItemKeys.needReview.rawValue)?.boolValue ?? true
+        type = cloudObj.get(NoteItemKeys.type.rawValue)?.stringValue ?? ""
+        url = cloudObj.get(NoteItemKeys.url.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -82,6 +101,8 @@ class NoteItem: BaseModel, Identifiable {
         try cloudObj.set(NoteItemKeys.faTimes.rawValue, value: faTimes.lcArray)
         try cloudObj.set(NoteItemKeys.stTimes.rawValue, value: stTimes.lcArray)
         try cloudObj.set(NoteItemKeys.needReview.rawValue, value: needReview.lcBool)
+        try cloudObj.set(NoteItemKeys.type.rawValue, value: type.lcString)
+        try cloudObj.set(NoteItemKeys.url.rawValue, value: url.lcString)
     }
     
 }
@@ -94,6 +115,8 @@ extension NoteItem {
         case faTimes
         case stTimes
         case needReview
+        case type
+        case url
     }
     
 }

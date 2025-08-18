@@ -22,6 +22,8 @@ class NoteModel: BaseModel, Identifiable {
     var faTimes: [Date] = []
     var stTimes: [Date] = []
     var needReview: Bool = true
+    var type: String = ""
+    var url: String = ""
     
     var faScore: Int { faTimes.count }
     var stScore: Int { stTimes.count }
@@ -53,6 +55,8 @@ class NoteModel: BaseModel, Identifiable {
         faTimes = try container.decode([Date].self, forKey: .faTimes)
         stTimes = try container.decode([Date].self, forKey: .stTimes)
         needReview = try container.decode(Bool.self, forKey: .needReview)
+        type = try container.decode(String.self, forKey: .type)
+        url = try container.decode(String.self, forKey: .url)
     }
     
     init(content: String) {
@@ -74,6 +78,8 @@ class NoteModel: BaseModel, Identifiable {
         try container.encode(faTimes, forKey: .faTimes)
         try container.encode(stTimes, forKey: .stTimes)
         try container.encode(needReview, forKey: .needReview)
+        try container.encode(type, forKey: .type)
+        try container.encode(url, forKey: .url)
     }
     
     override class func modelClassName() -> String {
@@ -99,6 +105,8 @@ class NoteModel: BaseModel, Identifiable {
         faTimes = cloudObj.get(NoteModelKeys.faTimes.rawValue)?.arrayValue as? [Date] ?? []
         stTimes = cloudObj.get(NoteModelKeys.stTimes.rawValue)?.arrayValue as? [Date] ?? []
         needReview = cloudObj.get(NoteModelKeys.needReview.rawValue)?.boolValue ?? false
+        type = cloudObj.get(NoteModelKeys.type.rawValue)?.stringValue ?? "text"
+        url = cloudObj.get(NoteModelKeys.url.rawValue)?.stringValue ?? ""
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -114,6 +122,8 @@ class NoteModel: BaseModel, Identifiable {
         try cloudObj.set(NoteModelKeys.faTimes.rawValue, value: faTimes.lcArray)
         try cloudObj.set(NoteModelKeys.stTimes.rawValue, value: stTimes.lcArray)
         try cloudObj.set(NoteModelKeys.needReview.rawValue, value: needReview.lcBool)
+        try cloudObj.set(NoteModelKeys.type.rawValue, value: type.lcString)
+        try cloudObj.set(NoteModelKeys.url.rawValue, value: url.lcString)
     }
     
 }
@@ -133,6 +143,8 @@ extension NoteModel {
         case faTimes
         case stTimes
         case needReview
+        case type
+        case url
     }
     
 }

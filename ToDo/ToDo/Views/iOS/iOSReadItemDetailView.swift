@@ -5,6 +5,7 @@
 //  Created by LQ on 2025/8/16.
 //
 
+#if os(iOS)
 import SwiftUI
 
 struct iOSReadItemDetailView: View {
@@ -131,3 +132,4 @@ struct iOSReadItemDetailView: View {
     
 }
  
+#endif

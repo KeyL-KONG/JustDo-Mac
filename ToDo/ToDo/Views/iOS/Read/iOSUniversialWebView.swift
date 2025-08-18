@@ -1,3 +1,5 @@
+#if os(iOS)
+
 import SwiftUI
 import WebKit
 
@@ -273,3 +275,5 @@ struct UniversalWebView_Previews: PreviewProvider {
         WebViewExample()
     }
 }
+
+#endif
