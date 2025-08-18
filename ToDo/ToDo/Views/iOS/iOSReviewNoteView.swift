@@ -238,6 +238,7 @@ struct ControlButtons: View {
                 Image(systemName: "arrowshape.right")
             }.buttonStyle(ScoreButtonStyle(color: .green))
         }
+        .padding(.bottom)
     }
 }
 

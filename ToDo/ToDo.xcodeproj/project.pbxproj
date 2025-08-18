@@ -23,6 +23,9 @@
 		091AA36D2E50E89F00BB1519 /* iOSUniversialWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA36C2E50E89000BB1519 /* iOSUniversialWebView.swift */; };
 		091AA36F2E50F8A500BB1519 /* iOSTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA36E2E50F89E00BB1519 /* iOSTagView.swift */; };
 		091AA3712E518BBB00BB1519 /* CommonTimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3702E518BB400BB1519 /* CommonTimerModel.swift */; };
+		091AA3732E5226C900BB1519 /* iOSNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3722E5226C400BB1519 /* iOSNoteView.swift */; };
+		091AA3772E52272C00BB1519 /* iOSScrollTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3762E52272600BB1519 /* iOSScrollTabView.swift */; };
+		091AA3822E522F1700BB1519 /* iOSNoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3812E522F1300BB1519 /* iOSNoteListView.swift */; };
 		092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545E82DD81E7600D324DB /* ProgressBar.swift */; };
 		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
 		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
@@ -157,6 +160,9 @@
 		091AA36C2E50E89000BB1519 /* iOSUniversialWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSUniversialWebView.swift; sourceTree = "<group>"; };
 		091AA36E2E50F89E00BB1519 /* iOSTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSTagView.swift; sourceTree = "<group>"; };
 		091AA3702E518BB400BB1519 /* CommonTimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTimerModel.swift; sourceTree = "<group>"; };
+		091AA3722E5226C400BB1519 /* iOSNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSNoteView.swift; sourceTree = "<group>"; };
+		091AA3762E52272600BB1519 /* iOSScrollTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSScrollTabView.swift; sourceTree = "<group>"; };
+		091AA3812E522F1300BB1519 /* iOSNoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSNoteListView.swift; sourceTree = "<group>"; };
 		092545E82DD81E7600D324DB /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
 		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
@@ -340,6 +346,23 @@
 			path = Read;
 			sourceTree = "<group>";
 		};
+		091AA3742E5226D400BB1519 /* Note */ = {
+			isa = PBXGroup;
+			children = (
+				091AA3812E522F1300BB1519 /* iOSNoteListView.swift */,
+				091AA3722E5226C400BB1519 /* iOSNoteView.swift */,
+			);
+			path = Note;
+			sourceTree = "<group>";
+		};
+		091AA3752E52271D00BB1519 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				091AA3762E52272600BB1519 /* iOSScrollTabView.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		092545EA2DD83F7300D324DB /* Plan */ = {
 			isa = PBXGroup;
 			children = (
@@ -369,6 +392,8 @@
 		0936CB362E0FA3E20058BD04 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				091AA3752E52271D00BB1519 /* Common */,
+				091AA3742E5226D400BB1519 /* Note */,
 				091AA3692E50E60E00BB1519 /* Read */,
 				091AA3652E505EF900BB1519 /* iOSReadEditView.swift */,
 				091AA3612E505ABE00BB1519 /* iOSReadItemDetailView.swift */,
@@ -760,6 +785,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				091AA3772E52272C00BB1519 /* iOSScrollTabView.swift in Sources */,
 				097A040E2C6B9BA300521483 /* TodoItemListView+Month.swift in Sources */,
 				09F80C012C665A3F00650366 /* WishModel.swift in Sources */,
 				09F80BFE2C665A3F00650366 /* UserManager.swift in Sources */,
@@ -776,6 +802,7 @@
 				09AAC5522DEDDC9A0091FA4A /* ReadListView.swift in Sources */,
 				0936CB432E103B730058BD04 /* EditTaskView+Section.swift in Sources */,
 				093E78FB2D238533006E5120 /* ReadModel.swift in Sources */,
+				091AA3732E5226C900BB1519 /* iOSNoteView.swift in Sources */,
 				092AF5262DD102480067DA7D /* PlanView.swift in Sources */,
 				090C722A2C8409E100FA21C5 /* MarkdownWebView.swift in Sources */,
 				09D714772DAB5C50009DB18E /* ModelData+Principle.swift in Sources */,
@@ -818,6 +845,7 @@
 				09F80C072C665A3F00650366 /* CloudProtocol.swift in Sources */,
 				091AA3622E505AC600BB1519 /* iOSReadItemDetailView.swift in Sources */,
 				0936CB3F2E1035F80058BD04 /* ListItemRow.swift in Sources */,
+				091AA3822E522F1700BB1519 /* iOSNoteListView.swift in Sources */,
 				09804BA22E3660AA00A5095A /* iOSTaskTimelineView.swift in Sources */,
 				092546192DE7611F00D324DB /* NoteListView.swift in Sources */,
 				09FF8CD72C6A4B7800A74F55 /* TodoItemListView+Project.swift in Sources */,

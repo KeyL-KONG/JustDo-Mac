@@ -26,7 +26,7 @@ struct MainView: View {
     
     @EnvironmentObject var modelData: ModelData
     @ObservedObject var timerModel: TimerModel
-    @State private var selection: Tab = .read
+    @State private var selection: Tab = .task
     @State var selectDate: Date = .now
     
     @State var showTimelineView: Bool = false
@@ -66,7 +66,7 @@ struct MainView: View {
 //                    Label("时间轴", systemImage: "list.bullet")
 //                }
             
-            iOSReviewNoteView()
+            iOSNoteView()
                 .environmentObject(modelData)
                 .tag(Tab.reviewNote)
                 .tabItem {
