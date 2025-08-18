@@ -33,11 +33,11 @@ extension TodoItemListView {
         modelData.principleItems.filter { $0.tag.isEmpty }
     }
     
-    func principleView() -> some View {
+    func principleView() -> AnyView {
         if principleDisplayMode == .list {
-            return principleListView()
+            return principleListView() as! AnyView
         } else {
-            return principleWeekView()
+            return principleWeekView() as! AnyView
         }
     }
     

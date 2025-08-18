@@ -58,6 +58,9 @@ struct NoteDetailView: View {
     @State var editItemState: [String: Bool] = [:]
     @State var itemEditingContent: [String: String] = [:]  // 新增：用于存储编辑中的内容
     @State var itemEditingTitle: [String: String] = [:]
+    @State var noteTypes: [String: String] = [:]
+    @State var itemsExpand: [String: Bool] = [:]
+    @State var itemUrls: [String: String] = [:]
     
     var body: some View {
         ScrollView {
@@ -138,6 +141,7 @@ struct NoteDetailView: View {
                     
                     if noteItemsExpand {
                         ForEach(noteItems, id: \.self.id) { item in
+                            let noteExpand = self.itemsExpand[item.id] ?? false
                             if isEditNoteItem(item) {
                                 ZStack {
                                     VStack {
@@ -149,6 +153,16 @@ struct NoteDetailView: View {
                                             }))
                                             
                                             Spacer()
+                                            
+                                            Picker("笔记类型", selection: Binding(get: {
+                                                return self.noteTypes[item.id] ?? item.type
+                                            }, set: { val in
+                                                self.noteTypes[item.id] = val
+                                            })) {
+                                                ForEach(NoteType.types, id: \.self) { type in
+                                                    Text(type).id(type)
+                                                }
+                                            }.frame(width: 200)
                                             
                                             Button {
                                                 item.faTimes.append(Date())
@@ -169,11 +183,21 @@ struct NoteDetailView: View {
                                             Button {
                                                 item.content = itemEditingContent[item.id] ?? item.content  // 将编辑后的值写回item
                                                 item.title = itemEditingTitle[item.id] ?? item.title
+                                                item.type = noteTypes[item.id] ?? item.type
+                                                item.url = itemUrls[item.id] ?? item.url
                                                 updateEditNoteItem(item, isEdit: false)
                                                 modelData.updateNoteItem(item)
                                             } label: {
                                                 Text("保存").foregroundStyle(.blue)
                                             }
+                                        }
+                                        
+                                        if item.noteType == .web {
+                                            TextField("url: ", text: Binding(get: {
+                                                return itemUrls[item.id] ?? item.url
+                                            }, set: { val in
+                                                itemUrls[item.id] = val
+                                            }))
                                         }
                                         
                                         TextEditor(text: Binding(get: {
@@ -190,7 +214,8 @@ struct NoteDetailView: View {
                                     }
                                 }
                                 
-                            } else if item.content.count > 0 {
+                            }
+                            else {
                                 ZStack {
                                     VStack {
                                         if item.title.count > 0 {
@@ -221,20 +246,47 @@ struct NoteDetailView: View {
                                                 } label: {
                                                     Text("编辑").foregroundStyle(.blue)
                                                 }
+                                                
+                                                if let updateAt = item.updateAt {
+                                                    Text(updateAt.simpleDateStr)
+                                                }
+                                        
+                                                Button {
+                                                    self.itemsExpand[item.id] = !noteExpand
+                                                } label: {
+                                                    Image(systemName: noteExpand ? "chevron.down" : "chevron.right").foregroundStyle(Color.blue)
+                                                }
                                             }
                                         }
                                         
-                                        MarkdownWebView(item.content, itemId: item.id)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 15)
-                                            .background(Color.blue.opacity(0.1))
-                                            .cornerRadius(10)
+                                        if noteExpand {
+                                            if let webUrl = URL(string: item.url), item.noteType == .web {
+                                                if item.content.count > 0 {
+                                                    MarkdownWebView(item.content, itemId: item.id)
+                                                        .padding(.horizontal, 10)
+                                                        .padding(.vertical, 15)
+                                                        .background(Color.blue.opacity(0.1))
+                                                        .cornerRadius(10)
+                                                }
+                                                
+                                                ScrollView {
+                                                    WebView(url: webUrl)
+                                                        .frame(minHeight: 500)
+                                                        .cornerRadius(10)
+                                                }
+                                            } else if item.content.count > 0 {
+                                                MarkdownWebView(item.content, itemId: item.id)
+                                                    .padding(.horizontal, 10)
+                                                    .padding(.vertical, 15)
+                                                    .background(Color.blue.opacity(0.1))
+                                                    .cornerRadius(10)
+                                            }
+                                        }
+                                        
                                     }
                                     
                                 }.overlay(alignment: .bottomTrailing) {
-                                    if let updateAt = noteItem.updateAt {
-                                        Text(updateAt.simpleDateStr)
-                                    }
+                                    
                                 }.overlay(alignment: .topTrailing) {
                                     if item.title.isEmpty {
                                         Button {
