@@ -26,7 +26,7 @@ struct MainView: View {
     
     @EnvironmentObject var modelData: ModelData
     @ObservedObject var timerModel: TimerModel
-    @State private var selection: Tab = .reviewNote
+    @State private var selection: Tab = .read
     @State var selectDate: Date = .now
     
     @State var showTimelineView: Bool = false
@@ -53,6 +53,7 @@ struct MainView: View {
                 }
             NavigationView {
                 iOSReadView()
+                    .environmentObject(modelData)
             }
                 .tag(Tab.read)
                 .tabItem {

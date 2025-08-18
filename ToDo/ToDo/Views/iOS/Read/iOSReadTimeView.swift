@@ -7,7 +7,7 @@
 #if os(iOS)
 import SwiftUI
 
-struct iOSReadView: View {
+struct iOSReadTimeView: View {
     @EnvironmentObject var modelData: ModelData
     @State var selection: TimeTab = .week
     var timeTabs: [TimeTab] = [.week, .month, .all]
@@ -17,17 +17,17 @@ struct iOSReadView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .center) {
-                Text("阅读").font(.title.bold()).foregroundStyle(.blue)
-                
-                Spacer()
-                
-                Menu {
-                   
-                } label: {
-                    Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
-                }
-            }.padding(.leading, 15)
+//            HStack(alignment: .center) {
+//                Text("阅读").font(.title.bold()).foregroundStyle(.blue)
+//                
+//                Spacer()
+//                
+//                Menu {
+//                   
+//                } label: {
+//                    Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
+//                }
+//            }.padding(.leading, 15)
             
             Picker("", selection: $selection) {
                 Label("周", systemImage: "")
@@ -72,8 +72,6 @@ struct iOSReadView: View {
                 
             }
             
-            Spacer()
-            
             switch selection {
             case .day:
                 iOSReadListView(selectDate: selectDate, timeTab: .day).environmentObject(modelData)
@@ -86,6 +84,8 @@ struct iOSReadView: View {
             case .all:
                 iOSReadListView(selectDate: selectDate, timeTab: .all).environmentObject(modelData)
             }
+            
+            Spacer()
         }
         .onChange(of: selection) { oldValue, newValue in
             if oldValue != newValue {
@@ -103,7 +103,7 @@ struct iOSReadView: View {
     }
 }
 
-extension iOSReadView {
+extension iOSReadTimeView {
     
     func updateSelectDate(next: Bool) {
         var date = selectDate
