@@ -18,6 +18,12 @@ struct iOSNoteListView: View {
         ZStack {
             itemListView()
         }
+        .onChange(of: modelData.updateDataIndex, { oldValue, newValue in
+            self.updateNoteItems()
+        })
+        .onChange(of: modelData.updateNoteIndex, { oldValue, newValue in
+            self.updateNoteItems()
+        })
         .onAppear {
             self.updateNoteItems()
         }
@@ -37,7 +43,12 @@ extension iOSNoteListView {
     func itemListView() -> some View {
         List {
             ForEach(noteItemList, id: \.self.id) { note in
-                noteItemView(note: note)
+                NavigationLink {
+                    iOSNoteDetailView(item: note)
+                        .environmentObject(modelData)
+                } label: {
+                    noteItemView(note: note)
+                }
             }
         }
     }

@@ -26,6 +26,7 @@
 		091AA3732E5226C900BB1519 /* iOSNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3722E5226C400BB1519 /* iOSNoteView.swift */; };
 		091AA3772E52272C00BB1519 /* iOSScrollTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3762E52272600BB1519 /* iOSScrollTabView.swift */; };
 		091AA3822E522F1700BB1519 /* iOSNoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3812E522F1300BB1519 /* iOSNoteListView.swift */; };
+		091AA3842E5373FC00BB1519 /* iOSNoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3832E5373F600BB1519 /* iOSNoteDetailView.swift */; };
 		092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545E82DD81E7600D324DB /* ProgressBar.swift */; };
 		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
 		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
@@ -163,6 +164,7 @@
 		091AA3722E5226C400BB1519 /* iOSNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSNoteView.swift; sourceTree = "<group>"; };
 		091AA3762E52272600BB1519 /* iOSScrollTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSScrollTabView.swift; sourceTree = "<group>"; };
 		091AA3812E522F1300BB1519 /* iOSNoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSNoteListView.swift; sourceTree = "<group>"; };
+		091AA3832E5373F600BB1519 /* iOSNoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSNoteDetailView.swift; sourceTree = "<group>"; };
 		092545E82DD81E7600D324DB /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
 		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 		091AA3742E5226D400BB1519 /* Note */ = {
 			isa = PBXGroup;
 			children = (
+				091AA3832E5373F600BB1519 /* iOSNoteDetailView.swift */,
 				091AA3812E522F1300BB1519 /* iOSNoteListView.swift */,
 				091AA3722E5226C400BB1519 /* iOSNoteView.swift */,
 			);
@@ -870,6 +873,7 @@
 				09F80C112C665A5B00650366 /* Date+Extensions.swift in Sources */,
 				09D7145F2D85CC6A009DB18E /* TaskTimeItem.swift in Sources */,
 				091AA35C2E50536100BB1519 /* iOSReadView.swift in Sources */,
+				091AA3842E5373FC00BB1519 /* iOSNoteDetailView.swift in Sources */,
 				09F80C022C665A3F00650366 /* ItemTag.swift in Sources */,
 				09F80BFF2C665A3F00650366 /* CacheManager.swift in Sources */,
 				093E78F52D23852D006E5120 /* TagModel.swift in Sources */,
