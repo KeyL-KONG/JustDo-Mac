@@ -13,4 +13,5 @@ public struct CommonDefine {
     public static let addNewThink = "添加想法"
     public static let searchWindow = "search-window"
     public static let noteWindow = "note-window"
+    public static let serverError = "server-error"
 }

@@ -75,7 +75,7 @@ extension ModelData {
         }
     }
     
-    func updateReadModel(_ model: ReadModel) {
+    func updateReadModel(_ model: ReadModel, completion: ((Error?) -> Void)? = nil) {
         if let index = readList.firstIndex(where: { $0.id == model.id
         }) {
             readList[index] = model
@@ -85,8 +85,12 @@ extension ModelData {
         
         DataManager.shared.save(with: ReadModel.modelClassName(), models: [model]) { error in
             if let error {
+                self.updateErrorReadItem = model
                 print(error)
+            } else {
+                self.updateErrorReadItem = nil
             }
+            completion?(error)
         }
     }
 
