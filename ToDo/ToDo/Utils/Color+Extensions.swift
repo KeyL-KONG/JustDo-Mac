@@ -32,9 +32,15 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
-#if os(macOS)
+    
     func toHexString() -> String {
+#if os(iOS)
+        let uic = UIColor(self)
+#endif
+#if os(macOS)
         let uic = NSColor(self)
+#endif
+        
         guard let components = uic.cgColor.components, components.count >= 3 else {
             return ""
         }
@@ -53,7 +59,5 @@ extension Color {
             return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
         }
     }
-    
-#endif
 }
 
