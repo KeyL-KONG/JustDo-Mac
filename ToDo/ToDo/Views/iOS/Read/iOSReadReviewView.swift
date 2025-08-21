@@ -126,7 +126,9 @@ struct iOSReadReviewView: View {
 //            updateItems()
 //        })
         .onAppear {
-            updateItems()
+            if unReviewItems.isEmpty {
+                updateItems()
+            }
 //            startTime = Date()
 //            if let currentReadItem {
 //                timer.startTimer(item: currentReadItem)
@@ -161,8 +163,7 @@ extension iOSReadReviewView {
             if read.title.isEmpty { return true }
             if read.tags.isEmpty { return true }
             return false
-        }).sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
-        })
+        }).shuffled()
         currentIndex = 0
     }
     

@@ -34,18 +34,18 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $selection) {
-            iOSTaskView(timerModel: timerModel)
+            iOSTaskProjectView(timerModel: timerModel)
                 .environmentObject(modelData)
                 .tag(Tab.task)
                 .tabItem {
                     Label("任务", systemImage: "star")
                 }
-            iOSProjectView(timerModel: timerModel)
-                .environmentObject(modelData)
-                .tag(Tab.project)
-                .tabItem {
-                    Label("项目", systemImage: "folder.fill")
-                }
+//            iOSProjectView(timerModel: timerModel)
+//                .environmentObject(modelData)
+//                .tag(Tab.project)
+//                .tabItem {
+//                    Label("项目", systemImage: "folder.fill")
+//                }
             iOSSummaryView()
                 .tag(Tab.summary)
                 .tabItem {

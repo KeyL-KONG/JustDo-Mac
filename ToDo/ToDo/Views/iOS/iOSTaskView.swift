@@ -23,25 +23,25 @@ struct iOSTaskView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .center) {
-                Text("事项统计").font(.title.bold()).foregroundStyle(.blue)
-                
-                Spacer()
-                
-                Menu {
-                    Toggle(isOn: $showUnFinishOnly) {
-                        Text("显示未完成")
-                    }
-                    
-                    Picker("排序类型", selection: $selectedMode) {
-                        ForEach(displayModes, id:\.self) { mode in
-                            Text(mode.id).tag(mode)
-                        }
-                    }
-                } label: {
-                    Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
-                }
-            }.padding(.leading, 15)
+//            HStack(alignment: .center) {
+//                Text("事项统计").font(.title.bold()).foregroundStyle(.blue)
+//                
+//                Spacer()
+//                
+//                Menu {
+//                    Toggle(isOn: $showUnFinishOnly) {
+//                        Text("显示未完成")
+//                    }
+//                    
+//                    Picker("排序类型", selection: $selectedMode) {
+//                        ForEach(displayModes, id:\.self) { mode in
+//                            Text(mode.id).tag(mode)
+//                        }
+//                    }
+//                } label: {
+//                    Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
+//                }
+//            }.padding(.leading, 15)
             
             Picker("", selection: $selection) {
                 Label("日", systemImage: "")
