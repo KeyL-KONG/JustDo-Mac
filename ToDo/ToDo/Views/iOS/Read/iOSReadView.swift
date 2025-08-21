@@ -4,7 +4,7 @@
 //
 //  Created by LQ on 2025/8/18.
 //
-
+#if os(iOS)
 import SwiftUI
 
 struct iOSReadView: View {
@@ -26,3 +26,4 @@ struct iOSReadView: View {
         }
     }
 }
+#endif

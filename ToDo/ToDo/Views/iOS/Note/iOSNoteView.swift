@@ -5,6 +5,7 @@
 //  Created by LQ on 2025/8/17.
 //
 
+#if os(iOS)
 import SwiftUI
 
 struct iOSNoteView: View {
@@ -27,3 +28,4 @@ struct iOSNoteView: View {
     }
     
 }
+#endif
