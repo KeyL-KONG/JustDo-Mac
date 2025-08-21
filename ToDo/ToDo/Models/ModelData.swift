@@ -73,6 +73,12 @@ class ModelData: ObservableObject {
     
     @Published var personalTagList: [PersonalTag] = []
     
+    @Published var recordList: [RecordItem] = [] {
+        didSet {
+            updateRecordIndex += 1
+        }
+    }
+    
     @Published var toggleToRefresh: Bool = false
     @Published var updateDataIndex: Int = 0
     
@@ -85,6 +91,7 @@ class ModelData: ObservableObject {
     @Published var updateSummaryItemIndex = 0
     @Published var updateReadItemIndex = 0
     @Published var updateNoteTagIndex = 0
+    @Published var updateRecordIndex = 0
     
 #if os(iOS)
     

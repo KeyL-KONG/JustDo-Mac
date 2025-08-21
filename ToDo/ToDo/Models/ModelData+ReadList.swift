@@ -47,6 +47,34 @@ extension ModelData {
         }
     }
     
+    func deleteRecordModel(_ model: RecordItem) {
+        guard let index = recordList.firstIndex(where: { $0.id == model.id
+        }) else {
+            return
+        }
+        recordList.remove(at: index)
+        DataManager.shared.delete(models: [model]) { error in
+            if let error {
+                print(error)
+            }
+        }
+    }
+    
+    func updateRecordModel(_ model: RecordItem) {
+        if let index = recordList.firstIndex(where: { $0.id == model.id
+        }) {
+            recordList[index] = model
+        } else {
+            recordList.append(model)
+        }
+        
+        DataManager.shared.save(with: RecordItem.modelClassName(), models: [model]) { error in
+            if let error {
+                print(error)
+            }
+        }
+    }
+    
     func deleteReadModel(_ model: ReadModel) {
         guard let index = readList.firstIndex(where: { $0.id == model.id
         }) else {
