@@ -24,6 +24,7 @@ struct iOSReadReviewView: View {
     @State var showEidtReadView: Bool = false
     @State var showMarkText: Bool = false
     @State var mark: String = ""
+    @Binding var showErrorAlert: Bool
     
     var currentReadItem: ReadModel? {
         guard currentIndex >= 0 && currentIndex < unReviewItems.count else { return nil }
@@ -93,7 +94,7 @@ struct iOSReadReviewView: View {
         })
         .sheet(isPresented: $showEidtReadView) {
             if let currentReadItem {
-                iOSReadEditView(readItem: currentReadItem, showSheetView: $showEidtReadView)
+                iOSReadEditView(readItem: currentReadItem, showSheetView: $showEidtReadView, showErrorAlert: $showErrorAlert)
                     .environmentObject(modelData)
             }
         }
@@ -126,16 +127,22 @@ struct iOSReadReviewView: View {
 //            updateItems()
 //        })
         .onAppear {
-            updateItems()
-            startTime = Date()
-            if let currentReadItem {
-                timer.startTimer(item: currentReadItem)
+            if unReviewItems.isEmpty {
+                updateItems()
             }
+//            startTime = Date()
+//            if let currentReadItem {
+//                timer.startTimer(item: currentReadItem)
+//            }
         }
         .onDisappear {
             timer.stopTimer()
         }
-        
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            if !timer.isTiming {
+                updateItems()
+            }
+        }
     }
     
 }
@@ -157,8 +164,7 @@ extension iOSReadReviewView {
             if read.title.isEmpty { return true }
             if read.tags.isEmpty { return true }
             return false
-        }).sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
-        })
+        }).shuffled()
         currentIndex = 0
     }
     

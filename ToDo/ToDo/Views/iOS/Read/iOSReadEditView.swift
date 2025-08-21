@@ -40,6 +40,9 @@ struct iOSReadEditView: View {
     @State var showingTimeTaskItemView: Bool = false
     static var selectedTaskItem: TaskTimeItem? = nil
     
+    @Binding var showErrorAlert: Bool
+    @State private var saveError: Error? = nil
+    
     var taskTimeItems: [TaskTimeItem] {
         guard let readItem else { return [] }
         return modelData.taskTimeItems.filter { item in
@@ -148,10 +151,9 @@ struct iOSReadEditView: View {
                     readItem.tags.contains(tag.id)
                 }).compactMap { $0.type }
             } else {
-                if iOSReadListView.pastedURL.count > 0 {
-                    urlText = iOSReadListView.pastedURL
+                if urlText.count > 0 {
+                    iOSReadView.pastedURL = ""
                     focusedField = .title
-                    iOSReadListView.pastedURL = ""
                     fetchTitle(url: urlText)
                 } else {
                     focusedField = .url
@@ -192,7 +194,11 @@ struct iOSReadEditView: View {
         readItem.tags = selectTags.compactMap { title in
             modelData.readTagList.first { $0.type == title }?.id
         }
-        modelData.updateReadModel(readItem)
+        modelData.updateReadModel(readItem) { error in
+            if let error {
+                showErrorAlert.toggle()
+            }
+        }
     }
     
     func fetchTitle(url: String) {
@@ -283,7 +289,7 @@ struct iOSReadEditView: View {
 struct EditReadItemViewPreview: PreviewProvider {
     
     static var previews: some View {
-        iOSReadEditView(showSheetView: .constant(true))
+        iOSReadEditView(showSheetView: .constant(true), showErrorAlert: .constant(false))
     }
     
 }

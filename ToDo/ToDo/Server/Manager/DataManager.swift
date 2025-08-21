@@ -12,6 +12,8 @@ class DataManager: NSObject {
     static let shared = DataManager.init()
     private var data:Dictionary = [String : [AnyObject]]()
     
+    private var retryCount = 0
+    
     func data<T: CloudProtocol>(with type:T.Type) -> [T] {
         return self.data[type.className()] as? [T] ?? []
     }
@@ -26,6 +28,7 @@ class DataManager: NSObject {
     }
     
     func save<T:CloudProtocol>(with clsName:String, models:[T], completion:@escaping((Error?)->Void)) {
+        self.retryCount += 1
         CloudManager.shared.save(models: models) { error in
             if error == nil {
                 if var arr = self.data[clsName] as? [T] {
@@ -41,6 +44,11 @@ class DataManager: NSObject {
                     self.data[clsName] = models as [AnyObject]
                 }
             }
+//            if self.retryCount % 2 == 0 {
+//                completion(NSError(domain: "unknonw", code: 1, userInfo: nil))
+//            } else {
+//                completion(error)
+//            }
             completion(error)
         }
     }

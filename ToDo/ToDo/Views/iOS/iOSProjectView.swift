@@ -29,25 +29,25 @@ struct iOSProjectView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .center) {
-                Text("项目统计").font(.title.bold()).foregroundStyle(.blue)
-                
-                Spacer()
-                
-                Menu {
-                    Toggle(isOn: $showFixedEventOnly) {
-                        Text("仅展示固定项目")
-                    }
-                    Toggle(isOn: $showUnArchiOny) {
-                        Text("仅展示未归档项目")
-                    }
-                    Toggle(isOn: $showUnFinish) {
-                        Text("仅展示未完成事项")
-                    }
-                } label: {
-                    Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
-                }
-            }.padding(.leading, 15)
+//            HStack(alignment: .center) {
+//                Text("项目统计").font(.title.bold()).foregroundStyle(.blue)
+//                
+//                Spacer()
+//                
+//                Menu {
+//                    Toggle(isOn: $showFixedEventOnly) {
+//                        Text("仅展示固定项目")
+//                    }
+//                    Toggle(isOn: $showUnArchiOny) {
+//                        Text("仅展示未归档项目")
+//                    }
+//                    Toggle(isOn: $showUnFinish) {
+//                        Text("仅展示未完成事项")
+//                    }
+//                } label: {
+//                    Label("", systemImage: "ellipsis.circle").foregroundStyle(.blue).font(.title2)
+//                }
+//            }.padding(.leading, 15)
             
             if toggleToRefresh {
                 Text("")

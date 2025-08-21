@@ -130,6 +130,8 @@ class ModelData: ObservableObject {
     
     var weekSelectedTimelineItem: TaskTimeItem? = nil
     
+    var updateErrorReadItem: ReadModel? = nil
+    
     public func notifyEventItemsUpdate() {
         self.itemList = self.itemList
     }

@@ -14,6 +14,7 @@ struct iOSReadTimeView: View {
     
     @State var titleText: String = ""
     @State var selectDate: Date = .now
+    @Binding var showErrorAlert: Bool
     
     var body: some View {
         VStack {
@@ -74,15 +75,15 @@ struct iOSReadTimeView: View {
             
             switch selection {
             case .day:
-                iOSReadListView(selectDate: selectDate, timeTab: .day).environmentObject(modelData)
+                iOSReadListView(selectDate: selectDate, timeTab: .day, showErrorAlert: $showErrorAlert).environmentObject(modelData)
             case .week:
-                iOSReadListView(selectDate: selectDate, timeTab: .week).environmentObject(modelData)
+                iOSReadListView(selectDate: selectDate, timeTab: .week, showErrorAlert: $showErrorAlert).environmentObject(modelData)
             case .month:
-                iOSReadListView(selectDate: selectDate, timeTab: .month).environmentObject(modelData)
+                iOSReadListView(selectDate: selectDate, timeTab: .month, showErrorAlert: $showErrorAlert).environmentObject(modelData)
             case .year:
-                iOSReadListView(selectDate: selectDate, timeTab: .year).environmentObject(modelData)
+                iOSReadListView(selectDate: selectDate, timeTab: .year, showErrorAlert: $showErrorAlert).environmentObject(modelData)
             case .all:
-                iOSReadListView(selectDate: selectDate, timeTab: .all).environmentObject(modelData)
+                iOSReadListView(selectDate: selectDate, timeTab: .all, showErrorAlert: $showErrorAlert).environmentObject(modelData)
             }
             
             Spacer()

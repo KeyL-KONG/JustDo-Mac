@@ -18,30 +18,32 @@ struct iOSReadListView: View {
     static var pastedURL: String = ""
     
     @State var readDict: [(key: String, value: [ReadModel])] = []
+    @Binding var showErrorAlert: Bool
     
     var body: some View {
         
         ZStack {
             itemListView()
-        }.overlay(alignment: .bottomTrailing, content: {
-            Button(action: {
-                Self.selectedReadItem = nil
-                showingSheet.toggle()
-            }, label: {
-                Image(systemName: "plus")
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .frame(width: 55, height: 55)
-                    .background(.blue.shadow(.drop(color: .black.opacity(0.25), radius: 5, x: 10, y: 10)), in: .circle)
-            })
-            .padding(15)
-        })
+        }
+//        .overlay(alignment: .bottomTrailing, content: {
+//            Button(action: {
+//                Self.selectedReadItem = nil
+//                showingSheet.toggle()
+//            }, label: {
+//                Image(systemName: "plus")
+//                    .fontWeight(.semibold)
+//                    .foregroundStyle(.white)
+//                    .frame(width: 55, height: 55)
+//                    .background(.blue.shadow(.drop(color: .black.opacity(0.25), radius: 5, x: 10, y: 10)), in: .circle)
+//            })
+//            .padding(15)
+//        })
         .sheet(isPresented: $showingSheet) {
             if let selectedReadItem = Self.selectedReadItem {
-                iOSReadEditView(readItem: selectedReadItem, showSheetView: $showingSheet)
+                iOSReadEditView(readItem: selectedReadItem, showSheetView: $showingSheet, showErrorAlert: $showErrorAlert)
                     .environmentObject(modelData)
             } else {
-                iOSReadEditView(showSheetView: $showingSheet)
+                iOSReadEditView(showSheetView: $showingSheet, showErrorAlert: $showErrorAlert)
                     .environmentObject(modelData)
             }
         }
@@ -58,9 +60,9 @@ struct iOSReadListView: View {
             updateReadList()
             checkPasteContent()
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-            checkPasteContent()
-        }
+//        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+//            checkPasteContent()
+//        }
     }
 }
 
