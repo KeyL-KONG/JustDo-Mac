@@ -146,6 +146,7 @@ struct iOSScrollTabViewWithGesture<Content: View>: View {
         self.content = content
     }
     
+    // 修改iOSScrollTabViewWithGesture的body部分
     var body: some View {
         VStack {
             iOSScrollTabView(tabs: tabs, selection: $selection)
@@ -155,31 +156,31 @@ struct iOSScrollTabViewWithGesture<Content: View>: View {
                 content()
             }
         }
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    dragOffset = value.translation.width
-                }
-                .onEnded { value in
-                    // 计算滑动距离
-                    let threshold: CGFloat = 50 // 最小滑动距离阈值
-                    let dragDistance = value.translation.width
-                    
-                    // 只有当滑动距离超过阈值时才切换tab
-                    if abs(dragDistance) > threshold {
-                        if dragDistance > 0 {
-                            // 向右滑动，切换到上一个tab
-                            selection = max(0, selection - 1)
-                        } else {
-                            // 向左滑动，切换到下一个tab
-                            selection = min(tabs.count - 1, selection + 1)
-                        }
-                    }
-                    
-                    // 重置拖拽偏移
-                    dragOffset = 0
-                }
-        )
+//        .gesture(
+//            DragGesture()
+//                .onChanged { value in
+//                    dragOffset = value.translation.width
+//                }
+//                .onEnded { value in
+//                    // 计算滑动距离
+//                    let threshold: CGFloat = 50 // 最小滑动距离阈值
+//                    let dragDistance = value.translation.width
+//                    
+//                    // 只有当滑动距离超过阈值时才切换tab
+//                    if abs(dragDistance) > threshold {
+//                        if dragDistance > 0 {
+//                            // 向右滑动，切换到上一个tab
+//                            selection = max(0, selection - 1)
+//                        } else {
+//                            // 向左滑动，切换到下一个tab
+//                            selection = min(tabs.count - 1, selection + 1)
+//                        }
+//                    }
+//                    
+//                    // 重置拖拽偏移
+//                    dragOffset = 0
+//                }
+//        )
     }
 }
 

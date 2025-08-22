@@ -246,6 +246,7 @@ extension ModelData {
             group.leave()
         }
         
+        loadRecordItems()
         
 //        group.enter()
 //        DataManager.shared.query(type: PrincipleModel.self) { items, error in
@@ -281,7 +282,6 @@ extension ModelData {
                     serverNoteItemList = items ?? []
                     print("cloud load all server note itemlist: \(serverNoteItemList.count)")
                 }
-                loadRecordItems()
                 group.leave()
             }
         }

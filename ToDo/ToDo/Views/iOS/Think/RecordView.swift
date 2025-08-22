@@ -21,26 +21,22 @@ struct RecordView: View {
     @State var selectionIndex: Int = 0
     @State var toggleToRefresh: Bool = false
     
-    var recordItems: [RecordItem] {
-        modelData.recordList.sorted { $0.displayTime.timeIntervalSince1970 > $1.displayTime.timeIntervalSince1970
-        }
-    }
-    
+    @State var recordItems: [RecordItem] = []
     var body: some View {
         NavigationView(content: {
             VStack(alignment: .leading, content: {
-                HStack(alignment: .top) {
-                    Text("记录").font(.title.bold()).foregroundStyle(.blue)
-                    Spacer()
-                }.padding(.leading, 15)
-                
-                if toggleToRefresh {
-                    Text("")
-                }
+//                HStack(alignment: .top) {
+//                    Text("记录").font(.title.bold()).foregroundStyle(.blue)
+//                    Spacer()
+//                }.padding(.leading, 15)
+//                
+//                if toggleToRefresh {
+//                    Text("")
+//                }
                 
                 
                 List {
-                    ForEach(recordItems, id: \.self) { item in
+                    ForEach(recordItems, id: \.self.id) { item in
                         RecordItemView(item: item, contentClick: {
                             Self.selectEditRecordItem = item
                             self.showingEditRecordView.toggle()
@@ -88,6 +84,10 @@ struct RecordView: View {
             })
             .padding(.vertical, 20)
             .padding(.horizontal, 40)
+        })
+        .onAppear(perform: {
+            self.recordItems = modelData.recordList.sorted { $0.displayTime.timeIntervalSince1970 > $1.displayTime.timeIntervalSince1970
+            }
         })
         .sheet(isPresented: $showingEditRecordView, content: {
             if let item = Self.selectEditRecordItem {

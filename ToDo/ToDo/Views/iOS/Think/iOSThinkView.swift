@@ -20,7 +20,7 @@ struct iOSThinkView: View {
                     iOSReviewView()
                         .environmentObject(modelData)
                 } else if selectionIndex == 1 {
-                    iOSProjectView(timerModel: timerModel)
+                    RecordView()
                         .environmentObject(modelData)
                 } 
             }

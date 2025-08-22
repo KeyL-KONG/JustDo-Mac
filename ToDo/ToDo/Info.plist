@@ -7,5 +7,7 @@
 		<key>NSExceptionDomains</key>
 		<dict/>
 	</dict>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>此应用需要访问您的照片库以选择和上传图片</string>
 </dict>
 </plist>
