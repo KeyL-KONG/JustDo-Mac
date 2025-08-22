@@ -4,6 +4,7 @@
 //
 //  Created by LQ on 2025/8/17.
 //
+#if os(iOS)
 
 import SwiftUI
 
@@ -60,3 +61,5 @@ extension iOSNoteListView {
     }
     
 }
+
+#endif
