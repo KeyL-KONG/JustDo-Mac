@@ -371,11 +371,24 @@ extension iOSReviewView {
                     }
                     .swipeActions {
                         Button {
-                            Self.deleteSummaryItem = item
-                            self.showingDeleteAlert.toggle()
+                            let noteItem = NoteItem()
+                            noteItem.content = item.content
+                            noteItem.createTime = item.createTime
+                            modelData.updateNoteItem(noteItem) { success in
+                                if success {
+                                    modelData.deleteSummaryItem(item)
+                                }
+                            }
                         } label: {
-                            Label("Delete", systemImage: "trash")
-                        }.tint(.red)
+                            Text("转换")
+                        }.tint(.green)
+                        
+//                        Button {
+//                            Self.deleteSummaryItem = item
+//                            self.showingDeleteAlert.toggle()
+//                        } label: {
+//                            Label("Delete", systemImage: "trash")
+//                        }.tint(.red)
                     }
                     .frame(maxWidth: .infinity)
             }.padding(.vertical, 15)

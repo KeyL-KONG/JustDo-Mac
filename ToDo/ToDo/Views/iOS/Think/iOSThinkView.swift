@@ -17,7 +17,7 @@ struct iOSThinkView: View {
         ZStack {
             iOSScrollTabViewWithGesture(tabs: tabs, selection: $selectionIndex) {
                 if selectionIndex == 0 {
-                    iOSReviewView()
+                    iOSThinkListView()
                         .environmentObject(modelData)
                 } else if selectionIndex == 1 {
                     RecordView()

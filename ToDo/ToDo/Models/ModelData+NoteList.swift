@@ -72,6 +72,7 @@ extension ModelData {
             if let error = error {
                 print(error)
             } else {
+                self.updateNoteItemIndex += 1
                 self.asyncUpdateCache(type: .noteItem)
             }
         }

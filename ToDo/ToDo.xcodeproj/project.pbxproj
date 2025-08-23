@@ -55,6 +55,7 @@
 		091AA3BB2E576EA600BB1519 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3BA2E576EA600BB1519 /* VideoView.swift */; };
 		091AA3BD2E576EAA00BB1519 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3BC2E576EAA00BB1519 /* VideoPlayerView.swift */; };
 		091AA3BF2E57F52700BB1519 /* TimerDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3BE2E57F52700BB1519 /* TimerDisplayView.swift */; };
+		091AA3C12E59F2CC00BB1519 /* iOSThinkListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3C02E59F2C500BB1519 /* iOSThinkListView.swift */; };
 		092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545E82DD81E7600D324DB /* ProgressBar.swift */; };
 		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
 		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
@@ -221,6 +222,7 @@
 		091AA3BA2E576EA600BB1519 /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		091AA3BC2E576EAA00BB1519 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		091AA3BE2E57F52700BB1519 /* TimerDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerDisplayView.swift; sourceTree = "<group>"; };
+		091AA3C02E59F2C500BB1519 /* iOSThinkListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSThinkListView.swift; sourceTree = "<group>"; };
 		092545E82DD81E7600D324DB /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
 		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 		091AA38E2E56AD3100BB1519 /* Think */ = {
 			isa = PBXGroup;
 			children = (
+				091AA3C02E59F2C500BB1519 /* iOSThinkListView.swift */,
 				091AA3BA2E576EA600BB1519 /* VideoView.swift */,
 				091AA3B82E576EA100BB1519 /* ImageCarousel.swift */,
 				091AA3B42E576E6B00BB1519 /* ImageView.swift */,
@@ -925,6 +928,7 @@
 				2B10E8F92DE48FD2007B88AC /* SearchWindowView.swift in Sources */,
 				097AE2C12DC481210096059B /* ModelData+Cache.swift in Sources */,
 				0925460F2DE1711200D324DB /* Dictionary+Extensions.swift in Sources */,
+				091AA3C12E59F2CC00BB1519 /* iOSThinkListView.swift in Sources */,
 				09AAC5382DED845F0091FA4A /* ThinkListView.swift in Sources */,
 				091AA3A22E56AE7F00BB1519 /* TagList.swift in Sources */,
 				091AA3A32E56AE7F00BB1519 /* TagCapsuleStyle.swift in Sources */,
