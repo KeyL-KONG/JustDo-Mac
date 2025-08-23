@@ -31,7 +31,9 @@ struct MainView: View {
     @State var selectDate: Date = .now
     
     @State var showTimelineView: Bool = false
-    private static var selectedTimeItem: TaskTimeItem? = nil
+    @State var restoreItem: EventItem?
+    @State var showRestoreAlert: Bool = false
+    static var selectedTimeItem: TaskTimeItem? = nil
     
     var body: some View {
         TabView(selection: $selection) {
@@ -85,8 +87,13 @@ struct MainView: View {
             
         }
         .onAppear(perform: {
-            
+            checkTaskView()
         })
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            if !timerModel.isTiming {
+                checkTaskView()
+            }
+        }
         .sheet(isPresented: $showTimelineView, content: {
             if let item = Self.selectedTimeItem {
                 EditTimeLineRowView(showSheetView: $showTimelineView, item: item)
@@ -96,59 +103,57 @@ struct MainView: View {
         })
         .overlay(alignment: .bottom, content: {
             if timerModel.isTiming {
-                HStack {
-                    let tagColor = timingTagColor()
-                    
-                    if timerModel.title.count > 0 {
-                        Text(timerModel.title).foregroundStyle(tagColor)
-                        Spacer()
-                    }
-                    
-                    Spacer()
-                    
-                    Text(timerModel.timeSeconds.secondAndMinTimeStr).bold().foregroundStyle(tagColor)
+                TimerDisplayView(timerModel: timerModel, showTimelineView: $showTimelineView)
+            }
+        })
+        .alert("", isPresented: $showRestoreAlert) {
+            Button("取消") {
+                if let restoreItem {
+                    restoreItem.isPlay = false
+                    modelData.updateItem(restoreItem)
                 }
-                .contentShape(Rectangle())
-                .onTapGesture(perform: {
-                    let timeItem = TaskTimeItem(startTime: timerModel.startTime ?? .now, endTime: .now, content: "")
-                    timeItem.eventId = timerModel.timingItem?.id ?? ""
-                    Self.selectedTimeItem = timeItem
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        self.showTimelineView.toggle()
-                    }
-                    timerModel.stopTimer()
-                })
-                .padding(.horizontal, 25)
-                .frame(height: 60)
-                .offset(y: -55)
-                .background {
-                    ZStack {
-                        Rectangle()
-                            .frame(height: 60)
-                            .cornerRadius(10)
-                            .foregroundStyle(Color.init(hex: "fdfefe"))
-                            .offset(y: -55)
-                    }
-                    .padding(.horizontal, 15)
-                    .shadow(color: .primary.opacity(0.06), radius: 5, x: 5, y: 5)
-                    .shadow(color: .primary.opacity(0.06), radius: 5, x: -5, y: -5)
-                }
+                restoreItem = nil
+            }
+            Button("记录") {
+                guard let restoreItem, let startTime = restoreItem.playTime, restoreItem.isPlay else { return }
+                let timeItem = TaskTimeItem(startTime: startTime, endTime: .now, content: "")
+                timeItem.eventId = restoreItem.id
+                Self.selectedTimeItem = timeItem
+                showTimelineView.toggle()
+                
+                restoreItem.isPlay = false
+                modelData.updateItem(restoreItem)
+                self.restoreItem = nil
+            }
+        } message: {
+            if let restoreItem {
+                Text("<\(restoreItem.title)> 进行中")
             }
             
-        })
+        }
+
     }
 }
 
 extension MainView {
     
-    func timingTagColor() -> Color {
-        let tagHexColor = modelData.tagList.first { $0.id == (timerModel.timingItem?.tag ?? "")
-        }?.hexColor
-        var tagColor: Color = .black
-        if let tagHexColor  {
-            tagColor = Color.init(hex: tagHexColor)
+    func checkTaskView() {
+        
+        func check() {
+            guard !timerModel.isTiming else { return }
+            guard let task = modelData.itemList.filter({ $0.isPlay && $0.playTime != nil
+            }).sorted(by: { first, second in
+                return (first.playTime ?? .now) > (second.playTime ?? .now)
+            }).first else {
+                return
+            }
+            restoreItem = task
+            self.showRestoreAlert.toggle()
         }
-        return tagColor
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            check()
+        }
     }
     
 }

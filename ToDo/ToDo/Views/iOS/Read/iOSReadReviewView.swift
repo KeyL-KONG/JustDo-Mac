@@ -84,8 +84,23 @@ struct iOSReadReviewView: View {
                 
                 Spacer()
                 
+                Button {
+                    updateItems()
+                } label: {
+                    Text("刷新").foregroundStyle(.blue)
+                }
+                
+                Button {
+                    if let currentReadItem {
+                        modelData.deleteReadModel(currentReadItem)
+                        updateItems()
+                    }
+                } label: {
+                    Text("删除").foregroundStyle(.red)
+                }
+
                 if timer.timeSeconds > 0 {
-                    Text(timer.timeSeconds.timeStr).foregroundStyle(.red)
+                    Text(timer.timeSeconds.timeStr).foregroundStyle(.yellow)
                 }
                 
                 Text("\(currentIndex+1) / \(self.unReviewItems.count)").bold().foregroundStyle(.blue)
@@ -139,9 +154,9 @@ struct iOSReadReviewView: View {
             timer.stopTimer()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            if !timer.isTiming {
-                updateItems()
-            }
+//            if !timer.isTiming {
+//                updateItems()
+//            }
         }
     }
     

@@ -94,7 +94,7 @@ extension iOSTaskListView {
                             }
 
                             Button(action: {
-                                timerModel.startTimer(item: item)
+                                startTimeItem(item)
                             }, label: {
                                 Label("Start", systemImage: "Flag")
                             }).tint(.blue)
@@ -124,7 +124,7 @@ extension iOSTaskListView {
                                 }
 
                                 Button(action: {
-                                    timerModel.startTimer(item: item)
+                                    startTimeItem(item)
                                 }, label: {
                                     Label("Start", systemImage: "Flag")
                                 }).tint(.blue)
@@ -205,7 +205,7 @@ extension iOSTaskListView {
                             }
 
                             Button(action: {
-                                timerModel.startTimer(item: item)
+                                startTimeItem(item)
                             }, label: {
                                 Label("Start", systemImage: "Flag")
                             }).tint(.blue)
@@ -230,7 +230,7 @@ extension iOSTaskListView {
                         }.environmentObject(modelData)
                         .swipeActions {
                             Button(action: {
-                                timerModel.startTimer(item: item)
+                                startTimeItem(item)
                             }, label: {
                                 Label("Start", systemImage: "Flag")
                             }).tint(.blue)
@@ -372,6 +372,14 @@ extension iOSTaskListView {
         
         
         print("update task items: \(eventItems.count)")
+    }
+    
+    func startTimeItem(_ item: EventItem) {
+        if timerModel.startTimer(item: item) {
+            item.isPlay = true
+            item.playTime = .now
+            modelData.updateItem(item)
+        }
     }
     
 }

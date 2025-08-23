@@ -54,7 +54,7 @@ struct iOSReadView: View {
             if let selectedReadItem = Self.selectedReadItem {
                 iOSReadEditView(readItem: selectedReadItem, showSheetView: $showingSheet, showErrorAlert: $showErrorAlert)
                     .environmentObject(modelData)
-            } else if Self.pastedURL.count > 0 {
+            } else {
                 iOSReadEditView(showSheetView: $showingSheet, urlText: Self.pastedURL, showErrorAlert: $showErrorAlert)
                     .environmentObject(modelData)
             }

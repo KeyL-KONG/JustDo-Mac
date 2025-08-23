@@ -210,65 +210,6 @@ struct UniversalWebViewContainer: View {
     }
 }
 
-// MARK: - 使用示例
-struct WebViewExample: View {
-    @State private var showDouyin = false
-    @State private var showRegular = false
-    
-    // 常用User-Agent定义
-    private let mobileUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
-    private let desktopUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    
-    var body: some View {
-        NavigationView {
-            List {
-                Section(header: Text("抖音示例")) {
-                    Button("打开抖音视频") {
-                        UniversalWebCacheManager.shared.preloadURL(
-                            "https://v.douyin.com/MVe9da35p1w/",
-                            userAgent: mobileUserAgent
-                        )
-                        showDouyin = true
-                    }
-                    
-                    NavigationLink(
-                        destination: UniversalWebViewContainer(
-                            urlString: "https://v.douyin.com/MVe9da35p1w/",
-                            userAgent: mobileUserAgent,
-                            title: "抖音视频"
-                        ),
-                        isActive: $showDouyin
-                    ) { Text("预加载抖音视频") }
-                }
-                
-                Section(header: Text("普通网页")) {
-                    Button("打开普通网页 (移动版)") {
-                        showRegular = true
-                    }
-                    
-                    NavigationLink(
-                        destination: UniversalWebViewContainer(
-                            urlString: "https://www.apple.com",
-                            userAgent: mobileUserAgent,
-                            title: "Apple官网"
-                        ),
-                        isActive: $showRegular
-                    ) { Text("预加载Apple官网") }
-                    
-                    Button("打开普通网页 (桌面版)") {
-                        UniversalWebCacheManager.shared.preloadURL(
-                            "https://www.microsoft.com",
-                            userAgent: desktopUserAgent
-                        )
-                    }
-                }
-            }
-            .listStyle(InsetGroupedListStyle())
-            .navigationTitle("网页浏览器")
-        }
-    }
-}
-
 // MARK: - 预览
 struct UniversalWebView_Previews: PreviewProvider {
     static var previews: some View {

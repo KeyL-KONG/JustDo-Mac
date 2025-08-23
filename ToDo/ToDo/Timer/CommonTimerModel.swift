@@ -43,11 +43,52 @@ class CommonTimerModel: ObservableObject {
             object: nil
         )
 #endif
+        
+#if os(iOS)
+        // 添加iOS平台的前后台切换监听
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillResignActive(_:)),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidBecomeActive(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+#endif
     }
+    
+#if os(iOS)
+    /// 应用将要进入非活跃状态（如切换到后台）
+    @objc private func appWillResignActive(_ notification: Notification) {
+        DispatchQueue.main.async {
+            self.pauseTimer()
+        }
+    }
+    
+    /// 应用已进入活跃状态（如从后台回到前台）
+    @objc private func appDidBecomeActive(_ notification: Notification) {
+        DispatchQueue.main.async {
+            if self.timingItem != nil && !self.isTiming {
+                self.restartTimer()
+            }
+        }
+    }
+#endif
     
     private func removeObservers() {
 #if os(macOS)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
+#endif
+        
+#if os(iOS)
+        // 移除iOS平台的监听
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
 #endif
     }
     
@@ -78,11 +119,16 @@ class CommonTimerModel: ObservableObject {
     }
     
     func restartTimer() {
-        start()
+        isTiming = true
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { timer in
+            self.timeSeconds += 1
+        })
     }
     
     func pauseTimer() {
+        print("pause time")
         self.timer?.invalidate()
+        self.timer = nil
         isTiming = false
     }
     
