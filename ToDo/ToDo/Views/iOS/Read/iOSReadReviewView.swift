@@ -39,10 +39,10 @@ struct iOSReadReviewView: View {
             VStack {
                 if unReviewItems.isEmpty {
                     Text("empty").font(.largeTitle)
-                } else if let currentReadItem, let noteUrl = URL(string: currentReadItem.url) {
+                } else if let currentReadItem, let _ = URL(string: currentReadItem.url) {
                     UniversalWebViewContainer(urlString: currentReadItem.url, title: currentReadItem.title)
                         .id(currentReadItem.id)
-                        // 添加拖拽手势识别
+                    // 添加拖拽手势识别
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
@@ -74,30 +74,43 @@ struct iOSReadReviewView: View {
                         )
                     
                     HStack {
+                        Button("删除") {
+                            modelData.deleteReadModel(currentReadItem)
+                            updateItems()
+                        }.buttonStyle(ScoreButtonStyle(color: .red))
                         
                         if timer.isTiming  {
-                            Button("记录阅读") {
+                            Button("记录") {
                                 self.updateReadTime()
                                 timer.stopTimer()
                             }.buttonStyle(ScoreButtonStyle(color: .blue))
                         } else {
-                            Button("开始阅读") {
+                            Button("阅读") {
                                 startTime = Date()
                                 timer.startTimer(item: currentReadItem)
                             }.buttonStyle(ScoreButtonStyle(color: .blue))
                         }
                         
                         Button("笔记") {
-                            self.mark = currentReadItem.note ?? ""
+                            self.mark = currentReadItem.note
                             self.showMarkText.toggle()
                         }.buttonStyle(ScoreButtonStyle(color: .purple))
                         
                         Button("编辑") {
                             self.showEidtReadView.toggle()
                         }.buttonStyle(ScoreButtonStyle(color: .brown))
-                
+                        
+                        Button("跳转") {
+                            if let URL = URL(string: currentReadItem.url) {
+                                UIApplication.shared.open(URL)
+                            } else {
+                                print("jump error")
+                            }
+                        }.buttonStyle(ScoreButtonStyle(color: .green))
+                        
+                    }
+                    Spacer()
                 }
-                Spacer()
             }
         }
         .overlay(alignment: .topTrailing, content: {
@@ -110,15 +123,6 @@ struct iOSReadReviewView: View {
                     updateItems()
                 } label: {
                     Text("刷新").foregroundStyle(.blue)
-                }
-                
-                Button {
-                    if let currentReadItem {
-                        modelData.deleteReadModel(currentReadItem)
-                        updateItems()
-                    }
-                } label: {
-                    Text("删除").foregroundStyle(.red)
                 }
 
                 if timer.timeSeconds > 0 {
@@ -158,27 +162,14 @@ struct iOSReadReviewView: View {
             if unReviewItems.isEmpty {
                 updateItems()
             }
-            
         })
-//        .onChange(of: modelData.updateNoteIndex, { oldValue, newValue in
-//            updateItems()
-//        })
         .onAppear {
             if unReviewItems.isEmpty {
                 updateItems()
             }
-//            startTime = Date()
-//            if let currentReadItem {
-//                timer.startTimer(item: currentReadItem)
-//            }
         }
         .onDisappear {
             timer.stopTimer()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-//            if !timer.isTiming {
-//                updateItems()
-//            }
         }
     }
     
@@ -189,9 +180,9 @@ extension iOSReadReviewView {
     func updateIndex(step: Int) {
         self.currentIndex = max(self.currentIndex + step, 0) % self.unReviewItems.count
         
-        startTime = Date()
-        timer.stopTimer()
-        if let currentReadItem {
+        if let currentReadItem, timer.isTiming {
+            startTime = Date()
+            timer.stopTimer()
             timer.startTimer(item: currentReadItem)
         }
     }
