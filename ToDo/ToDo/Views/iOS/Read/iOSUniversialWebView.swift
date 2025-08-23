@@ -17,36 +17,35 @@ class UniversalWebCacheManager {
     // 预加载网页
     func preloadURL(_ urlString: String, userAgent: String = iOSUserAgent.defaultUA) {
         guard let url = URL(string: urlString) else { return }
-        
-        cacheQueue.async(flags: .barrier) {
+
             // 检查是否已缓存
-            if self.cachedWebViews[urlString] == nil {
-                // 清理旧缓存如果超过限制
-                if self.cachedWebViews.count >= self.maxCacheCount {
-                    
-                }
+        if self.cachedWebViews[urlString] == nil {
+            // 清理旧缓存如果超过限制
+            if self.cachedWebViews.count >= self.maxCacheCount {
                 
-                let configuration = WKWebViewConfiguration()
-                configuration.allowsInlineMediaPlayback = true
-                configuration.mediaTypesRequiringUserActionForPlayback = []
-                
-                let webView = WKWebView(frame: .zero, configuration: configuration)
-                webView.isHidden = true
-                
-                // 设置自定义User-Agent（如果提供）
-                
-                    //webView.customUserAgent = userAgent
-                
-                
-                // 添加到缓存
-                self.cachedWebViews[urlString] = webView
-                
-                // 开始预加载
-                DispatchQueue.main.async {
-                    webView.load(URLRequest(url: url))
-                }
             }
+            
+            let configuration = WKWebViewConfiguration()
+            configuration.allowsInlineMediaPlayback = true
+            configuration.mediaTypesRequiringUserActionForPlayback = []
+            
+            let webView = WKWebView(frame: .zero, configuration: configuration)
+            webView.isHidden = true
+            
+            // 设置自定义User-Agent（如果提供）
+            
+                //webView.customUserAgent = userAgent
+            
+            
+            // 添加到缓存
+            self.cachedWebViews[urlString] = webView
+            
+            // 开始预加载
+            
+            webView.load(URLRequest(url: url))
+            
         }
+        
     }
     
     // 获取缓存的WebView
@@ -200,20 +199,13 @@ struct UniversalWebViewContainer: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .navigationTitle(title ?? "网页浏览")
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationTitle(title ?? "网页浏览")
+//        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if preloadEnabled {
                 UniversalWebCacheManager.shared.preloadURL(urlString, userAgent: userAgent ?? iOSUserAgent.defaultUA)
             }
         }
-    }
-}
-
-// MARK: - 预览
-struct UniversalWebView_Previews: PreviewProvider {
-    static var previews: some View {
-        WebViewExample()
     }
 }
 

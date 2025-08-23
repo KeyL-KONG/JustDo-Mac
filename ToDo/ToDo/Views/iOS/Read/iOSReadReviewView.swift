@@ -26,6 +26,9 @@ struct iOSReadReviewView: View {
     @State var mark: String = ""
     @Binding var showErrorAlert: Bool
     
+    // 添加拖拽偏移状态
+    @State private var dragOffset: CGSize = .zero
+    
     var currentReadItem: ReadModel? {
         guard currentIndex >= 0 && currentIndex < unReviewItems.count else { return nil }
         return unReviewItems[currentIndex]
@@ -37,15 +40,40 @@ struct iOSReadReviewView: View {
                 if unReviewItems.isEmpty {
                     Text("empty").font(.largeTitle)
                 } else if let currentReadItem, let noteUrl = URL(string: currentReadItem.url) {
-                    UniversalWebView(urlString: currentReadItem.url, isLoading: $isLoading).id(currentReadItem.id)
+                    UniversalWebViewContainer(urlString: currentReadItem.url, title: currentReadItem.title)
+                        .id(currentReadItem.id)
+                        // 添加拖拽手势识别
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    dragOffset = value.translation
+                                }
+                                .onEnded { value in
+                                    // 计算滑动距离和速度
+                                    let dragThreshold: CGFloat = 50
+                                    let velocityThreshold: Double = 500
+                                    
+                                    // 判断是否满足滑动条件
+                                    if abs(value.translation.width) > dragThreshold &&
+                                        abs(value.predictedEndTranslation.width) > dragThreshold &&
+                                        abs(value.velocity.width) > velocityThreshold {
+                                        
+                                        // 向右滑动，切换到上一个
+                                        if value.translation.width > 0 {
+                                            updateIndex(step: -1)
+                                        }
+                                        // 向左滑动，切换到下一个
+                                        else {
+                                            updateIndex(step: 1)
+                                        }
+                                    }
+                                    
+                                    // 重置拖拽偏移
+                                    dragOffset = .zero
+                                }
+                        )
                     
                     HStack {
-                        Button {
-                            updateIndex(step: -1)
-                        } label: {
-                            Image(systemName: "arrowshape.left")
-                        }.buttonStyle(ScoreButtonStyle(color: .red))
-                            .disabled(currentIndex == 0)
                         
                         if timer.isTiming  {
                             Button("记录阅读") {
@@ -67,13 +95,7 @@ struct iOSReadReviewView: View {
                         Button("编辑") {
                             self.showEidtReadView.toggle()
                         }.buttonStyle(ScoreButtonStyle(color: .brown))
-                        
-                        Button {
-                            updateIndex(step: 1)
-                        } label: {
-                            Image(systemName: "arrowshape.right")
-                        }.buttonStyle(ScoreButtonStyle(color: .green))
-                    }
+                
                 }
                 Spacer()
             }
@@ -194,5 +216,4 @@ extension iOSReadReviewView {
     }
     
 }
-
 #endif
