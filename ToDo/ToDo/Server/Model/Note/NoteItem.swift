@@ -24,6 +24,7 @@ class NoteItem: BaseModel, Identifiable {
     var needReview: Bool = true
     var type: String = "text"
     var url: String = ""
+    var tags: [String] = []
     
     var noteType: NoteType {
         return NoteType(rawValue: type) ?? .text
@@ -55,6 +56,7 @@ class NoteItem: BaseModel, Identifiable {
         needReview = try container.decode(Bool.self, forKey: .needReview)
         type = try container.decode(String.self, forKey: .type)
         url = try container.decode(String.self, forKey: .url)
+        tags = try container.decode([String].self, forKey: .tags)
     }
     
     init(content: String, title: String = "") {
@@ -73,6 +75,7 @@ class NoteItem: BaseModel, Identifiable {
         try container.encode(needReview, forKey: .needReview)
         try container.encode(type, forKey: .type)
         try container.encode(url, forKey: .url)
+        try container.encode(tags, forKey: .tags)
     }
     
     override class func modelClassName() -> String {
@@ -92,6 +95,7 @@ class NoteItem: BaseModel, Identifiable {
         needReview = cloudObj.get(NoteItemKeys.needReview.rawValue)?.boolValue ?? true
         type = cloudObj.get(NoteItemKeys.type.rawValue)?.stringValue ?? ""
         url = cloudObj.get(NoteItemKeys.url.rawValue)?.stringValue ?? ""
+        tags = cloudObj.get(NoteItemKeys.tags.rawValue)?.arrayValue as? [String] ?? []
     }
     
     override func convert(to cloudObj: LCObject) throws {
@@ -103,6 +107,7 @@ class NoteItem: BaseModel, Identifiable {
         try cloudObj.set(NoteItemKeys.needReview.rawValue, value: needReview.lcBool)
         try cloudObj.set(NoteItemKeys.type.rawValue, value: type.lcString)
         try cloudObj.set(NoteItemKeys.url.rawValue, value: url.lcString)
+        try cloudObj.set(NoteItemKeys.tags.rawValue, value: tags.lcArray)
     }
     
 }
@@ -117,6 +122,7 @@ extension NoteItem {
         case needReview
         case type
         case url
+        case tags
     }
     
 }

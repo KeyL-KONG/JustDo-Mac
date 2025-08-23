@@ -299,7 +299,7 @@ struct ResizableTF: UIViewRepresentable {
         view.isEditable = true
         view.isScrollEnabled = true
         view.text = "Enter Message"
-        view.font = .systemFont(ofSize: 18)
+        view.font = .systemFont(ofSize: 15)
         view.textColor = .gray
         view.delegate = context.coordinator
         view.backgroundColor = .clear

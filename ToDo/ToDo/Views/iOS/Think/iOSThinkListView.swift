@@ -14,6 +14,8 @@ struct iOSThinkListView: View {
     @State var noteItems: [NoteItem] = []
     @State var showDeleteAlert: Bool = false
     static var deleteItem: NoteItem?
+    @State var showSelectedItem: Bool = false
+    static var selectedItem: NoteItem?
     
     var body: some View {
         VStack {
@@ -21,6 +23,11 @@ struct iOSThinkListView: View {
                 ForEach(noteItems, id: \.self.id) { item in
                     Section {
                         itemView(item)
+                            .contentShape(Rectangle())
+                            .onTapGesture(perform: {
+                                Self.selectedItem = item
+                                showSelectedItem.toggle()
+                            })
                             .swipeActions {
                                 Button {
                                     Self.deleteItem = item
@@ -29,13 +36,29 @@ struct iOSThinkListView: View {
                                     Text("删除").foregroundStyle(.red)
                                 }.tint(.red)
                             }
-                    }.padding(.vertical, 15)
+                    }.padding(.top, 5)
+                        .padding(.bottom, 20)
                         .background(alignment: .bottomTrailing) {
                             HStack {
+                                let tags = item.tags.compactMap { tagId in modelData.noteTagList.first { $0.id == tagId}?.content }
+                                
+                                if tags.count > 0 {
+                                    TagList(tags: tags) { tag in
+                                        Text(tag)
+                                            .font(.system(size: 8))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 4)
+                                            .padding(.vertical, 2)
+                                            .background(.blue)
+                                            .clipShape(RoundedRectangle(cornerRadius: 3))
+                                    }
+                                }
+                                
                                 Spacer()
                                 let timeStr = item.createTime!.simpleDateStr
                                 Text(timeStr).font(.system(size: 12)).foregroundColor(.secondary)
                             }
+                            .offset(y: 5)
                         }
                 }
             }
@@ -53,6 +76,7 @@ struct iOSThinkListView: View {
                 Button(action: {
                     saveNoteItem()
                     endEdit()
+                    self.summaryText = ""
                 }, label: {
                     Image(systemName: "paperplane.fill")
                         .resizable()
@@ -86,8 +110,15 @@ struct iOSThinkListView: View {
         .onChange(of: modelData.updateNoteItemIndex, { oldValue, newValue in
             self.updateItems()
         })
+        .sheet(isPresented: $showSelectedItem, content: {
+            if let item = Self.selectedItem {
+                iOSEditThinkView(showItem: $showSelectedItem, item: item)
+                    .environmentObject(modelData)
+            }
+        })
         .onAppear {
             self.updateItems()
+            
         }
     }
 }
@@ -96,8 +127,11 @@ extension iOSThinkListView {
     
     func itemView(_ item: NoteItem) -> some View {
         VStack {
-            Text(item.content).font(.system(size: 16)).foregroundColor(.black).multilineTextAlignment(.leading)
-                .contentShape(Rectangle())
+            HStack {
+                Text(item.content).font(.system(size: 16)).foregroundColor(.black).multilineTextAlignment(.leading)
+                    .contentShape(Rectangle())
+                Spacer()
+            }
         }
     }
     
