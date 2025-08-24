@@ -17,7 +17,7 @@ struct iOSEditThinkView: View {
     @State var tags: [String] = []
     @State var selectTags: [String] = []
     @State var tagText: String = ""
-    
+    @State var tagTimes: [String: Int] = [:]
     
     @FocusState private var focusedField: FocusedField?
     
@@ -61,7 +61,7 @@ struct iOSEditThinkView: View {
                             //.padding(10)
                             .scrollContentBackground(.hidden)
                             //.background(Color.blue.opacity(0.3))
-                            .frame(minHeight: 50, maxHeight: 230)
+                            .frame(minHeight: 150, maxHeight: .infinity)
                             //.cornerRadius(8)
                             .focused($focusedField, equals: .content)
                             .padding(.horizontal, 12)  // 水平内边距
@@ -118,6 +118,7 @@ struct iOSEditThinkView: View {
             updateTags()
         })
         .onAppear {
+            updateTagTimes()
             updateData()
             if let item, item.tags.isEmpty {
                 focusedField = .tag
@@ -137,7 +138,9 @@ extension iOSEditThinkView {
                     item.tags.contains(tag.id)
                 }).compactMap { $0.content }
             }
-            tags = modelData.noteTagList.compactMap { $0.content }
+            tags = modelData.noteTagList.sorted(by: { first, second in
+                return (self.tagTimes[first.id] ?? 0) >= (self.tagTimes[second.id] ?? 0)
+            }).compactMap { $0.content }
         }
     }
     
@@ -157,8 +160,22 @@ extension iOSEditThinkView {
             tags = (modelData.noteTagList.filter { tag in
                 if tagText.isEmpty { return true }
                 return tag.content.contains(tagText)
-            }.compactMap { $0.content} + selectTags).uniqueArray
+            }.sorted(by: { first, second in
+                return (self.tagTimes[first.id] ?? 0) >= (self.tagTimes[second.id] ?? 0)
+            }).compactMap { $0.content} + selectTags).uniqueArray
         }
+    }
+    
+    func updateTagTimes() {
+        var tagTimes = [String: Int]()
+        modelData.noteItemList.compactMap { $0.tags }.reduce([], +).forEach { tag in
+            if let times = tagTimes[tag] {
+                tagTimes[tag] = times + 1
+            } else {
+                tagTimes[tag] = 1
+            }
+        }
+        self.tagTimes = tagTimes
     }
     
     func saveItem() {

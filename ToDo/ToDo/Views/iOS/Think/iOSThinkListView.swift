@@ -17,8 +17,17 @@ struct iOSThinkListView: View {
     @State var showSelectedItem: Bool = false
     static var selectedItem: NoteItem?
     
+    @State var noteTags: [String] = []
+    @State var selectedTag: String?
+    @State var tagTimes: [String: Int] = [:]
+    
+    let allNoteTag = "所有"
+    let unListTag = "未整理"
+    
     var body: some View {
         VStack {
+            HorizontalTagListView(tags: noteTags, selectedTag: $selectedTag)
+            
             List {
                 ForEach(noteItems, id: \.self.id) { item in
                     Section {
@@ -108,6 +117,15 @@ struct iOSThinkListView: View {
             Text("是否删除 <\(title)>")
         })
         .onChange(of: modelData.updateNoteItemIndex, { oldValue, newValue in
+            self.updateTagTimes()
+            self.updateItems()
+        })
+        .onChange(of: modelData.updateNoteTagIndex, { old, new in
+            self.updateTagTimes()
+            self.updateTags()
+            self.updateItems()
+        })
+        .onChange(of: selectedTag, { oldValue, newValue in
             self.updateItems()
         })
         .sheet(isPresented: $showSelectedItem, content: {
@@ -117,8 +135,10 @@ struct iOSThinkListView: View {
             }
         })
         .onAppear {
+            self.updateTagTimes()
+            self.updateTags()
+            self.selectedTag = allNoteTag
             self.updateItems()
-            
         }
     }
 }
@@ -141,8 +161,46 @@ extension iOSThinkListView {
         modelData.updateNoteItem(noteItem)
     }
     
+    func updateTags() {
+        self.noteTags = [allNoteTag, unListTag] + modelData.noteTagList.filter({ tag in
+            return self.tagTimes[tag.id] != nil
+        }).sorted(by: { first, second in
+            return (self.tagTimes[first.id] ?? 0) >= (self.tagTimes[second.id] ?? 0)
+        }).compactMap { tag in
+            if let time = self.tagTimes[tag.id] {
+                return tag.content + " \(time)"
+            }
+            return tag.content
+        }
+    }
+    
+    func updateTagTimes() {
+        var tagTimes = [String: Int]()
+        modelData.noteItemList.compactMap { $0.tags }.reduce([], +).forEach { tag in
+            if let times = tagTimes[tag] {
+                tagTimes[tag] = times + 1
+            } else {
+                tagTimes[tag] = 1
+            }
+        }
+        self.tagTimes = tagTimes
+    }
+    
     func updateItems() {
-        self.noteItems = modelData.noteItemList.sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
+        self.noteItems = modelData.noteItemList.filter({ item in
+            if selectedTag == allNoteTag {
+                return true
+            }
+            if selectedTag == unListTag {
+                return item.tags.isEmpty
+            }
+            if let selectedTag = modelData.noteTagList.first(where: {  tag in
+                return self.selectedTag?.contains(tag.content) ?? false
+            }) {
+                return item.tags.contains(selectedTag.id)
+            }
+            return false
+        }).sorted(by: { ($0.createTime?.timeIntervalSince1970 ?? 0) > ($1.createTime?.timeIntervalSince1970 ?? 0)
         })
     }
     

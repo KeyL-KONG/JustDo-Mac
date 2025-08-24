@@ -27,7 +27,7 @@ struct MainView: View {
     
     @EnvironmentObject var modelData: ModelData
     @ObservedObject var timerModel: TimerModel
-    @State private var selection: Tab = .think
+    @State private var selection: Tab = .task
     @State var selectDate: Date = .now
     
     @State var showTimelineView: Bool = false

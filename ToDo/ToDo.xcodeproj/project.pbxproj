@@ -57,6 +57,7 @@
 		091AA3BF2E57F52700BB1519 /* TimerDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3BE2E57F52700BB1519 /* TimerDisplayView.swift */; };
 		091AA3C12E59F2CC00BB1519 /* iOSThinkListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3C02E59F2C500BB1519 /* iOSThinkListView.swift */; };
 		091AA3C32E5A1AAC00BB1519 /* iOSEditThinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3C22E5A1AA400BB1519 /* iOSEditThinkView.swift */; };
+		091AA3C52E5AF67000BB1519 /* HorizontalTagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AA3C42E5AF67000BB1519 /* HorizontalTagListView.swift */; };
 		092545E92DD81E8000D324DB /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545E82DD81E7600D324DB /* ProgressBar.swift */; };
 		092545EC2DD83F9100D324DB /* PlanTimeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */; };
 		092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */; };
@@ -225,6 +226,7 @@
 		091AA3BE2E57F52700BB1519 /* TimerDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerDisplayView.swift; sourceTree = "<group>"; };
 		091AA3C02E59F2C500BB1519 /* iOSThinkListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSThinkListView.swift; sourceTree = "<group>"; };
 		091AA3C22E5A1AA400BB1519 /* iOSEditThinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSEditThinkView.swift; sourceTree = "<group>"; };
+		091AA3C42E5AF67000BB1519 /* HorizontalTagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalTagListView.swift; sourceTree = "<group>"; };
 		092545E82DD81E7600D324DB /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		092545EB2DD83F7C00D324DB /* PlanTimeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTimeItem.swift; sourceTree = "<group>"; };
 		092545ED2DD8415800D324DB /* ModelData+PlanItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelData+PlanItem.swift"; sourceTree = "<group>"; };
@@ -445,6 +447,7 @@
 		091AA38E2E56AD3100BB1519 /* Think */ = {
 			isa = PBXGroup;
 			children = (
+				091AA3C42E5AF67000BB1519 /* HorizontalTagListView.swift */,
 				091AA3C22E5A1AA400BB1519 /* iOSEditThinkView.swift */,
 				091AA3C02E59F2C500BB1519 /* iOSThinkListView.swift */,
 				091AA3BA2E576EA600BB1519 /* VideoView.swift */,
@@ -949,6 +952,7 @@
 				2BBE50382DEF2A8000D89777 /* NoteQuickView.swift in Sources */,
 				091AA35E2E50562500BB1519 /* iOSReadListView.swift in Sources */,
 				09D714792DAB60DA009DB18E /* ToDoItemListView+Principle.swift in Sources */,
+				091AA3C52E5AF67000BB1519 /* HorizontalTagListView.swift in Sources */,
 				091AA38B2E56AACB00BB1519 /* iOSTaskProjectView.swift in Sources */,
 				091AA3682E50DC3200BB1519 /* WebTitleFetcher.swift in Sources */,
 				092545EE2DD8415D00D324DB /* ModelData+PlanItem.swift in Sources */,
