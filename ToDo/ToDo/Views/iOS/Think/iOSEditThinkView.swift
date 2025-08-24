@@ -61,7 +61,7 @@ struct iOSEditThinkView: View {
                             //.padding(10)
                             .scrollContentBackground(.hidden)
                             //.background(Color.blue.opacity(0.3))
-                            .frame(minHeight: 50)
+                            .frame(minHeight: 50, maxHeight: 230)
                             //.cornerRadius(8)
                             .focused($focusedField, equals: .content)
                             .padding(.horizontal, 12)  // 水平内边距
@@ -93,7 +93,7 @@ struct iOSEditThinkView: View {
                             if tagText.count > 0 && !tags.contains(tagText) {
                                 Spacer()
                                 Button {
-                                    
+                                    addTag()
                                     tagText = ""
                                 } label: {
                                     Text("添加").foregroundStyle(.blue)
@@ -141,8 +141,19 @@ extension iOSEditThinkView {
         }
     }
     
+    func addTag() {
+        if modelData.noteTagList.contains(where: { tag in
+            tag.content == tagText
+        }) {
+            return
+        }
+        let noteTag = TagModel()
+        noteTag.content = tagText
+        modelData.updateTagNote(noteTag)
+    }
+    
     func updateTags() {
-        if let item {
+        if item != nil {
             tags = (modelData.noteTagList.filter { tag in
                 if tagText.isEmpty { return true }
                 return tag.content.contains(tagText)
@@ -151,7 +162,7 @@ extension iOSEditThinkView {
     }
     
     func saveItem() {
-        var item = self.item ?? NoteItem()
+        let item = self.item ?? NoteItem()
         item.title = titleText
         item.content = contentText
         item.tags = selectTags.compactMap { tag in
